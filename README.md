@@ -1,4 +1,4 @@
-# DevLog Entry - 11/14
+# Devlog Entry - 11/14
 
 ## Introducing the Team
 Tools Lead - Nick, Nate
