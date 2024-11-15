@@ -2,31 +2,21 @@
 
 ## Introducing the Team
 Tools Lead - Nick, Nate
-
 Engine Lead - Norman, Josh
-
 Design Lead - David
 
 Everybody will have input into all parts these are just the people facilitating the conversations.
 
 ## Tools and materials
-With about one paragraph each...
+1. Our team will start with Phaser. We chose Phaser mainly because of its deep documentation online with extensive examples. Secondly, we chose Phaser because of its ease of access. It is very easy to start on a Phaser project since its systems are simple for the most part. And, finally, we went with Phaser because of our previous experience with it in CMPM 120, the prerequisite to this course. Since we are all pretty experienced with Phaser rather than Unity or another engine, we believed this would be quick to start with and get our game up and running as efficiently as possible.
 
-Tell us about what engines, libraries, frameworks, and or platforms you intend to use, and give us a tiny bit of detail about why your team chose those.
-    -Start with phaser, because we all did it in cmpm 120 and it satisfies our needs completely.  
-Tell us programming languages (e.g. TypeScript) and data languages (e.g. JSON) you team expects to use and why you chose them. Presumably you’ll just be using the languages expected by your previously chosen engine/platform.
-    -Start with typescript then move to javascript. For data language we will be using JSON.
-Tell us about which tools you expect to use in the process of authoring your project. You might name the IDE for writing code, the image editor for creating visual assets, or the 3D editor you will use for building your scene. Again, briefly tell us why you made these choices. Maybe one of your teammates feels especially skilled in that tool or it represents something you all want to learn about.
-    -We expect to use VS code and github for version control
-Tell us about your alternate platform choice. Remember, your alternate platform must differ from your primary platform by either changing the primary primarily language used or the engine/library/framework used for building your user interface.
-    - We will be switching our engine from phaser to .............
+2. Since we are using Phaser as our main engine to start, we are going to be using the JavaScript language and the JSON data language. We chose these because we did lots of projects in CMPM 120 using these languages. We felt that we had a somewhat solid background in these languages, so this seemed like an obvious choice.
+
+3. Visual Studio Code will be our team's main IDE. Since we all have been using this IDE for a while, it made sense to stick with it to be efficient for the project. For the visual assets of our game, we will be using GIMP. This should hopefully make our workflow of art simple as well, but we chose GIMP because it's something our team is excited to learn more about.
+
+4. Since we are using Phaser, our alternate platform will be Excalibur.js. We thought it would be smart to use an engine that has some similarities to Phaser as it will cause less headaches and stress as we carry our code forward and implement new ideas. We also wanted to keep the submission deadline in mind and remember that at the end of everything, we will have to submit something that works, so using Excalibur.js was our choice. However, this engine uses TypeScript as its main language, so we will probably have to switch our code around for that which shouldn't be too difficult.
 
 ## Outlook
-Give us a short section on your outlook on the project. You might cover one or more of these topics:
-
-What is your team hoping to accomplish that other teams might not attempt?
-    - Our team is looking to push the boundaries of player agency in a farming game by incorporating a unique seasonal mechanic that adapts over time and affects the reap-and-sow cycle in meaningful ways. Rather than simply having static cycles, we aim to introduce dynamic environmental factors—like unpredictable weather patterns, soil quality changes, and pest invasions—that evolve and require the player to adapt their strategy in real time. This approach brings a deeper level of engagement to farming games, creating a more immersive and challenging experience as players react to a constantly changing environment, making our project truly stand out.
-What do you anticipate being the hardest or riskiest part of the project?
-    - Swithcing engines and everything still working properly within a managable time frame.
-What are you hoping to learn by approaching the project with the tools and materials you selected above?
-    - How to properly refactor code so in the future engine changes are much easier to come by. 
+- Our team is looking to add more interactive and fun game mechanics such as a weather system or maybe a combat system where enemies try to steal your crops and so on. We think this can add another interesting element to that game we will make that other teams might not try.
+- We anticipate that switching platforms and languages will be the hardest and riskiest part of the project. Since none of us have used Excalibur.js before, this could be a tough obstacle to move past. We also have to make sure we finish our project on time to submit it, so we will have to figure out effective workflows when switching our engine/library.
+- We are hoping to learn GIMP and asset creation for our game and also the best way to refactor and change our code which will make it a lot easier if we have to switch engines or platforms. This can be beneficial for us in the future as well since we will always be working with different technologies in our careers, so being able to adapt is another key element we want to learn.
