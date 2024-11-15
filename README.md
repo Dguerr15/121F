@@ -2,7 +2,9 @@
 
 ## Introducing the Team
 Tools Lead - Nick, Nate
+
 Engine Lead - Norman, Josh
+
 Design Lead - David
 
 Everybody will have input into all parts these are just the people facilitating the conversations.
