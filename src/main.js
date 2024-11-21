@@ -18,12 +18,11 @@ let config = {
             }
         }
     },
-    width: 800,
-    height: 600,
+    width: 1280,  // 16:9 aspect ratio
+    height: 720,  // 16:9 aspect ratio
     scene: [farming]
 }
 
-var cursors;
 const SCALE = 2.0;
 var my = {sprite: {}, text: {}, vfx: {}};
 
