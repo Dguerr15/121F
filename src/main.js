@@ -24,6 +24,6 @@ let config = {
 }
 
 const SCALE = 2.0;
-var my = {player: {}, sprite: {}, text: {}, vfx: {}, grid: {}};
+var my = {sprite: {}, text: {}, vfx: {}, grid: {}};
 
 const game = new Phaser.Game(config);
