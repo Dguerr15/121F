@@ -18,7 +18,7 @@ class Cell {
         if (this.waterText){
             this.waterText.destroy();
         }
-        this.waterText = scene.add.text(x, y, 'W: ' + this.waterLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ffffff' });
+        this.waterText = scene.add.text(x, y, 'W: ' + this.waterLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ccccff' });
     }
 
     drawSunLevel(scene, cellSize){
@@ -27,7 +27,7 @@ class Cell {
         if (this.sunText){
             this.sunText.destroy();
         }
-        this.sunText = scene.add.text(x, y + 16, 'S: ' + this.sunLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ffffff' });
+        this.sunText = scene.add.text(x, y + 16, 'S: ' + this.sunLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ffffaa' });
     }
 
     updateWaterLevel(){
