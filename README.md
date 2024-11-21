@@ -1,7 +1,7 @@
 # Devlog Entry - 11/14
 
 ## Introducing the Team
-Tools Lead - Nick, Nate
+Tools Lead - Nick,Nate
 
 Engine Lead - Norman, Josh
 
