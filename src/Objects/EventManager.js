@@ -18,4 +18,9 @@ class EventManager {
     endTurn() {
         this.endTurnListeners.forEach(listener => listener());
     }
+
+    // placeholder for f1
+    undoTurn() {
+
+    }
 }

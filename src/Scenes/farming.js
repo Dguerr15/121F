@@ -29,10 +29,18 @@ class farming extends Phaser.Scene {
         // Creating event manager
         my.eventMan = new EventManager();
 
+        // Creating an abstract grid
+        my.grid = new Grid(this.cellSize);
+        let cols = Math.floor(game.config.width / this.cellSize);
+        let rows = Math.floor(game.config.height / this.cellSize);
+        my.grid.initializeGrid(rows, cols, this);
+
         // Creating the ground
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
         // Scaling the ground
         my.sprite.ground.setScale(23.0);
+        // Drawing a grid
+        this.drawGrid(this.cellSize);
 
         // Creating the player
         my.sprite.player = this.physics.add.sprite(game.config.width/2, game.config.height/2, 'player');
@@ -55,12 +63,7 @@ class farming extends Phaser.Scene {
         // Creating E key for picking up carrots
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-        // Creating 2D grid
-        my.grid = new Grid(this.cellSize);
-        let cols = Math.floor(game.config.width / this.cellSize);
-        let rows = Math.floor(game.config.height / this.cellSize);
-        my.grid.initializeGrid(rows, cols);
-        this.drawGrid(this.cellSize);
+
 
         // Create a group for carrots and put the carrots on the grid
         this.createCarrot(this.cellSize);

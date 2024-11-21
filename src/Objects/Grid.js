@@ -6,12 +6,14 @@ class Grid {
         this.grid = [];
     }
 
-    initializeGrid(rows, cols) {
+    initializeGrid(rows, cols, scene) {
         for (let i = 0; i < rows; i++) {
             let row = [];
             for (let j = 0; j < cols; j++) {
                 let newCell = new Cell(i, j);
-                my.eventMan.addTurnListener(newCell.endOfTurnUpdate.bind(newCell));
+                // subscribe this cell's     endOfTurnUpdate()
+                //         to the eventMan's endTurn() event trigger
+                my.eventMan.addTurnListener(newCell.endOfTurnUpdate.bind(newCell, scene, this.cellSize));
                 row.push(newCell);
             }
             this.grid.push(row);

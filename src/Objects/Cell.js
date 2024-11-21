@@ -7,8 +7,27 @@ class Cell {
         this.x = x;
         this.y = y;
         this.waterLevel = waterLevel;
+        this.waterText = null;
         this.sunLevel = sunLevel;
         this.plantDensity = 0; // increment when spawning nearby plants.
+    }
+
+    drawWaterLevel(scene, cellSize) {
+        let x = this.x * cellSize;
+        let y = this.y * cellSize;
+        if (this.waterText){
+            this.waterText.destroy();
+        }
+        this.waterText = scene.add.text(x, y, 'W: ' + this.waterLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ffffff' });
+    }
+
+    drawSunLevel(scene, cellSize){
+        let x = this.x * cellSize;
+        let y = this.y * cellSize;
+        if (this.sunText){
+            this.sunText.destroy();
+        }
+        this.sunText = scene.add.text(x, y + 16, 'S: ' + this.sunLevel, { fontFamily: 'Arial', fontSize: 16, color: '#ffffff' });
     }
 
     updateWaterLevel(){
@@ -16,12 +35,12 @@ class Cell {
         // clamp to max water capacity
         newWaterLevel = Math.min(newWaterLevel, MAX_WATER_CAPACITY);
         this.waterLevel = newWaterLevel;
-        console.log ("Water level: " + this.waterLevel);
+        // console.log ("Water level: " + this.waterLevel);
     }
 
     updateSunLevel() {
         this.sunLevel = Math.floor(Math.random() * RAND_SUN_MAX);
-        console.log ("Sun level: " + this.sunLevel);
+        // console.log ("Sun level: " + this.sunLevel);
     }
 
     setPlant(plant) {
@@ -40,8 +59,17 @@ class Cell {
         return this.plant;
     }
 
-    endOfTurnUpdate(){
+    endOfTurnUpdate(scene, cellSize){
         this.updateWaterLevel();
         this.updateSunLevel();
+        this.drawWaterLevel(scene, cellSize);
+        this.drawSunLevel(scene, cellSize);
+    }
+
+    // placeholder for f1
+    undoTurn(){
+        // note. will need to add an "actual water level" variable because water capacity is capped.
+        //      e.g. if cell with 10 water is watered again, it stays at 10.
+        //           undoing that, it should still stay at 10
     }
 }
