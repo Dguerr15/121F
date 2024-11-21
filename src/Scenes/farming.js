@@ -53,7 +53,11 @@ class farming extends Phaser.Scene {
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
         // Creating 2D grid
-        this.createGrid(this.cellSize);
+        my.grid = new Grid(this.cellSize);
+        let cols = Math.floor(game.config.width / this.cellSize);
+        let rows = Math.floor(game.config.height / this.cellSize);
+        my.grid.initializeGrid(rows, cols);
+        this.drawGrid(this.cellSize);
 
         // Create a group for carrots and put the carrots on the grid
         this.createCarrot(this.cellSize);
@@ -68,7 +72,7 @@ class farming extends Phaser.Scene {
     }
 
     // This function creates a 2D grid over the game
-    createGrid(cellSize) {
+    drawGrid(cellSize) {
         const graphics = this.add.graphics();
         graphics.lineStyle(1, 0xffffff, 0.2); // Set line color (white) and transparency
 
@@ -126,21 +130,21 @@ class farming extends Phaser.Scene {
         this.moveY = 0;
 
         if (this.aKey.isDown) {
-            this.moveX = -this.playerSpeed;
+            this.moveX -= 1;
         }
-        else if (this.dKey.isDown) {
-            this.moveX = this.playerSpeed;
+        if (this.dKey.isDown) {
+            this.moveX += 1;
         }
 
         if (this.wKey.isDown) {
-            this.moveY = -this.playerSpeed;
+            this.moveY -= 1;
         }
-        else if (this.sKey.isDown) {
-            this.moveY = this.playerSpeed;
+        if (this.sKey.isDown) {
+            this.moveY += 1;
         }
 
-        my.sprite.player.x += this.moveX;
-        my.sprite.player.y += this.moveY;
+        my.sprite.player.x += this.moveX * this.playerSpeed;
+        my.sprite.player.y += this.moveY * this.playerSpeed;
     }
 
     // This function advances time in the game
