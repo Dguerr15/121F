@@ -33,7 +33,7 @@ class farming extends Phaser.Scene {
         my.grid = new Grid(this.cellSize);
         let cols = Math.floor(game.config.width / this.cellSize);
         let rows = Math.floor(game.config.height / this.cellSize);
-        my.grid.initializeGrid(rows, cols, this);
+        my.grid.initializeGrid(cols, rows, this);
 
         // Creating the ground
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
