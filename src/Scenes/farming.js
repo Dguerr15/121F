@@ -26,6 +26,9 @@ class farming extends Phaser.Scene {
     // This function is called once at the start
     create ()
     {
+        // Creating event manager
+        my.eventMan = new EventManager();
+
         // Creating the ground
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
         // Scaling the ground
@@ -152,8 +155,10 @@ class farming extends Phaser.Scene {
     {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar))
         {
+            console.log("spacebar pressed");
             this.dayCount++;
             my.text.dayCount.setText('Day: ' + this.dayCount);
+            my.eventMan.endTurn();
         }
     }
 }

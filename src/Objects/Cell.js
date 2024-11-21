@@ -12,14 +12,16 @@ class Cell {
     }
 
     updateWaterLevel(){
-        newWaterLevel = this.waterLevel + Math.floor(Math.random() * RAND_WATER_MAX);
+        let newWaterLevel = this.waterLevel + Math.floor(Math.random() * RAND_WATER_MAX);
         // clamp to max water capacity
         newWaterLevel = Math.min(newWaterLevel, MAX_WATER_CAPACITY);
         this.waterLevel = newWaterLevel;
+        console.log ("Water level: " + this.waterLevel);
     }
 
     updateSunLevel() {
         this.sunLevel = Math.floor(Math.random() * RAND_SUN_MAX);
+        console.log ("Sun level: " + this.sunLevel);
     }
 
     setPlant(plant) {

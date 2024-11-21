@@ -10,7 +10,9 @@ class Grid {
         for (let i = 0; i < rows; i++) {
             let row = [];
             for (let j = 0; j < cols; j++) {
-                row.push(new Cell(i, j));
+                let newCell = new Cell(i, j);
+                my.eventMan.addTurnListener(newCell.endOfTurnUpdate.bind(newCell));
+                row.push(newCell);
             }
             this.grid.push(row);
         }
