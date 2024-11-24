@@ -39,6 +39,7 @@ class farming extends Phaser.Scene {
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
         // Scaling the ground
         my.sprite.ground.setScale(23.0);
+
         // Drawing a grid
         this.drawGrid(this.cellSize);
 
@@ -63,10 +64,12 @@ class farming extends Phaser.Scene {
         // Creating E key for picking up carrots
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
+        // Creating Q key for planting carrots
+        this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
-
-        // Create a group for carrots and put the carrots on the grid
-        this.createCarrot(this.cellSize);
+        // Carrot group
+        this.carrots = this.add.group();
+        this.spawnCarrots(this.cellSize);
     }
 
     // This function is called each frame
@@ -75,6 +78,7 @@ class farming extends Phaser.Scene {
         this.movePlayer();      // Function for player movement
         this.advanceTime();     // Function for advancing time by 1 day
         this.pickUpCarrot();    // Function for picking up carrots
+        this.plantCarrot();     // Function for planting carrots
     }
 
     // This function creates a 2D grid over the game
@@ -100,16 +104,13 @@ class farming extends Phaser.Scene {
     }
 
     // This function creates carrots randomly on the grid
-    createCarrot(cellSize) 
+    spawnCarrots(cellSize) 
     {
-        this.carrots = this.add.group();    // Create a group for carrots
-        
         for (let i = 0; i < this.carrotsOnScreen; i++) {
-            let x = Phaser.Math.Between(0, game.config.width/cellSize - 1) * cellSize + cellSize/2;
-            let y = Phaser.Math.Between(0, game.config.height/cellSize - 1) * cellSize + cellSize/2;
+            let x = Phaser.Math.Between(0, game.config.width / cellSize - 1) * cellSize + cellSize / 2;
+            let y = Phaser.Math.Between(0, game.config.height / cellSize - 1) * cellSize + cellSize / 2;
             let carrot = this.physics.add.image(x, y, 'carrot');
             carrot.setScale(2.5);
-
             this.carrots.add(carrot);
         }
     }
@@ -151,6 +152,27 @@ class farming extends Phaser.Scene {
 
         my.sprite.player.x += this.moveX * this.playerSpeed;
         my.sprite.player.y += this.moveY * this.playerSpeed;
+
+        // Clamp the player's position to the screen bounds
+        my.sprite.player.x = Phaser.Math.Clamp(my.sprite.player.x, 0, this.sys.game.config.width);
+        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height);
+    }
+
+    plantCarrot(){
+        if (this.qKey.isDown && this.carrotsInInventory > 0) {
+            let x = Phaser.Math.Snap.To(my.sprite.player.x, this.cellSize) + this.cellSize / 2;
+            let y = Phaser.Math.Snap.To(my.sprite.player.y, this.cellSize) + this.cellSize / 2;
+
+            // Check if already occupied
+            if (!this.carrots.getChildren().some(c => c.x === x && c.y === y)) {
+                let carrot = this.physics.add.image(x, y, 'carrot');
+                carrot.setScale(2.5);
+                this.carrots.add(carrot);
+
+                this.carrotsInInventory--;
+                my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
+            }
+        }
     }
 
     // This function advances time in the game
