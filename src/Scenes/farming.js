@@ -8,8 +8,7 @@ class farming extends Phaser.Scene {
     {
         this.playerSpeed = 3.0;
         this.dayCount = 1;
-        this.carrotsOnScreen = 5;
-        this.carrotsInInventory = 0;
+        this.carrotsInInventory = 5;
         this.distanceToCarrot = 50;
         this.cellSize = 70;
     }
@@ -20,7 +19,9 @@ class farming extends Phaser.Scene {
         this.load.setPath("./assets/");
         this.load.image('ground', 'ground_01.png');
         this.load.image('player', 'player_05.png');
-        this.load.image('carrot', 'tile_0056.png');
+        this.load.image('carrotFullGrown', 'tile_0056.png');
+        this.load.image('carrotGrowing', 'tile_0072.png');
+        this.load.image('carrotSeedling', 'tile_0088.png');
     }
     
     // This function is called once at the start
@@ -29,11 +30,15 @@ class farming extends Phaser.Scene {
         // Creating event manager
         my.eventMan = new EventManager();
 
+        my.eventMan.on('plantGrew', this.onPlantGrew.bind(this));
+
         // Creating an abstract grid
         my.grid = new Grid(this.cellSize);
         let cols = Math.floor(game.config.width / this.cellSize);
         let rows = Math.floor(game.config.height / this.cellSize);
         my.grid.initializeGrid(cols, rows, this);
+
+        my.gridManager = new GridManager(cols, rows, this.cellSize);
 
         // Creating the ground
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
@@ -45,7 +50,8 @@ class farming extends Phaser.Scene {
 
         // Creating the player
         my.sprite.player = this.physics.add.sprite(game.config.width/2, game.config.height/2, 'player');
-        
+        my.sprite.player.setOrigin(0, 0);
+
         // Creating text for day count
         my.text.dayCount = this.add.text(10, 10, 'Day: ' + this.dayCount, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
     
@@ -69,7 +75,6 @@ class farming extends Phaser.Scene {
 
         // Carrot group
         this.carrots = this.add.group();
-        this.spawnCarrots(this.cellSize);
     }
 
     // This function is called each frame
@@ -102,34 +107,7 @@ class farming extends Phaser.Scene {
             graphics.strokePath();
         }
     }
-
-    // This function creates carrots randomly on the grid
-    spawnCarrots(cellSize) 
-    {
-        for (let i = 0; i < this.carrotsOnScreen; i++) {
-            let x = Phaser.Math.Between(0, game.config.width / cellSize - 1) * cellSize + cellSize / 2;
-            let y = Phaser.Math.Between(0, game.config.height / cellSize - 1) * cellSize + cellSize / 2;
-            let carrot = this.physics.add.image(x, y, 'carrot');
-            carrot.setScale(2.5);
-            this.carrots.add(carrot);
-        }
-    }
-
-    // This function allows the player to pick up carrots with the e key
-    pickUpCarrot()
-    {
-        // Check if player is near a carrot and press E to pick it up
-        this.carrots.getChildren().forEach(carrot => {
-            const distance = Phaser.Math.Distance.Between(my.sprite.player.x, my.sprite.player.y, carrot.x, carrot.y);
     
-            if (distance < this.distanceToCarrot && this.eKey.isDown) {
-                this.carrotsInInventory++;
-                my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
-                carrot.destroy();
-            }
-        });
-    }
-
     // This function handles movement for the player
     movePlayer() 
     {
@@ -158,20 +136,82 @@ class farming extends Phaser.Scene {
         my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height);
     }
 
-    plantCarrot(){
-        if (this.qKey.isDown && this.carrotsInInventory > 0) {
-            let x = Phaser.Math.Snap.To(my.sprite.player.x, this.cellSize) + this.cellSize / 2;
-            let y = Phaser.Math.Snap.To(my.sprite.player.y, this.cellSize) + this.cellSize / 2;
+    // This function allows the player to pick up carrots with the e key
+    pickUpCarrot() {
+        if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
+            const gridX = Phaser.Math.Clamp(Math.floor(my.sprite.player.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
+            const gridY = Phaser.Math.Clamp(Math.floor(my.sprite.player.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
 
-            // Check if already occupied
-            if (!this.carrots.getChildren().some(c => c.x === x && c.y === y)) {
-                let carrot = this.physics.add.image(x, y, 'carrot');
+            const cell = my.gridManager.grid[gridX][gridY];
+            if (cell.plant) {
+                // Remove the carrot from the grid
+                this.carrotsInInventory++;
+                my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
+    
+                my.gridManager.pickUpPlant(gridX, gridY);
+    
+                // Remove carrot sprite
+                this.carrots.getChildren().forEach(carrot => {
+                    const distance = Phaser.Math.Distance.Between(my.sprite.player.x, my.sprite.player.y, carrot.x, carrot.y);
+                    if (distance < this.distanceToCarrot) carrot.destroy();
+                });
+            }
+
+            if (cell.carrotSprite) {
+                cell.carrotSprite.destroy();
+                cell.carrotSprite = null;
+            }
+        }
+
+    }    
+
+    plantCarrot() {
+        if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.carrotsInInventory > 0) {
+            const gridX = Phaser.Math.Clamp(Math.floor(my.sprite.player.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
+            const gridY = Phaser.Math.Clamp(Math.floor(my.sprite.player.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
+
+            const cell = my.gridManager.grid[gridX][gridY];
+            if (!cell.plant) {  // Check if the cell is empty
+                // Add a visual carrot on the grid
+                const x = gridX * this.cellSize + this.cellSize / 2;
+                const y = gridY * this.cellSize + this.cellSize / 2;
+    
+                const carrot = this.physics.add.image(x, y, 'carrotSeedling');
                 carrot.setScale(2.5);
                 this.carrots.add(carrot);
-
+    
+                // Update inventory and plant a crop in the GridManager
                 this.carrotsInInventory--;
                 my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
+                my.gridManager.plantCrop(gridX, gridY, 'carrot');
+
+                cell.carrotSprite = carrot; // Store sprite reference in the cell
             }
+        }        
+    }
+
+    // This function is called when a plant grows
+    onPlantGrew(data) {
+        const { x, y, growthLevel, plantType } = data;
+    
+        // Find the corresponding carrot sprite
+        const cell = my.gridManager.grid[x][y];
+        const carrotSprite = cell.carrotSprite; // Assuming you stored it during planting
+    
+        if (carrotSprite) {
+            let newTextureKey = '';
+    
+            // Determine the new texture based on growth level
+            if (growthLevel === 1) {
+                newTextureKey = 'carrotSeedling';
+            } else if (growthLevel === 2) {
+                newTextureKey = 'carrotGrowing';
+            } else if (growthLevel === 3) {
+                newTextureKey = 'carrotFullGrown';
+            }
+    
+            // Update the sprite's texture
+            carrotSprite.setTexture(newTextureKey);
         }
     }
 
@@ -184,6 +224,18 @@ class farming extends Phaser.Scene {
             this.dayCount++;
             my.text.dayCount.setText('Day: ' + this.dayCount);
             my.eventMan.endTurn();
+
+            // Generate resources every turn
+            my.gridManager.generateResources();
+
+            // Update plant growth
+            my.gridManager.updatePlantGrowth();
+
+            // Check win condition
+            const win = my.gridManager.checkWinCondition(5, 3); // At least 5 plants at growth level 3
+            if (win) {
+                console.log("Victory! You've completed the scenario.");
+            }
         }
     }
 }
