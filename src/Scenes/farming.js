@@ -33,12 +33,14 @@ class farming extends Phaser.Scene {
         my.eventMan.on('plantGrew', this.onPlantGrew.bind(this));
 
         // Creating an abstract grid
-        my.grid = new Grid(this.cellSize);
         let cols = Math.floor(game.config.width / this.cellSize);
         let rows = Math.floor(game.config.height / this.cellSize);
-        my.grid.initializeGrid(cols, rows, this);
 
+        // Creating grid manager
         my.gridManager = new GridManager(cols, rows, this.cellSize);
+
+        // Initialize grid manager to set up the grid
+        my.gridManager.initializeGrid(cols, rows, this);
 
         // Creating the ground
         my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
@@ -151,11 +153,7 @@ class farming extends Phaser.Scene {
                     carrot.y
                 );
     
-                if (
-                    distance < this.distanceToCarrot &&
-                    (distance < closestDistance || 
-                     (distance === closestDistance && carrot.x > (closestCarrot?.x || -Infinity))) // Prefer the one to the right
-                ) {
+                if (distance < this.distanceToCarrot && (distance < closestDistance || (distance === closestDistance && carrot.x > (closestCarrot?.x || -Infinity)))) { // Prefer the one to the right
                     closestCarrot = carrot;
                     closestDistance = distance;
                 }
@@ -170,16 +168,8 @@ class farming extends Phaser.Scene {
                 closestCarrot.destroy();
     
                 // Remove the plant from the grid
-                const gridX = Phaser.Math.Clamp(
-                    Math.floor(closestCarrot.x / this.cellSize),
-                    0,
-                    my.gridManager.gridWidth - 1
-                );
-                const gridY = Phaser.Math.Clamp(
-                    Math.floor(closestCarrot.y / this.cellSize),
-                    0,
-                    my.gridManager.gridHeight - 1
-                );
+                const gridX = Phaser.Math.Clamp(Math.floor(closestCarrot.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
+                const gridY = Phaser.Math.Clamp(Math.floor(closestCarrot.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
     
                 const cell = my.gridManager.grid[gridX][gridY];
                 if (cell.plant) {
@@ -218,6 +208,12 @@ class farming extends Phaser.Scene {
                 my.gridManager.plantCrop(gridX, gridY, 'carrot');
     
                 cell.carrotSprite = carrot; // Store sprite reference in the cell
+                cell.plant = {
+                    type: 'carrot',
+                    growthLevel: 0,
+                    sunNeeded: my.gridManager.plantTypes.carrot.sunNeeded,
+                    waterNeeded: my.gridManager.plantTypes.carrot.waterNeeded
+                };
             }
         }
     }
