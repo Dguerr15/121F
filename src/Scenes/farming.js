@@ -139,32 +139,60 @@ class farming extends Phaser.Scene {
     // This function allows the player to pick up carrots with the e key
     pickUpCarrot() {
         if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
-            const gridX = Phaser.Math.Clamp(Math.floor(my.sprite.player.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
-            const gridY = Phaser.Math.Clamp(Math.floor(my.sprite.player.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
-
-            const cell = my.gridManager.grid[gridX][gridY];
-            if (cell.plant) {
-                // Remove the carrot from the grid
+            let closestCarrot = null;
+            let closestDistance = Infinity;
+    
+            // Find the closest carrot
+            this.carrots.getChildren().forEach(carrot => {
+                const distance = Phaser.Math.Distance.Between(
+                    my.sprite.player.x + my.sprite.player.displayWidth / 2, // Use player sprite center
+                    my.sprite.player.y + my.sprite.player.displayHeight / 2,
+                    carrot.x,
+                    carrot.y
+                );
+    
+                if (
+                    distance < this.distanceToCarrot &&
+                    (distance < closestDistance || 
+                     (distance === closestDistance && carrot.x > (closestCarrot?.x || -Infinity))) // Prefer the one to the right
+                ) {
+                    closestCarrot = carrot;
+                    closestDistance = distance;
+                }
+            });
+    
+            // Pick up the closest carrot if found
+            if (closestCarrot) {
                 this.carrotsInInventory++;
                 my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
     
-                my.gridManager.pickUpPlant(gridX, gridY);
+                // Destroy the carrot sprite
+                closestCarrot.destroy();
     
-                // Remove carrot sprite
-                this.carrots.getChildren().forEach(carrot => {
-                    const distance = Phaser.Math.Distance.Between(my.sprite.player.x, my.sprite.player.y, carrot.x, carrot.y);
-                    if (distance < this.distanceToCarrot) carrot.destroy();
-                });
-            }
-
-            if (cell.carrotSprite) {
-                cell.carrotSprite.destroy();
-                cell.carrotSprite = null;
+                // Remove the plant from the grid
+                const gridX = Phaser.Math.Clamp(
+                    Math.floor(closestCarrot.x / this.cellSize),
+                    0,
+                    my.gridManager.gridWidth - 1
+                );
+                const gridY = Phaser.Math.Clamp(
+                    Math.floor(closestCarrot.y / this.cellSize),
+                    0,
+                    my.gridManager.gridHeight - 1
+                );
+    
+                const cell = my.gridManager.grid[gridX][gridY];
+                if (cell.plant) {
+                    my.gridManager.pickUpPlant(gridX, gridY);
+                    if (cell.carrotSprite === closestCarrot) {
+                        cell.carrotSprite = null;
+                    }
+                }
             }
         }
-
-    }    
-
+    }
+    
+    
     plantCarrot() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.carrotsInInventory > 0) {
             const gridX = Phaser.Math.Clamp(Math.floor(my.sprite.player.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
@@ -223,13 +251,14 @@ class farming extends Phaser.Scene {
             console.log("spacebar pressed");
             this.dayCount++;
             my.text.dayCount.setText('Day: ' + this.dayCount);
-            my.eventMan.endTurn();
 
             // Generate resources every turn
             my.gridManager.generateResources();
 
             // Update plant growth
             my.gridManager.updatePlantGrowth();
+
+            my.eventMan.endTurn();
 
             // Check win condition
             const win = my.gridManager.checkWinCondition(5, 3); // At least 5 plants at growth level 3

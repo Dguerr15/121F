@@ -1,4 +1,4 @@
-const RAND_SUN_MAX = 3;
+const RAND_SUN_MAX = 5;
 const RAND_WATER_MAX = 2;
 const MAX_WATER_CAPACITY = 10;
 
