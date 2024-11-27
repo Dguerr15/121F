@@ -192,12 +192,16 @@ class farming extends Phaser.Scene {
         }
     }
     
-    
     plantCarrot() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.carrotsInInventory > 0) {
-            const gridX = Phaser.Math.Clamp(Math.floor(my.sprite.player.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
-            const gridY = Phaser.Math.Clamp(Math.floor(my.sprite.player.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
-
+            // Calculate the center position of the player sprite
+            const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
+            const playerCenterY = my.sprite.player.y + my.sprite.player.height / 2;
+    
+            // Map the center position to the grid
+            const gridX = Phaser.Math.Clamp(Math.floor(playerCenterX / this.cellSize), 0, my.gridManager.gridWidth - 1);
+            const gridY = Phaser.Math.Clamp(Math.floor(playerCenterY / this.cellSize), 0, my.gridManager.gridHeight - 1);
+    
             const cell = my.gridManager.grid[gridX][gridY];
             if (!cell.plant) {  // Check if the cell is empty
                 // Add a visual carrot on the grid
@@ -212,11 +216,12 @@ class farming extends Phaser.Scene {
                 this.carrotsInInventory--;
                 my.text.carrotsInInventory.setText('Carrots: ' + this.carrotsInInventory);
                 my.gridManager.plantCrop(gridX, gridY, 'carrot');
-
+    
                 cell.carrotSprite = carrot; // Store sprite reference in the cell
             }
-        }        
+        }
     }
+    
 
     // This function is called when a plant grows
     onPlantGrew(data) {
