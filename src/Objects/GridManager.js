@@ -9,11 +9,7 @@ class GridManager {
         for (let x = 0; x < gridWidth; x++) {
             this.grid[x] = [];
             for (let y = 0; y < gridHeight; y++) {
-                this.grid[x][y] = {
-                    sun: 0,  // Sun energy (resets every turn)
-                    water: 0, // Water moisture (accumulates)
-                    plant: null, // Plant object, if any
-                };
+                this.grid[x][y] = new Cell(x, y); // Use Cell class
             }
         }
 
@@ -29,8 +25,9 @@ class GridManager {
     generateResources() {
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
-                this.grid[x][y].sun = Phaser.Math.Between(0, 5); // Random sun (0-5)
-                this.grid[x][y].water += Phaser.Math.Between(0, 2); // Random water increment (0-2)
+                const cell = this.grid[x][y];
+                cell.updateWaterLevel();
+                cell.updateSunLevel();
             }
         }
     }
@@ -51,14 +48,15 @@ class GridManager {
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
                 const cell = this.grid[x][y];
-                if (cell.plant && cell.plant.growthLevel < 3) {
-                    const plantType = this.plantTypes[cell.plant.type];
-                    const previousGrowthLevel = cell.plant.growthLevel;
+                const plant = cell.getPlant();
+                if (plant && plant.growthLevel < 3) {
+                    const plantType = this.plantTypes[plant.type];
+                    const previousGrowthLevel = plant.growthLevel;
     
                     // Check sun and water requirements
-                    if (cell.sun >= plantType.sunNeeded && cell.water >= plantType.waterNeeded) {
-                        cell.plant.growthLevel += 1; // Increase growth level
-                        cell.water -= plantType.waterNeeded; // Consume water
+                    if (cell.getSunLevel() >= plantType.sunNeeded && cell.getWaterLevel() >= plantType.waterNeeded) {
+                        plant.growthLevel += 1; // Increase growth level
+                        cell.waterLevel -= plantType.waterNeeded; // Consume water
     
                         // Cap the growth level at 3
                         if (cell.plant.growthLevel > 3) {
@@ -66,12 +64,12 @@ class GridManager {
                         }
     
                         // Emit event if growth level increased
-                        if (cell.plant.growthLevel > previousGrowthLevel) {
+                        if (plant.growthLevel > previousGrowthLevel) {
                             my.eventMan.emit('plantGrew', {
                                 x,
                                 y,
-                                growthLevel: cell.plant.growthLevel,
-                                plantType: cell.plant.type
+                                growthLevel: plant.growthLevel,
+                                plantType: plant.type
                             });
                         }
                     }
@@ -86,7 +84,8 @@ class GridManager {
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
                 const cell = this.grid[x][y];
-                if (cell.plant && cell.plant.growthLevel >= requiredGrowthLevel) {
+                const plant = cell.getPlant();
+                if (plant && plant.growthLevel >= requiredGrowthLevel) {
                     count++;
                 }
             }
@@ -97,8 +96,8 @@ class GridManager {
     // Pick up a plant (reset cell)
     pickUpPlant(x, y) {
         const cell = this.grid[x][y];
-        if (cell.plant) {
-            cell.plant = null; // Remove the plant
+        if (cell.getPlant()) {
+            cell.setPlant(null); // Remove the plant
         }
     }
 }

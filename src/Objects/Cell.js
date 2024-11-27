@@ -7,6 +7,7 @@ class Cell {
         this.x = x;
         this.y = y;
         this.waterLevel = waterLevel;
+        this.plant = null; 
         this.waterText = null;
         this.sunLevel = sunLevel;
         this.plantDensity = 0; // increment when spawning nearby plants.
@@ -39,8 +40,8 @@ class Cell {
     }
 
     updateSunLevel() {
-        this.sunLevel = Math.floor(Math.random() * RAND_SUN_MAX);
-        // console.log ("Sun level: " + this.sunLevel);
+        // Generate a new random sun level (not stored, as sun doesn't accumulate)
+        this.sunLevel = Phaser.Math.Between(0, RAND_SUN_MAX);
     }
 
     setPlant(plant) {
