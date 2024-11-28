@@ -1,6 +1,6 @@
-## Devlog F0 Software Requirement Satisfaction 11/27
+# Devlog F0 Software Requirement Satisfaction 11/27
 
-Beneath is a list of all the F0 requirements, and how we satisfied each part. 
+## How we satisfied the software requirements
 
 [F0.a] You control a character moving over a 2D grid.
 
@@ -30,7 +30,7 @@ Plant growth is managed through the updateGrowth() method in the Plant class. Fo
 
 The win condition is checked in checkWinCondition(), which evaluates whether the required number of plants has reached a specified growth level. For example, achieving at least 9 plants at growth level 3 triggers a victory message, concluding the scenario when the condition is met.
 
-## Devlog F0 Reflection
+## Reflection
 
 Our team's approach has evolved from an early focus on getting basic functionality working to a more structured design that considers long-term scalability, maintainability, and the requirements for future features. While the initial implementation had several challenges, including random resource generation and getting all of the plants to grow correctly, the team’s reflection and changes to tools, materials, and roles helped address those issues. These adjustments also set the foundation for future development, ensuring that the game logic could be expanded and refined as needed. 
 
