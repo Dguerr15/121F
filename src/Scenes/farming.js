@@ -187,24 +187,23 @@ class farming extends Phaser.Scene {
                     closestDistance = distance;
                 }
             });
-    
+            
             // Pick up the closest plant if found
             if (closestPlant) {
-                this.inventory[this.selectedPlant]++;
-                this.updateInventory();
-                closestPlant.destroy();
-                
                 // Remove the plant from the grid
                 const gridX = Phaser.Math.Clamp(Math.floor(closestPlant.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
                 const gridY = Phaser.Math.Clamp(Math.floor(closestPlant.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
     
                 const cell = my.gridManager.grid[gridX][gridY];
+                const plantType = cell.getPlant().type;
+                this.inventory[plantType]++;
+                this.updateInventory();
                 if (cell.plant) {
                     my.gridManager.pickUpPlant(gridX, gridY);
-                    if (cell.carrotSprite === closestPlant) {
-                        cell.carrotSprite = null;
-                    }
+                    cell.plantSprite = null;
                 }
+                
+                closestPlant.destroy();
             }
         }
     }
