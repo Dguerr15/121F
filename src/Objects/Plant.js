@@ -23,6 +23,14 @@ class Plant {
         }
     }
 
+    getSunNeeded() {
+        return this.sunNeeded;
+    }
+
+    getWaterNeeded() {
+        return this.waterNeeded;
+    }
+
     updateSprite(){
         if (this.plantSprite) {
             if (this.growthLevel === 1) {

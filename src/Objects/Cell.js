@@ -52,6 +52,10 @@ class Cell {
         return this.waterLevel;
     }
 
+    setWaterLevel(waterLevel) {
+        this.waterLevel = waterLevel;
+    }
+
     getSunLevel() {
         return this.sunLevel;
     }

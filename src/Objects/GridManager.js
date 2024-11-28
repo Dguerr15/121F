@@ -65,7 +65,10 @@ class GridManager {
                 if (plant) {
                     const sunLevel = cell.getSunLevel();
                     const waterLevel = cell.getWaterLevel();
-                    plant.updateGrowth(sunLevel, waterLevel);
+                    if (sunLevel >= plant.sunNeeded && waterLevel >= plant.waterNeeded) {
+                        plant.updateGrowth(sunLevel, waterLevel);
+                        cell.setWaterLevel(waterLevel - plant.waterNeeded);
+                    }
                 }
             })
         );
@@ -91,6 +94,11 @@ class GridManager {
         if (cell.getPlant()) {
             cell.setPlant(null); // Remove the plant
         }
+    }
+
+    // Helper methods
+    setWaterAt(x, y, waterLevel) {
+        this.grid[x][y].setWaterLevel(waterLevel);
     }
 
     // Helper methods for retrieving resource levels
