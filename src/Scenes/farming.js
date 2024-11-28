@@ -80,8 +80,11 @@ class farming extends Phaser.Scene {
         my.text.inventoryThree = this.add.text(180, 130, 'Roses: ' + this.inventory.roses, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
         this.updateInventory();
 
-        // Message text for player feedback
+        // Message text for player feedback on planting in adjacent cells
         my.text.message = this.add.text(10, 170, '', { fontFamily: 'Arial', fontSize: 24, color: '#ff0000' });
+
+        // Message text for winning game
+        my.text.winMessage = this.add.text(600, 300, '', { fontFamily: 'Arial', fontSize: 42, color: '#00ff00' });
 
         // Input for plant selection (1 = carrots, 2 = corns, 3 = roses)
         this.input.keyboard.on('keydown-ONE', () => { this.selectedPlant = 'carrots'; this.updateInventory();});
@@ -309,7 +312,16 @@ class farming extends Phaser.Scene {
             // Check win condition
             const win = my.gridManager.checkWinCondition(9, 3); // At least 9 plants at growth level 3
             if (win) {
-                console.log("Victory! You've completed the scenario.");
+                // Disable all controls and display win message
+                this.input.keyboard.enabled = false;
+                my.text.winMessage.setText('You win!');
+
+                // Clear the message after 3 seconds and restart the game
+                this.time.delayedCall(2500, () => {
+                    this.input.keyboard.enabled = true;
+                    my.text.winMessage.setText('');
+                    this.scene.restart();
+                }, [], this);
             }
         }
     }
