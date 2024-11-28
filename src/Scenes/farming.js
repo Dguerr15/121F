@@ -79,12 +79,17 @@ class farming extends Phaser.Scene {
         my.text.dayCount = this.add.text(10, 10, 'Day: ' + this.dayCount, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
     
         // Creating text for inventory
-        my.text.inventory = this.add.text(10, 50, 'Inventory: Carrots: ' + this.inventory.carrots + ' Corn: ' + this.inventory.corns + ' Roses: ' + this.inventory.roses, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        this.selectedPlant = 'carrots';
+        my.text.inventory = this.add.text(10, 50, 'Inventory:', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        my.text.inventoryOne = this.add.text(180, 50, 'Carrots: ' + this.inventory.carrots, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        my.text.inventoryTwo = this.add.text(180, 90, 'Corn: ' + this.inventory.corns, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        my.text.inventoryThree = this.add.text(180, 130, 'Roses: ' + this.inventory.roses, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        this.updateInventory();
 
         // Creating input for plant selection (1 = carrots, 2 = corns, 3 = roses)
-        this.input.keyboard.on('keydown-ONE', () => { this.selectedPlant = 'carrots'; });
-        this.input.keyboard.on('keydown-TWO', () => { this.selectedPlant = 'corns'; });
-        this.input.keyboard.on('keydown-THREE', () => { this.selectedPlant = 'roses'; });
+        this.input.keyboard.on('keydown-ONE', () => { this.selectedPlant = 'carrots'; this.updateInventory();});
+        this.input.keyboard.on('keydown-TWO', () => { this.selectedPlant = 'corns'; this.updateInventory(); });
+        this.input.keyboard.on('keydown-THREE', () => { this.selectedPlant = 'roses'; this.updateInventory(); });
  
          
         // Creating WASD keys for player movement
@@ -189,7 +194,7 @@ class farming extends Phaser.Scene {
             // Pick up the closest plant if found
             if (closestPlant) {
                 this.inventory[this.selectedPlant]++;
-                my.text.inventory.setText('Inventory: Carrots: ' + this.inventory.carrots + ' Corn: ' + this.inventory.corns + ' Roses: ' + this.inventory.roses);
+                this.updateInventory();
                 closestPlant.destroy();
                 
                 
@@ -208,6 +213,31 @@ class farming extends Phaser.Scene {
         }
     }
     
+    updateInventory() {
+        let carrotSelected = '#ffffff';
+        let cornSelected = '#ffffff';
+        let roseSelected = '#ffffff';
+        switch (this.selectedPlant){
+            case 'carrots':
+                carrotSelected = '#aaffaa';
+                break;
+            case 'corns':
+                cornSelected = '#aaffaa';
+                break;
+            case 'roses':
+                roseSelected = '#aaffaa';
+                break;
+        }
+        my.text.inventoryOne.setText('Carrots: ' + this.inventory.carrots);
+        my.text.inventoryTwo.setText('Corn: ' + this.inventory.corns);
+        my.text.inventoryThree.setText('Roses: ' + this.inventory.roses);
+
+        // set color of inventory
+        my.text.inventoryOne.setColor(carrotSelected);
+        my.text.inventoryTwo.setColor(cornSelected);
+        my.text.inventoryThree.setColor(roseSelected);
+    }
+
     plantCrop() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
             console.log("Planting a crop");
@@ -237,7 +267,7 @@ class farming extends Phaser.Scene {
                 // Update inventory and plant a crop in the GridManager
                 this.inventory[plantType]--;
                 console.log(this.inventory);
-                my.text.inventory.setText('Inventory: Carrots: ' + this.inventory['carrots'] + ' Corn: ' + this.inventory['corns'] + ' Roses: ' + this.inventory['roses']);
+                this.updateInventory();
 
                 my.gridManager.plantCrop(gridX, gridY, plantType, plantSprite);
                 
