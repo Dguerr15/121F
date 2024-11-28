@@ -101,10 +101,10 @@ class farming extends Phaser.Scene {
         // Creating spacebar for advancing time
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        // Creating E key for picking up carrots
+        // Creating E key for picking up crops
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-        // Creating Q key for planting carrots
+        // Creating Q key for planting crops
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         // Plant group

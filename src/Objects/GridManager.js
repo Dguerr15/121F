@@ -13,8 +13,7 @@ class GridManager {
             let row = [];
             for (let j = 0; j < cols; j++) {
                 let newCell = new Cell(i, j);
-                // subscribe this cell's     endOfTurnUpdate()
-                //         to the eventMan's endTurn() event trigger
+                // subscribe this cell's endOfTurnUpdate() to the eventMan's endTurn() event trigger
                 my.eventMan.addTurnListener(newCell.endOfTurnUpdate.bind(newCell, scene, this.cellSize));
                 row.push(newCell);
             }
