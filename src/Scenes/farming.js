@@ -22,6 +22,13 @@ class farming extends Phaser.Scene {
         this.load.image('carrotFullGrown', 'tile_0056.png');
         this.load.image('carrotGrowing', 'tile_0072.png');
         this.load.image('carrotSeedling', 'tile_0088.png');
+        this.load.image("roseSeedling", "tile_0089.png");
+        this.load.image('cornSeedling', 'tile_0091.png');
+        this.load.image('roseFullGrown', 'tile_0057.png');
+        this.load.image('cornFullGrown', 'tile_0059.png');
+        this.load.image('roseGrowing', 'tile_0073.png');
+        this.load.image('cornGrowing', 'tile_0075.png');
+
     }
     
     // This function is called once at the start
