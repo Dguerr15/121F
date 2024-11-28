@@ -10,9 +10,7 @@ class Cell {
         this.plant = null; 
         this.waterText = null;
         this.sunLevel = sunLevel;
-
-        // increment when spawning nearby plants.
-        this.plantDensity = 0; 
+        this.plantDensity = 0; // Initialize plantDensity to 0
     }
 
     drawWaterLevel(scene, cellSize) {
@@ -36,7 +34,7 @@ class Cell {
     updateWaterLevel(){
         let newWaterLevel = this.waterLevel + Math.floor(Math.random() * RAND_WATER_MAX);
 
-        // clamp to max water capacity
+        // Clamp to max water capacity
         newWaterLevel = Math.min(newWaterLevel, MAX_WATER_CAPACITY);
         this.waterLevel = newWaterLevel;
     }
@@ -73,10 +71,20 @@ class Cell {
         this.drawSunLevel(scene, cellSize);
     }
 
-    // placeholder for f1
+    // Calculate the number of adjacent cells with plants (including diagonals)
+    calculatePlantDensity() {
+        const adjacentCells = my.gridManager.returnAdjacentCells(this.x, this.y);
+        let count = 0;
+        adjacentCells.forEach(adjCell => {
+            if (adjCell.getPlant()) {
+                count++;
+            }
+        });
+        this.plantDensity = count;
+    }
+
+    // Placeholder for undo functionality
     undoTurn(){
-        // note. will need to add an "actual water level" variable because water capacity is capped.
-        //      e.g. if cell with 10 water is watered again, it stays at 10.
-        //           undoing that, it should still stay at 10
+        // Implementation for undoing a turn if needed
     }
 }

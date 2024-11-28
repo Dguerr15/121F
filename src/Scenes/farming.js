@@ -1,7 +1,7 @@
 class farming extends Phaser.Scene {
     constructor() {
         super("farming");
-        this.plants=[];
+        this.plants = [];
         this.selectedPlant = 'carrots';
     }
 
@@ -10,23 +10,21 @@ class farming extends Phaser.Scene {
         this.plants.push(plant);
     }
 
-    // This function defines variables
-    init () 
-    {
+    // Define variables
+    init () {
         this.playerSpeed = 3.0;
         this.dayCount = 1;
         this.inventory = {
             carrots: 5,
             roses: 5,
             corns: 5
-        }
+        };
         this.distanceToPlant = 50;
         this.cellSize = 70;
     }
     
-    // This function is called once at the start and preloads all assets
-    preload ()
-    {
+    // Preload assets
+    preload () {
         this.load.setPath("./assets/");
         this.load.image('ground', 'ground_01.png');
         this.load.image('player', 'player_05.png');
@@ -35,19 +33,17 @@ class farming extends Phaser.Scene {
         this.load.image('carrotsGrowing', 'tile_0072.png');
         this.load.image('carrotsSeedling', 'tile_0088.png');
         // Rose Assets
-        this.load.image("rosesSeedling", "tile_0089.png");
+        this.load.image("rosesSeedling", 'tile_0089.png');
         this.load.image('rosesFullGrown', 'tile_0057.png');
         this.load.image('rosesGrowing', 'tile_0073.png');
         // Corn Assets
         this.load.image('cornsSeedling', 'tile_0091.png');
         this.load.image('cornsFullGrown', 'tile_0059.png');
         this.load.image('cornsGrowing', 'tile_0075.png');
-
     }
     
-    // This function is called once at the start
-    create ()
-    {
+    // Create game objects
+    create () {
         // Creating event manager
         my.eventMan = new EventManager();
 
@@ -62,7 +58,7 @@ class farming extends Phaser.Scene {
         my.gridManager.initializeGrid(cols, rows, this);
 
         // Creating the ground
-        my.sprite.ground = this.add.sprite(game.config.width/2, game.config.height/2, 'ground');
+        my.sprite.ground = this.add.sprite(game.config.width / 2, game.config.height / 2, 'ground');
         // Scaling the ground
         my.sprite.ground.setScale(23.0);
 
@@ -70,7 +66,7 @@ class farming extends Phaser.Scene {
         this.drawGrid(this.cellSize);
 
         // Creating the player
-        my.sprite.player = this.physics.add.sprite(game.config.width/2, game.config.height/2, 'player');
+        my.sprite.player = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'player');
         my.sprite.player.setOrigin(0, 0);
 
         // Creating text for day count
@@ -84,40 +80,42 @@ class farming extends Phaser.Scene {
         my.text.inventoryThree = this.add.text(180, 130, 'Roses: ' + this.inventory.roses, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
         this.updateInventory();
 
-        // Creating input for plant selection (1 = carrots, 2 = corns, 3 = roses)
+        // Message text for player feedback
+        my.text.message = this.add.text(10, 170, '', { fontFamily: 'Arial', fontSize: 24, color: '#ff0000' });
+
+        // Input for plant selection (1 = carrots, 2 = corns, 3 = roses)
         this.input.keyboard.on('keydown-ONE', () => { this.selectedPlant = 'carrots'; this.updateInventory();});
         this.input.keyboard.on('keydown-TWO', () => { this.selectedPlant = 'corns'; this.updateInventory(); });
         this.input.keyboard.on('keydown-THREE', () => { this.selectedPlant = 'roses'; this.updateInventory(); });
- 
-        // Creating WASD keys for player movement
+
+        // WASD keys for player movement
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-        // Creating spacebar for advancing time
+        // Spacebar for advancing time
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
-        // Creating E key for picking up crops
+        // E key for picking up crops
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
 
-        // Creating Q key for planting crops
+        // Q key for planting crops
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         // Plant group
         this.plantsGroup = this.add.group();
     }
 
-    // This function is called each frame
-    update ()
-    {
-        this.movePlayer();      // Function for player movement
-        this.advanceTime();     // Function for advancing time by 1 day
-        this.pickUpPlant();    // Function for picking up crops
-        this.plantCrop();     // Function for planting crops
+    // Game loop
+    update () {
+        this.movePlayer();      // Player movement
+        this.advanceTime();     // Advance time by 1 day
+        this.pickUpPlant();     // Picking up crops
+        this.plantCrop();       // Planting crops
     }
 
-    // This function creates a 2D grid over the game
+    // Create a 2D grid over the game
     drawGrid(cellSize) {
         const graphics = this.add.graphics();
         graphics.lineStyle(1, 0xffffff, 0.2); // Set line color (white) and transparency
@@ -139,9 +137,8 @@ class farming extends Phaser.Scene {
         }
     }
     
-    // This function handles movement for the player
-    movePlayer() 
-    {
+    // Player movement
+    movePlayer() {
         this.moveX = 0;
         this.moveY = 0;
 
@@ -164,16 +161,16 @@ class farming extends Phaser.Scene {
 
         // Clamp the player's position to the screen bounds
         my.sprite.player.x = Phaser.Math.Clamp(my.sprite.player.x, 0, this.sys.game.config.width);
-        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height - 75);    // - 75 makes it so player can't go below screen border
+        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height - 75);    // -75 to prevent going below screen border
     }
 
-    // This function allows the player to pick up plants with the e key
+    // Picking up plants with the E key
     pickUpPlant() {
         if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
             let closestPlant = null;
             let closestDistance = Infinity;
     
-            // Find the closest Plant
+            // Find the closest plant
             this.plantsGroup.getChildren().forEach(plant => {
                 const distance = Phaser.Math.Distance.Between(
                     my.sprite.player.x + my.sprite.player.displayWidth / 2, // Use player sprite center
@@ -182,7 +179,7 @@ class farming extends Phaser.Scene {
                     plant.y
                 );
     
-                if (distance < this.distanceToPlant && (distance < closestDistance)) { // Prefer the one to the right
+                if (distance < this.distanceToPlant && (distance < closestDistance)) {
                     closestPlant = plant;
                     closestDistance = distance;
                 }
@@ -208,6 +205,7 @@ class farming extends Phaser.Scene {
         }
     }
     
+    // Update inventory display
     updateInventory() {
         let carrotSelected = '#ffffff';
         let cornSelected = '#ffffff';
@@ -227,15 +225,16 @@ class farming extends Phaser.Scene {
         my.text.inventoryTwo.setText('Corn: ' + this.inventory.corns);
         my.text.inventoryThree.setText('Roses: ' + this.inventory.roses);
 
-        // set color of inventory
+        // Set color of inventory items
         my.text.inventoryOne.setColor(carrotSelected);
         my.text.inventoryTwo.setColor(cornSelected);
         my.text.inventoryThree.setColor(roseSelected);
     }
 
+    // Plant crops with the Q key
     plantCrop() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
-            console.log("Planting a crop");
+            console.log("Attempting to plant a crop");
 
             // Calculate the center position of the player sprite
             const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
@@ -246,36 +245,56 @@ class farming extends Phaser.Scene {
             const gridY = Phaser.Math.Clamp(Math.floor(playerCenterY / this.cellSize), 0, my.gridManager.gridHeight - 1);
     
             const cell = my.gridManager.grid[gridX][gridY];
-            
+    
             // Check if the cell is empty
-            if (!cell.plant) {  
-                // Add a visual plant on the grid
+            if (!cell.plant) {
+                // Attempt to plant a crop
                 const x = gridX * this.cellSize + this.cellSize / 2;
                 const y = gridY * this.cellSize + this.cellSize / 2;
-                
+    
                 const plantType = this.selectedPlant;
                 console.log("Planting a " + plantType);
                 const plantImageKey = `${plantType}Seedling`;
 
                 const plantSprite = this.physics.add.image(x, y, plantImageKey);
                 plantSprite.setScale(2.5);
-                this.plantsGroup.add(plantSprite);
 
-                // Update inventory and plant a crop in the GridManager
-                this.inventory[plantType]--;
-                console.log(this.inventory);
-                this.updateInventory();
+                // Try to plant the crop via GridManager
+                const canPlant = my.gridManager.plantCrop(gridX, gridY, plantType, plantSprite);
 
-                my.gridManager.plantCrop(gridX, gridY, plantType, plantSprite);                
+                if (canPlant) {
+                    this.plantsGroup.add(plantSprite);
+
+                    // Update inventory
+                    this.inventory[plantType]--;
+                    this.updateInventory();
+                    my.text.message.setText(''); // Clear any previous message
+                } else {
+                    // Can't plant here; destroy the sprite and show message
+                    plantSprite.destroy();
+                    my.text.message.setText('Cannot plant here: too many adjacent plants.');
+
+                    // Clear the message after 3 seconds
+                    this.time.delayedCall(3000, () => {
+                        my.text.message.setText('');
+                    }, [], this);
+                }
+            } else {
+                // Cell is not empty
+                my.text.message.setText('Cannot plant here: cell is occupied.');
+
+                // Clear the message after 3 seconds
+                this.time.delayedCall(3000, () => {
+                    my.text.message.setText('');
+                }, [], this);
             }
         }
     }
 
-    // This function advances time in the game
-    advanceTime(){
-        if (Phaser.Input.Keyboard.JustDown(this.spacebar))
-        {
-            console.log("spacebar pressed");
+    // Advance time in the game
+    advanceTime() {
+        if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+            console.log("Spacebar pressed");
             this.dayCount++;
             my.text.dayCount.setText('Day: ' + this.dayCount);
 
@@ -288,7 +307,7 @@ class farming extends Phaser.Scene {
             my.eventMan.endTurn();
 
             // Check win condition
-            const win = my.gridManager.checkWinCondition(9, 3); // At least 5 plants at growth level 3
+            const win = my.gridManager.checkWinCondition(9, 3); // At least 9 plants at growth level 3
             if (win) {
                 console.log("Victory! You've completed the scenario.");
             }
