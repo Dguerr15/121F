@@ -10,7 +10,9 @@ class Cell {
         this.plant = null; 
         this.waterText = null;
         this.sunLevel = sunLevel;
-        this.plantDensity = 0; // increment when spawning nearby plants.
+
+        // increment when spawning nearby plants.
+        this.plantDensity = 0; 
     }
 
     drawWaterLevel(scene, cellSize) {
@@ -33,10 +35,10 @@ class Cell {
 
     updateWaterLevel(){
         let newWaterLevel = this.waterLevel + Math.floor(Math.random() * RAND_WATER_MAX);
+
         // clamp to max water capacity
         newWaterLevel = Math.min(newWaterLevel, MAX_WATER_CAPACITY);
         this.waterLevel = newWaterLevel;
-        // console.log ("Water level: " + this.waterLevel);
     }
 
     updateSunLevel() {

@@ -11,15 +11,6 @@ class Plant {
         if (this.growthLevel < 3 && sunLevel >= this.sunNeeded && waterLevel >= this.waterNeeded) {
             this.growthLevel++;
             this.updateSprite();
-
-            /*
-            // Update the sprite texture based on growth level
-            if (this.growthLevel === 1) {
-                this.plantSprite.setTexture(this.type + 'Growing');
-            } else if (this.growthLevel === 2) {
-                this.plantSprite.setTexture(this.type + 'FullGrown');
-            }
-            */
         }
     }
 

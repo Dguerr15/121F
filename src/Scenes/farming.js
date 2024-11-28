@@ -51,8 +51,6 @@ class farming extends Phaser.Scene {
         // Creating event manager
         my.eventMan = new EventManager();
 
-        //my.eventMan.on('plantGrew', this.onPlantGrew.bind(this));
-
         // Creating an abstract grid
         let cols = Math.floor(game.config.width / this.cellSize);
         let rows = Math.floor(game.config.height / this.cellSize);
@@ -91,7 +89,6 @@ class farming extends Phaser.Scene {
         this.input.keyboard.on('keydown-TWO', () => { this.selectedPlant = 'corns'; this.updateInventory(); });
         this.input.keyboard.on('keydown-THREE', () => { this.selectedPlant = 'roses'; this.updateInventory(); });
  
-         
         // Creating WASD keys for player movement
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -116,8 +113,8 @@ class farming extends Phaser.Scene {
     {
         this.movePlayer();      // Function for player movement
         this.advanceTime();     // Function for advancing time by 1 day
-        this.pickUpPlant();    // Function for picking up
-        this.plantCrop();     // Function for planting 
+        this.pickUpPlant();    // Function for picking up crops
+        this.plantCrop();     // Function for planting crops
     }
 
     // This function creates a 2D grid over the game
@@ -167,7 +164,7 @@ class farming extends Phaser.Scene {
 
         // Clamp the player's position to the screen bounds
         my.sprite.player.x = Phaser.Math.Clamp(my.sprite.player.x, 0, this.sys.game.config.width);
-        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height);
+        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height - 75);    // - 75 makes it so player can't go below screen border
     }
 
     // This function allows the player to pick up plants with the e key
@@ -196,7 +193,6 @@ class farming extends Phaser.Scene {
                 this.inventory[this.selectedPlant]++;
                 this.updateInventory();
                 closestPlant.destroy();
-                
                 
                 // Remove the plant from the grid
                 const gridX = Phaser.Math.Clamp(Math.floor(closestPlant.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
@@ -241,6 +237,7 @@ class farming extends Phaser.Scene {
     plantCrop() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
             console.log("Planting a crop");
+
             // Calculate the center position of the player sprite
             const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
             const playerCenterY = my.sprite.player.y + my.sprite.player.height / 2;
@@ -250,7 +247,9 @@ class farming extends Phaser.Scene {
             const gridY = Phaser.Math.Clamp(Math.floor(playerCenterY / this.cellSize), 0, my.gridManager.gridHeight - 1);
     
             const cell = my.gridManager.grid[gridX][gridY];
-            if (!cell.plant) {  // Check if the cell is empty
+            
+            // Check if the cell is empty
+            if (!cell.plant) {  
                 // Add a visual plant on the grid
                 const x = gridX * this.cellSize + this.cellSize / 2;
                 const y = gridY * this.cellSize + this.cellSize / 2;
@@ -262,44 +261,16 @@ class farming extends Phaser.Scene {
                 const plantSprite = this.physics.add.image(x, y, plantImageKey);
                 plantSprite.setScale(2.5);
                 this.plantsGroup.add(plantSprite);
-    
 
                 // Update inventory and plant a crop in the GridManager
                 this.inventory[plantType]--;
                 console.log(this.inventory);
                 this.updateInventory();
 
-                my.gridManager.plantCrop(gridX, gridY, plantType, plantSprite);
-                
-                /*
-                cell.plant = { 
-                    type: plantType, 
-                    growthLevel: 0, 
-                    sunNeeded: my.gridManager.plantTypes[plantType].sunNeeded, 
-                    waterNeeded: my.gridManager.plantTypes[plantType].waterNeeded 
-                };
-                */
+                my.gridManager.plantCrop(gridX, gridY, plantType, plantSprite);                
             }
         }
     }
-    
-
-    // This function is called when a plant grows
-    /*
-    onPlantGrew(data) {
-        const { x, y, growthLevel, plantType } = data;
-    
-        // Find the corresponding plant sprite
-        const cell = my.gridManager.grid[x][y];
-        const plantSprite = cell.plantSprite;
-    
-        if (growthLevel === 1) {
-            plantSprite.setTexture(plantType + 'Growing');
-        } else if (growthLevel === 2) {
-            plantSprite.setTexture(plantType + 'FullGrown');
-        }
-    }
-        */
 
     // This function advances time in the game
     advanceTime(){

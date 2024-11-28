@@ -13,6 +13,7 @@ class GridManager {
             let row = [];
             for (let j = 0; j < cols; j++) {
                 let newCell = new Cell(i, j);
+
                 // subscribe this cell's endOfTurnUpdate() to the eventMan's endTurn() event trigger
                 my.eventMan.addTurnListener(newCell.endOfTurnUpdate.bind(newCell, scene, this.cellSize));
                 row.push(newCell);
@@ -34,17 +35,18 @@ class GridManager {
     // Plant a crop in the middle of a grid cell
     plantCrop(x, y, plantType, plantSprite) {
         const cell = this.grid[x][y];
-        if (!cell.plant) { // Ensure that the cell is empty
+
+        // Ensure that the cell is empty
+        if (!cell.plant) { 
             // Define plant attributes from the plantType
-            const plantData = this.getPlantAttributes(plantType); // Retrieve attributes from a lookup
+            const plantData = this.getPlantAttributes(plantType);
             if (plantData) {
                 // Create a new Plant object with the attributes and the sprite
                 const newPlant = new Plant(plantType, plantData.sunNeeded, plantData.waterNeeded, plantSprite);
                 cell.setPlant(newPlant);
             }
         }
-    }    
-
+    }
 
     // Helper method to get plant attributes from the plantTypes
     getPlantAttributes(plantType) {
