@@ -20,12 +20,6 @@ class GridManager {
             }
             this.grid.push(row);
         }
-        // Define plant types and their growth conditions
-        this.plantTypes = {
-            carrot: { sunNeeded: 3, waterNeeded: 2 },
-            //potato: { sunNeeded: 2, waterNeeded: 4 },
-            //wheat: { sunNeeded: 4, waterNeeded: 3 },
-        };
     }
 
     // Generate random sun and water levels for each grid cell
@@ -39,46 +33,43 @@ class GridManager {
     }
 
     // Plant a crop in the middle of a grid cell
-    plantCrop(x, y, plantType) {
+    plantCrop(x, y, plantType, plantSprite) {
         const cell = this.grid[x][y];
-    if (!cell.plant) { // Ensure that the cell is empty
-        cell.plant = {
-            type: plantType,
-            growthLevel: 0,  // Start with growth level 0
-            sunNeeded: this.plantTypes[plantType].sunNeeded,
-            waterNeeded: this.plantTypes[plantType].waterNeeded,
-        };
-    }
+        if (!cell.plant) { // Ensure that the cell is empty
+            // Define plant attributes from the plantType
+            const plantData = this.getPlantAttributes(plantType); // Retrieve attributes from a lookup
+            if (plantData) {
+                // Create a new Plant object with the attributes and the sprite
+                const newPlant = new Plant(plantType, plantData.sunNeeded, plantData.waterNeeded, plantSprite);
+                cell.setPlant(newPlant);
+            }
+        }
     }    
+
+
+    // Helper method to get plant attributes from the plantTypes
+    getPlantAttributes(plantType) {
+        const plantTypes = {
+            carrots: { sunNeeded: 3, waterNeeded: 2 },
+            roses: { sunNeeded: 2, waterNeeded: 4 },
+            corns: { sunNeeded: 4, waterNeeded: 3 },
+        };
+        return plantTypes[plantType];
+    }
 
     // Check growth conditions for each plant
     updatePlantGrowth() {
-        this.grid.forEach((row, x) => 
-            row.forEach((cell, y) => {
+        this.grid.forEach((row) => 
+            row.forEach((cell) => {
                 const plant = cell.getPlant();
-                if (plant && plant.growthLevel < 3) {
-                    const plantType = this.plantTypes[plant.type];
-                    const previousGrowthLevel = plant.growthLevel;
-
-                    if (cell.getSunLevel() >= plantType.sunNeeded && cell.getWaterLevel() >= plantType.waterNeeded
-                    ) {
-                        plant.growthLevel += 1; // Increase growth level
-                        cell.waterLevel -= plantType.waterNeeded; // Consume water
-                        plant.growthLevel = Math.min(plant.growthLevel, 3);
-
-                        if (plant.growthLevel > previousGrowthLevel) {
-                            my.eventMan.emit('plantGrew', {
-                                x,
-                                y,
-                                growthLevel: plant.growthLevel,
-                                plantType: plant.type,
-                            });
-                        }
-                    }
+                if (plant) {
+                    const sunLevel = cell.getSunLevel();
+                    const waterLevel = cell.getWaterLevel();
+                    plant.updateGrowth(sunLevel, waterLevel);
                 }
             })
         );
-    }        
+    }   
 
     // Check win condition: X plants at Y growth level or above
     checkWinCondition(requiredPlants, requiredGrowthLevel) {
