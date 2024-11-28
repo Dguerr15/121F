@@ -192,19 +192,18 @@ class farming extends Phaser.Scene {
                 my.text.inventory.setText('Inventory: Carrots: ' + this.inventory.carrots + ' Corn: ' + this.inventory.corns + ' Roses: ' + this.inventory.roses);
                 closestPlant.destroy();
                 
-                /*
+                
                 // Remove the plant from the grid
-                const gridX = Phaser.Math.Clamp(Math.floor(closestCarrot.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
-                const gridY = Phaser.Math.Clamp(Math.floor(closestCarrot.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
+                const gridX = Phaser.Math.Clamp(Math.floor(closestPlant.x / this.cellSize), 0, my.gridManager.gridWidth - 1);
+                const gridY = Phaser.Math.Clamp(Math.floor(closestPlant.y / this.cellSize), 0, my.gridManager.gridHeight - 1);
     
                 const cell = my.gridManager.grid[gridX][gridY];
                 if (cell.plant) {
                     my.gridManager.pickUpPlant(gridX, gridY);
-                    if (cell.carrotSprite === closestCarrot) {
+                    if (cell.carrotSprite === closestPlant) {
                         cell.carrotSprite = null;
                     }
                 }
-                */
             }
         }
     }
