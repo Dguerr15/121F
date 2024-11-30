@@ -13,248 +13,212 @@ class farming extends Phaser.Scene {
             roses: 5,
             corns: 5
         };
-        this.distanceToPlant = 50;
         this.cellSize = 70;
     }
-    
+
     // Preload assets
-    preload () {
+    preload() {
         this.load.setPath("./assets/");
         this.load.image('ground', 'ground_01.png');
         this.load.image('player', 'player_05.png');
-        // Carrot Assets
-        this.load.image('carrotsFullGrown', 'tile_0056.png');
-        this.load.image('carrotsGrowing', 'tile_0072.png');
-        this.load.image('carrotsSeedling', 'tile_0088.png');
-        // Rose Assets
-        this.load.image("rosesSeedling", 'tile_0089.png');
-        this.load.image('rosesFullGrown', 'tile_0057.png');
-        this.load.image('rosesGrowing', 'tile_0073.png');
-        // Corn Assets
-        this.load.image('cornsSeedling', 'tile_0091.png');
-        this.load.image('cornsFullGrown', 'tile_0059.png');
-        this.load.image('cornsGrowing', 'tile_0075.png');
+
+        // Load plant assets using a loop to reduce redundancy
+        const plants = ['carrots', 'roses', 'corns'];
+        const stages = ['Seedling', 'Growing', 'FullGrown'];
+        plants.forEach(plant => {
+            stages.forEach(stage => {
+                const key = `${plant}${stage}`;
+                const filename = this.getAssetFilename(plant, stage);
+                this.load.image(key, filename);
+            });
+        });
     }
-    
+
+    // Helper method to get asset filenames
+    getAssetFilename(plant, stage) {
+        const filenames = {
+            carrotsSeedling: 'tile_0088.png',
+            carrotsGrowing: 'tile_0072.png',
+            carrotsFullGrown: 'tile_0056.png',
+            rosesSeedling: 'tile_0089.png',
+            rosesGrowing: 'tile_0073.png',
+            rosesFullGrown: 'tile_0057.png',
+            cornsSeedling: 'tile_0091.png',
+            cornsGrowing: 'tile_0075.png',
+            cornsFullGrown: 'tile_0059.png'
+        };
+        return filenames[`${plant}${stage}`];
+    }
+
     // Create game objects
-    create () {
-        // Creating event manager
+    create() {
+        // Initialize event manager
         my.eventMan = new EventManager();
 
-        // Creating an abstract grid
-        let cols = Math.floor(game.config.width / this.cellSize);
-        let rows = Math.floor(game.config.height / this.cellSize);
-
-        // Creating grid manager
+        // Initialize grid manager
+        const cols = Math.floor(game.config.width / this.cellSize);
+        const rows = Math.floor(game.config.height / this.cellSize);
         my.gridManager = new GridManager(cols, rows, this.cellSize);
-
-        // Initialize grid manager to set up the grid
         my.gridManager.initializeGrid(this);
 
-        // Creating the ground
-        my.sprite.ground = this.add.sprite(game.config.width / 2, game.config.height / 2, 'ground');
-        // Scaling the ground
-        my.sprite.ground.setScale(23.0);
+        // Create ground and player
+        this.createGround();
+        this.createPlayer();
 
-        // Drawing a grid
+        // Draw grid lines
         this.drawGrid(this.cellSize);
 
-        // Creating the player
+        // Initialize UI elements
+        this.initUI();
+
+        // Set up input controls
+        this.setupInput();
+    }
+
+    // Create ground sprite
+    createGround() {
+        my.sprite.ground = this.add.sprite(game.config.width / 2, game.config.height / 2, 'ground');
+        my.sprite.ground.setScale(23.0);
+    }
+
+    // Create player sprite
+    createPlayer() {
         my.sprite.player = this.physics.add.sprite(game.config.width / 2, game.config.height / 2, 'player');
         my.sprite.player.setOrigin(0, 0);
+    }
 
-        // Creating text for day count
-        my.text.dayCount = this.add.text(10, 10, 'Day: ' + this.dayCount, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
-    
-        // Creating text for inventory
+    // Initialize UI elements
+    initUI() {
+        const textStyle = { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' };
+        my.text.dayCount = this.add.text(10, 10, `Day: ${this.dayCount}`, textStyle);
+
+        // Inventory text
         this.selectedPlant = 'carrots';
-        my.text.inventory = this.add.text(10, 50, 'Inventory:', { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
-        my.text.inventoryOne = this.add.text(180, 50, 'Carrots: ' + this.inventory.carrots, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
-        my.text.inventoryTwo = this.add.text(180, 90, 'Corn: ' + this.inventory.corns, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
-        my.text.inventoryThree = this.add.text(180, 130, 'Roses: ' + this.inventory.roses, { fontFamily: 'Arial', fontSize: 32, color: '#ffffff' });
+        my.text.inventory = this.add.text(10, 50, 'Inventory:', textStyle);
+        my.text.inventoryItems = {
+            carrots: this.add.text(180, 50, '', textStyle),
+            corns: this.add.text(180, 90, '', textStyle),
+            roses: this.add.text(180, 130, '', textStyle)
+        };
         this.updateInventory();
 
-        // Message text for player feedback on planting in adjacent cells
+        // Messages
         my.text.message = this.add.text(10, 170, '', { fontFamily: 'Arial', fontSize: 24, color: '#ff0000' });
-
-        // Message text for winning game
         my.text.winMessage = this.add.text(600, 300, '', { fontFamily: 'Arial', fontSize: 42, color: '#00ff00' });
+    }
 
-        // Input for plant selection (1 = carrots, 2 = corns, 3 = roses)
-        this.input.keyboard.on('keydown-ONE', () => { this.selectedPlant = 'carrots'; this.updateInventory(); });
-        this.input.keyboard.on('keydown-TWO', () => { this.selectedPlant = 'corns'; this.updateInventory(); });
-        this.input.keyboard.on('keydown-THREE', () => { this.selectedPlant = 'roses'; this.updateInventory(); });
+    // Set up input controls
+    setupInput() {
+        // Plant selection keys
+        this.input.keyboard.on('keydown-ONE', () => { this.selectPlant('carrots'); });
+        this.input.keyboard.on('keydown-TWO', () => { this.selectPlant('corns'); });
+        this.input.keyboard.on('keydown-THREE', () => { this.selectPlant('roses'); });
 
-        // WASD keys for player movement
+        // Movement keys
+        this.cursors = this.input.keyboard.createCursorKeys();
         this.wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.sKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
-        // Spacebar for advancing time
+        // Action keys
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
-        // E key for picking up crops
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
-
-        // Q key for planting crops
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     }
 
+    // Select a plant type
+    selectPlant(plant) {
+        this.selectedPlant = plant;
+        this.updateInventory();
+    }
+
     // Game loop
-    update () {
-        this.movePlayer();      // Player movement
-        this.advanceTime();     // Advance time by 1 day
-        this.pickUpPlant();     // Picking up crops
-        this.plantCrop();       // Planting crops
+    update() {
+        this.movePlayer();
+        this.handleActions();
+    }
+
+    // Handle player actions
+    handleActions() {
+        this.advanceTime();
+        this.pickUpPlant();
+        this.plantCrop();
     }
 
     // Create a 2D grid over the game
     drawGrid(cellSize) {
         const graphics = this.add.graphics();
-        graphics.lineStyle(1, 0xffffff, 0.2); // Set line color (white) and transparency
+        graphics.lineStyle(1, 0xffffff, 0.2);
 
-        // Vertical lines
+        // Draw vertical and horizontal lines
         for (let x = 0; x < game.config.width; x += cellSize) {
-            graphics.beginPath();
-            graphics.moveTo(x, 0);
-            graphics.lineTo(x, game.config.height);
-            graphics.strokePath();
+            graphics.strokeLineShape(new Phaser.Geom.Line(x, 0, x, game.config.height));
         }
-
-        // Horizontal lines
         for (let y = 0; y < game.config.height; y += cellSize) {
-            graphics.beginPath();
-            graphics.moveTo(0, y);
-            graphics.lineTo(game.config.width, y);
-            graphics.strokePath();
+            graphics.strokeLineShape(new Phaser.Geom.Line(0, y, game.config.width, y));
         }
     }
-    
+
     // Player movement
     movePlayer() {
-        this.moveX = 0;
-        this.moveY = 0;
+        const moveX = (this.aKey.isDown ? -1 : 0) + (this.dKey.isDown ? 1 : 0);
+        const moveY = (this.wKey.isDown ? -1 : 0) + (this.sKey.isDown ? 1 : 0);
 
-        if (this.aKey.isDown) {
-            this.moveX -= 1;
-        }
-        if (this.dKey.isDown) {
-            this.moveX += 1;
-        }
-
-        if (this.wKey.isDown) {
-            this.moveY -= 1;
-        }
-        if (this.sKey.isDown) {
-            this.moveY += 1;
-        }
-
-        my.sprite.player.x += this.moveX * this.playerSpeed;
-        my.sprite.player.y += this.moveY * this.playerSpeed;
-
-        // Clamp the player's position to the screen bounds
-        my.sprite.player.x = Phaser.Math.Clamp(my.sprite.player.x, 0, this.sys.game.config.width);
-        my.sprite.player.y = Phaser.Math.Clamp(my.sprite.player.y, 0, this.sys.game.config.height - 75);    // -75 to prevent going below screen border
+        my.sprite.player.x = Phaser.Math.Clamp(
+            my.sprite.player.x + moveX * this.playerSpeed,
+            0,
+            this.sys.game.config.width - my.sprite.player.width
+        );
+        my.sprite.player.y = Phaser.Math.Clamp(
+            my.sprite.player.y + moveY * this.playerSpeed,
+            0,
+            this.sys.game.config.height - my.sprite.player.height
+        );
     }
 
     // Picking up plants with the E key
     pickUpPlant() {
         if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
-            const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
-            const playerCenterY = my.sprite.player.y + my.sprite.player.height / 2;
-            const gridX = Math.floor(playerCenterX / this.cellSize);
-            const gridY = Math.floor(playerCenterY / this.cellSize);
+            const { gridX, gridY } = this.getPlayerGridPosition();
 
             const plantTypeCode = my.gridManager.getPlantType(gridX, gridY);
             if (plantTypeCode !== PlantTypes.NONE) {
                 const plantType = my.gridManager.getPlantTypeName(plantTypeCode);
-                // Update inventory
                 this.inventory[plantType]++;
                 this.updateInventory();
 
-                // Update grid data
-                my.gridManager.setPlantType(gridX, gridY, PlantTypes.NONE);
-                my.gridManager.setGrowthLevel(gridX, gridY, 0);
-
-                // Remove plant sprite
-                const spriteKey = `${gridX},${gridY}`;
-                const plantSprite = my.gridManager.plantSprites[spriteKey];
-                if (plantSprite) {
-                    plantSprite.destroy();
-                    delete my.gridManager.plantSprites[spriteKey];
-                }
+                my.gridManager.removePlant(gridX, gridY);
             }
         }
     }
-    
+
     // Update inventory display
     updateInventory() {
-        let carrotSelected = '#ffffff';
-        let cornSelected = '#ffffff';
-        let roseSelected = '#ffffff';
-        switch (this.selectedPlant){
-            case 'carrots':
-                carrotSelected = '#aaffaa';
-                break;
-            case 'corns':
-                cornSelected = '#aaffaa';
-                break;
-            case 'roses':
-                roseSelected = '#aaffaa';
-                break;
-        }
-        my.text.inventoryOne.setText('Carrots: ' + this.inventory.carrots);
-        my.text.inventoryTwo.setText('Corn: ' + this.inventory.corns);
-        my.text.inventoryThree.setText('Roses: ' + this.inventory.roses);
+        const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
+        colors[this.selectedPlant] = '#aaffaa';
 
-        // Set color of inventory items
-        my.text.inventoryOne.setColor(carrotSelected);
-        my.text.inventoryTwo.setColor(cornSelected);
-        my.text.inventoryThree.setColor(roseSelected);
+        for (const [plant, textObj] of Object.entries(my.text.inventoryItems)) {
+            textObj.setText(`${plant.charAt(0).toUpperCase() + plant.slice(1)}: ${this.inventory[plant]}`);
+            textObj.setColor(colors[plant]);
+        }
     }
 
     // Plant crops with the Q key
     plantCrop() {
         if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
-            const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
-            const playerCenterY = my.sprite.player.y + my.sprite.player.height / 2;
-            const gridX = Math.floor(playerCenterX / this.cellSize);
-            const gridY = Math.floor(playerCenterY / this.cellSize);
+            const { gridX, gridY } = this.getPlayerGridPosition();
 
-            const plantTypeCode = my.gridManager.getPlantTypeCode(this.selectedPlant);
-
-            if (my.gridManager.getPlantType(gridX, gridY) === PlantTypes.NONE) {
-                // Enforce planting rules based on adjacent plants
-                const adjacentPlantCount = my.gridManager.getAdjacentPlantCount(gridX, gridY);
-                if (adjacentPlantCount < 2) {
-                    // Create plant sprite
-                    const x = gridX * this.cellSize + this.cellSize / 2;
-                    const y = gridY * this.cellSize + this.cellSize / 2;
-                    const textureKey = `${this.selectedPlant}Seedling`;
-                    const plantSprite = this.physics.add.image(x, y, textureKey);
-                    plantSprite.setScale(2.5);
-
-                    // Update grid data
-                    my.gridManager.setPlantType(gridX, gridY, plantTypeCode);
-                    my.gridManager.setGrowthLevel(gridX, gridY, 1);
-                    my.gridManager.plantSprites[`${gridX},${gridY}`] = plantSprite;
-
-                    // Update inventory
-                    this.inventory[this.selectedPlant]--;
-                    this.updateInventory();
-                    my.text.message.setText(''); // Clear any previous message
-                } else {
-                    my.text.message.setText('Cannot plant here: too many adjacent plants.');
-                    this.time.delayedCall(3000, () => {
-                        my.text.message.setText('');
-                    }, [], this);
-                }
+            if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
+                my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
+                this.inventory[this.selectedPlant]--;
+                this.updateInventory();
+                my.text.message.setText('');
             } else {
-                my.text.message.setText('Cannot plant here: cell is occupied.');
+                my.text.message.setText('Cannot plant here.');
                 this.time.delayedCall(3000, () => {
                     my.text.message.setText('');
-                }, [], this);
+                });
             }
         }
     }
@@ -263,25 +227,34 @@ class farming extends Phaser.Scene {
     advanceTime() {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
             this.dayCount++;
-            my.text.dayCount.setText('Day: ' + this.dayCount);
+            my.text.dayCount.setText(`Day: ${this.dayCount}`);
 
-            // Trigger end of turn updates
             my.eventMan.endTurn();
 
-            // Check win condition
-            const win = my.gridManager.checkWinCondition(9, 3); // At least 9 plants at growth level 3
-            if (win) {
-                // Disable all controls and display win message
-                this.input.keyboard.enabled = false;
-                my.text.winMessage.setText('You win!');
-
-                // Clear the message after 3 seconds and restart the game
-                this.time.delayedCall(2500, () => {
-                    this.input.keyboard.enabled = true;
-                    my.text.winMessage.setText('');
-                    this.scene.restart();
-                }, [], this);
+            if (my.gridManager.checkWinCondition(9, 3)) {
+                this.winGame();
             }
         }
+    }
+
+    // Handle winning the game
+    winGame() {
+        this.input.keyboard.enabled = false;
+        my.text.winMessage.setText('You win!');
+
+        this.time.delayedCall(2500, () => {
+            this.input.keyboard.enabled = true;
+            my.text.winMessage.setText('');
+            this.scene.restart();
+        });
+    }
+
+    // Get player's current grid position
+    getPlayerGridPosition() {
+        const playerCenterX = my.sprite.player.x + my.sprite.player.width / 2;
+        const playerCenterY = my.sprite.player.y + my.sprite.player.height / 2;
+        const gridX = Math.floor(playerCenterX / this.cellSize);
+        const gridY = Math.floor(playerCenterY / this.cellSize);
+        return { gridX, gridY };
     }
 }

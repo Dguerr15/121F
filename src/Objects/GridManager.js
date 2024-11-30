@@ -11,31 +11,28 @@ const PlantTypes = {
     ROSES: 3
 };
 
+// GridManager.js
+
 class GridManager {
     constructor(gridWidth, gridHeight, cellSize) {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;
         this.cellSize = cellSize;
 
-        // Bytes per cell: waterLevel, sunLevel, plantType, growthLevel
-        this.BYTES_PER_CELL = 4;
+        this.BYTES_PER_CELL = 4; // waterLevel, sunLevel, plantType, growthLevel
 
-        // Total cells and bytes
         const totalCells = gridWidth * gridHeight;
         const totalBytes = totalCells * this.BYTES_PER_CELL;
 
-        // Initialize the buffer and DataView
         this.gridBuffer = new ArrayBuffer(totalBytes);
         this.gridDataView = new DataView(this.gridBuffer);
 
-        // Initialize plant sprites and text objects
         this.plantSprites = {};
         this.waterTexts = {};
         this.sunTexts = {};
     }
 
     initializeGrid(scene) {
-        // Initialize grid data
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
                 this.setWaterLevel(x, y, 0);
@@ -45,87 +42,72 @@ class GridManager {
             }
         }
 
-        // Subscribe to end turn event
         my.eventMan.addTurnListener(this.endOfTurnUpdate.bind(this, scene));
     }
 
-    // Calculate byte offset for a cell
+    // Accessor methods
     getCellOffset(x, y) {
         return (y * this.gridWidth + x) * this.BYTES_PER_CELL;
     }
 
-    // Accessor methods
-    // Water Level
     getWaterLevel(x, y) {
-        const offset = this.getCellOffset(x, y);
-        return this.gridDataView.getUint8(offset);
+        return this.gridDataView.getUint8(this.getCellOffset(x, y));
     }
 
     setWaterLevel(x, y, value) {
-        const offset = this.getCellOffset(x, y);
-        this.gridDataView.setUint8(offset, value);
+        this.gridDataView.setUint8(this.getCellOffset(x, y), value);
     }
 
-    // Sun Level
     getSunLevel(x, y) {
-        const offset = this.getCellOffset(x, y) + 1;
-        return this.gridDataView.getUint8(offset);
+        return this.gridDataView.getUint8(this.getCellOffset(x, y) + 1);
     }
 
     setSunLevel(x, y, value) {
-        const offset = this.getCellOffset(x, y) + 1;
-        this.gridDataView.setUint8(offset, value);
+        this.gridDataView.setUint8(this.getCellOffset(x, y) + 1, value);
     }
 
-    // Plant Type
     getPlantType(x, y) {
-        const offset = this.getCellOffset(x, y) + 2;
-        return this.gridDataView.getUint8(offset);
+        return this.gridDataView.getUint8(this.getCellOffset(x, y) + 2);
     }
 
     setPlantType(x, y, value) {
-        const offset = this.getCellOffset(x, y) + 2;
-        this.gridDataView.setUint8(offset, value);
+        this.gridDataView.setUint8(this.getCellOffset(x, y) + 2, value);
     }
 
-    // Growth Level
     getGrowthLevel(x, y) {
-        const offset = this.getCellOffset(x, y) + 3;
-        return this.gridDataView.getUint8(offset);
+        return this.gridDataView.getUint8(this.getCellOffset(x, y) + 3);
     }
 
     setGrowthLevel(x, y, value) {
-        const offset = this.getCellOffset(x, y) + 3;
-        this.gridDataView.setUint8(offset, value);
+        this.gridDataView.setUint8(this.getCellOffset(x, y) + 3, value);
     }
 
-    // Update water level for a cell
-    updateWaterLevel(x, y) {
-        let currentWater = this.getWaterLevel(x, y);
-        let additionalWater = Math.floor(Math.random() * RAND_WATER_MAX);
-        let newWaterLevel = Math.min(currentWater + additionalWater, MAX_WATER_CAPACITY);
-        this.setWaterLevel(x, y, newWaterLevel);
-    }
-
-    // Update sun level for a cell
-    updateSunLevel(x, y) {
-        let newSunLevel = Math.floor(Math.random() * RAND_SUN_MAX);
-        this.setSunLevel(x, y, newSunLevel);
-    }
-
-    // End of turn update for all cells
+    // End of turn updates
     endOfTurnUpdate(scene) {
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
-                this.updateWaterLevel(x, y);
-                this.updateSunLevel(x, y);
+                this.updateResources(x, y);
                 this.updatePlantGrowth(x, y);
                 this.drawCellInfo(scene, x, y);
             }
         }
     }
 
-    // Update plant growth based on resources
+    updateResources(x, y) {
+        this.updateWaterLevel(x, y);
+        this.updateSunLevel(x, y);
+    }
+
+    updateWaterLevel(x, y) {
+        const currentWater = this.getWaterLevel(x, y);
+        const additionalWater = Phaser.Math.Between(0, RAND_WATER_MAX - 1);
+        this.setWaterLevel(x, y, Math.min(currentWater + additionalWater, MAX_WATER_CAPACITY));
+    }
+
+    updateSunLevel(x, y) {
+        this.setSunLevel(x, y, Phaser.Math.Between(0, RAND_SUN_MAX - 1));
+    }
+
     updatePlantGrowth(x, y) {
         const plantType = this.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
@@ -144,7 +126,6 @@ class GridManager {
         }
     }
 
-    // Draw water and sun levels on the grid
     drawCellInfo(scene, x, y) {
         const cellSize = this.cellSize;
         const posX = x * cellSize;
@@ -156,20 +137,60 @@ class GridManager {
         const key = `${x},${y}`;
 
         // Water Level Text
-        let waterText = this.waterTexts[key];
-        if (!waterText) {
-            waterText = scene.add.text(posX, posY, '', { fontSize: '12px', fill: '#00f' });
-            this.waterTexts[key] = waterText;
+        if (!this.waterTexts[key]) {
+            this.waterTexts[key] = scene.add.text(posX, posY, '', { fontSize: '12px', fill: '#00f' });
         }
-        waterText.setText(`W: ${waterLevel}`);
+        this.waterTexts[key].setText(`W: ${waterLevel}`);
 
         // Sun Level Text
-        let sunText = this.sunTexts[key];
-        if (!sunText) {
-            sunText = scene.add.text(posX, posY + 14, '', { fontSize: '12px', fill: '#ff0' });
-            this.sunTexts[key] = sunText;
+        if (!this.sunTexts[key]) {
+            this.sunTexts[key] = scene.add.text(posX, posY + 14, '', { fontSize: '12px', fill: '#ff0' });
         }
-        sunText.setText(`S: ${sunLevel}`);
+        this.sunTexts[key].setText(`S: ${sunLevel}`);
+    }
+
+    // Planting methods
+    canPlant(x, y, plantName) {
+        if (this.getPlantType(x, y) !== PlantTypes.NONE) {
+            return false;
+        }
+        return this.getAdjacentPlantCount(x, y) < 2;
+    }
+
+    plantCrop(x, y, plantName, scene) {
+        const plantTypeCode = this.getPlantTypeCode(plantName);
+        const textureKey = `${plantName}Seedling`;
+
+        const posX = x * this.cellSize + this.cellSize / 2;
+        const posY = y * this.cellSize + this.cellSize / 2;
+        const plantSprite = scene.physics.add.image(posX, posY, textureKey);
+        plantSprite.setScale(2.5);
+
+        this.setPlantType(x, y, plantTypeCode);
+        this.setGrowthLevel(x, y, 1);
+        this.plantSprites[`${x},${y}`] = plantSprite;
+    }
+
+    removePlant(x, y) {
+        this.setPlantType(x, y, PlantTypes.NONE);
+        this.setGrowthLevel(x, y, 0);
+
+        const spriteKey = `${x},${y}`;
+        if (this.plantSprites[spriteKey]) {
+            this.plantSprites[spriteKey].destroy();
+            delete this.plantSprites[spriteKey];
+        }
+    }
+
+    updatePlantSprite(x, y) {
+        const spriteKey = `${x},${y}`;
+        const plantSprite = this.plantSprites[spriteKey];
+        if (plantSprite) {
+            const plantType = this.getPlantType(x, y);
+            const growthLevel = this.getGrowthLevel(x, y);
+            const textureKey = this.getPlantTextureKey(plantType, growthLevel);
+            plantSprite.setTexture(textureKey);
+        }
     }
 
     // Helper methods
@@ -191,37 +212,14 @@ class GridManager {
         return textures[plantType][growthLevel - 1];
     }
 
-    updatePlantSprite(x, y) {
-        const spriteKey = `${x},${y}`;
-        const plantSprite = this.plantSprites[spriteKey];
-        if (plantSprite) {
-            const plantType = this.getPlantType(x, y);
-            const growthLevel = this.getGrowthLevel(x, y);
-            const textureKey = this.getPlantTextureKey(plantType, growthLevel);
-            plantSprite.setTexture(textureKey);
-        }
-    }
-
-    // Methods to get plant type name and code
     getPlantTypeName(plantTypeCode) {
-        const plantNames = {
-            [PlantTypes.CARROTS]: 'carrots',
-            [PlantTypes.CORNS]: 'corns',
-            [PlantTypes.ROSES]: 'roses'
-        };
-        return plantNames[plantTypeCode];
+        return Object.keys(PlantTypes).find(key => PlantTypes[key] === plantTypeCode).toLowerCase();
     }
 
     getPlantTypeCode(plantTypeName) {
-        const plantCodes = {
-            'carrots': PlantTypes.CARROTS,
-            'corns': PlantTypes.CORNS,
-            'roses': PlantTypes.ROSES
-        };
-        return plantCodes[plantTypeName];
+        return PlantTypes[plantTypeName.toUpperCase()];
     }
 
-    // Return adjacent cells including diagonals
     returnAdjacentCells(x, y) {
         const adjacentCells = [];
         const directions = [
@@ -238,8 +236,6 @@ class GridManager {
         directions.forEach(({ dx, dy }) => {
             const newX = x + dx;
             const newY = y + dy;
-
-            // Check if the new coordinates are within bounds
             if (newX >= 0 && newX < this.gridWidth && newY >= 0 && newY < this.gridHeight) {
                 adjacentCells.push({ x: newX, y: newY });
             }
@@ -248,19 +244,12 @@ class GridManager {
         return adjacentCells;
     }
 
-    // Check for adjacent plants to enforce planting rules
     getAdjacentPlantCount(x, y) {
-        let count = 0;
-        const adjacentCells = this.returnAdjacentCells(x, y);
-        adjacentCells.forEach(({ x: adjX, y: adjY }) => {
-            if (this.getPlantType(adjX, adjY) !== PlantTypes.NONE) {
-                count++;
-            }
-        });
-        return count;
+        return this.returnAdjacentCells(x, y).reduce((count, { x: adjX, y: adjY }) => {
+            return count + (this.getPlantType(adjX, adjY) !== PlantTypes.NONE ? 1 : 0);
+        }, 0);
     }
 
-    // Check win condition: X plants at Y growth level or above
     checkWinCondition(requiredPlants, requiredGrowthLevel) {
         let count = 0;
         for (let x = 0; x < this.gridWidth; x++) {
