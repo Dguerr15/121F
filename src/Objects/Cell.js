@@ -1,3 +1,6 @@
+// This isn't used anymore, so we can delete it
+
+/*
 const RAND_SUN_MAX = 5;
 const RAND_WATER_MAX = 2;
 const MAX_WATER_CAPACITY = 10;
@@ -88,3 +91,4 @@ class Cell {
         // Implementation for undoing a turn if needed
     }
 }
+*/

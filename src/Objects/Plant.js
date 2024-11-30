@@ -1,3 +1,6 @@
+// This isn't used anymore, so we can delete it
+
+/*
 class Plant {
     constructor(type, sunNeeded, waterNeeded, plantSprite) {
         this.type = type;
@@ -36,3 +39,4 @@ class Plant {
         console.log(`${this.name} - Growth Level: ${this.growthLevel}, Sun Needed: ${this.sunNeeded}, Water Needed: ${this.waterNeeded}`);
     }
 }
+    */
