@@ -74,6 +74,31 @@ class farming extends Phaser.Scene {
 
         // Set up input controls
         this.setupInput();
+
+        this.time.addEvent({
+            delay: 5000, // 5 seconds
+            callback: this.autoSavePrompt,
+            callbackScope: this,
+            loop: true
+        });
+
+        this.promptContinue();
+    }
+
+    promptContinue() {
+        // Check if saveSlot3 exists (this assumes you're using localStorage for persistence)
+        if (localStorage.getItem('saveSlot3')) {
+            const continueGame = confirm("Do you want to continue from where you left off? ");
+            if (continueGame) {
+                my.eventMan.loadGame('saveSlot3');
+                this.updateInventory();
+                console.log("Game loaded from saveSlot3");
+            } else {
+                console.log("Starting a new game...");
+            }
+        } else {
+            console.log("No previous save found. Starting a new game...");
+        }
     }
 
     // Create ground sprite
@@ -129,7 +154,7 @@ class farming extends Phaser.Scene {
 
         // Save/load keys
         this.input.keyboard.on('keydown-K', () => {
-            const slot = prompt("Enter save slot number (1-3):");
+            const slot = prompt("Enter save slot number (1-2):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.saveGame(`saveSlot${slot}`);
             } else {
@@ -138,7 +163,7 @@ class farming extends Phaser.Scene {
         })
 
         this.input.keyboard.on('keydown-L', () => {
-            const slot = prompt("Enter save slot number (1-3):");
+            const slot = prompt("Enter save slot number (1-2):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.loadGame(`saveSlot${slot}`);
                 this.updateInventory();
@@ -147,6 +172,11 @@ class farming extends Phaser.Scene {
             }
         });
 
+    }
+
+    autoSavePrompt() {
+        my.eventMan.saveGame('saveSlot3');
+        console.log("Auto-saved to saveSlot3");
     }
 
     // Select a plant type
