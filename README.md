@@ -1,3 +1,40 @@
+# Devlog F0 Software Requirement Satisfaction 11/27
+
+## How we satisfied the software requirements
+
+[F0.a] You control a character moving over a 2D grid.
+
+We implemented a 2D grid system drawn using the drawGrid() method in farming.js. The player's movement is handled through the movePlayer method, allowing the player to move freely in four directions (up, down, left, and right) on the grid using W, A, S, and D. We also ensured the character stays within the 2D grid boundaries.
+
+[F0.b] You advance time manually in the turn-based simulation.
+
+The player can advance time manually by calling the advanceTime() function in the farming.js file by pressing the Spacebar in-game. This function triggers updates for all subscribed listeners which are listed as follows: The resources (sun and water) are recalculated for each cell, the dayCount is updated, each plant growth level is checked and updated depending on the sun and water levels of their cell, and the win condition is checked. 
+
+[F0.c] You can reap or sow plants on grid cells only when you are near them.
+
+The ability to sow plants on grid cells is implemented in the GridManager class through the plantCrop() method by pressing Q in-game. A plant can be planted in a grid cell if the cell is empty, ensuring players can only interact with nearby cells, satisfying the condition that planting or harvesting is proximity-based. Additionally, the pickUpPlant() method in the GridManager class allows plants to be removed from the grid (reaped) if the player interacts with the cell by pressing E in-game.
+
+[F0.d] Grid cells have sun and water levels. The incoming sun and water for each cell is somehow randomly generated each turn. Sun energy cannot be stored in a cell (it is used immediately or lost) while water moisture can be slowly accumulated over several turns.
+
+Each grid cell has sun and water levels defined by the Cell class. The updateWaterLevel() and updateSunLevel() methods handle the random generation of water and sun levels, which are updated per day. Water slowly accumulates over turns but is capped at a maximum capacity to prevent infinite storage, while sun is randomly generated for each cell at the start of each turn and does not persist between turns. Water levels can build up, ensuring that moisture can be stored and accumulated, but the sun levels are reset each turn, following the rule that sun energy cannot be stored.
+
+[F0.e] Each plant on the grid has a distinct type (e.g. one of 3 species) and a growth level (e.g. “level 1”, “level 2”, “level 3”).
+
+Each plant is represented by an instance of the Plant class, which has a type (such as "carrots", "roses", or "corns") and a growthLevel that starts at 0. The plant’s growth is tracked and updated in the updateGrowth() method based on the sun and water levels in the grid cell. When conditions are met (sufficient sun and water), the plant’s growth level increases, and its sprite changes to reflect the plant’s current stage of growth. The visual representation of the plant changes based on its growth level via the updateSprite method, ensuring distinct progression states.
+
+[F0.f] Simple spatial rules govern plant growth based on sun, water, and nearby plants (growth is unlocked by satisfying conditions).
+
+Plant growth is managed through the updateGrowth() method in the Plant class. For each plant, growth is dependent on the sun and water levels available in the surrounding grid cell. If the sun and water levels meet the plant's required thresholds (sunNeeded and waterNeeded), the growth level of the plant increases, and the sprite is updated to reflect the next stage of growth. The GridManager class checks all plants in the grid every turn and updates their growth based on the current resource levels in their respective cells. This ensures that growth follows a spatial rule set, where each plant's growth is influenced by its location and the resources available. There is also a check for plants in adjacent cells, so the player cannot sow plants near each other.
+
+[F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
+
+The win condition is checked in checkWinCondition(), which evaluates whether the required number of plants has reached a specified growth level. For example, achieving at least 9 plants at growth level 3 triggers a victory message, concluding the scenario when the condition is met.
+
+## Reflection
+
+Our team's approach has evolved from an early focus on getting basic functionality working to a more structured design that considers long-term scalability, maintainability, and the requirements for future features. While the initial implementation had several challenges, including random resource generation and getting all of the plants to grow correctly, the team’s reflection and changes to tools, materials, and roles helped address those issues. These adjustments also set the foundation for future development, ensuring that the game logic could be expanded and refined as needed. 
+
+
 # Devlog Entry - 11/14
 
 ## Introducing the Team
@@ -23,38 +60,3 @@ Everybody will have input into all parts these are just the people facilitating 
 - We anticipate that switching platforms and languages will be the hardest and riskiest part of the project. Since none of us have used Excalibur.js before, this could be a tough obstacle to move past. We also have to make sure we finish our project on time to submit it, so we will have to figure out effective workflows when switching our engine/library.
 - We are hoping to learn GIMP and Tiled for asset creation for our game and also the best way to refactor and change our code which will make it a lot easier if we have to switch engines or platforms. This can be beneficial for us in the future as well since we will always be working with different technologies in our careers, so being able to adapt is another key element we want to learn.
 
-## Devlog F0 Software Requirement Satisfaction 11/27
-
-Beneath is a list of all the F0 requirements, and how we satisfied each part. 
-
-[F0.a] You control a character moving over a 2D grid.
-
-We implemented a 2D grid system drawn dynamically using the drawGrid method in farming.js. The player's movement is handled through the movePlayer method, allowing the player to move freely in four directions (up, down, left, and right) on the grid using W, A, S, and D. We also ensured the character stays within the 2D grid boundaries.
-
-[F0.b] You advance time manually in the turn-based simulation.
-
-The player is able to advance time manually by calling the endTurn() function in the EventManager class by pressing the Spacebar in-game. This function triggers updates for all subscribed listeners which are listed as follows: The resources (sun and water) are recalculated for each cell, the dayCount is updated, each plant growth level is checked and updated depending on the sun and water levels of their cell, and the win condition is checked. 
-
-[F0.c] You can reap or sow plants on grid cells only when you are near them.
-
-The ability to sow plants on grid cells is implemented in the GridManager class through the plantCrop() method by pressing Q in-game. A plant can be planted in a grid cell if the cell is empty, ensuring players can only interact with nearby cells, satisfying the condition that planting or harvesting is proximity-based. Additionally, the pickUpPlant() method in the GridManager class allows for plants to be removed from the grid (reaped) if the player interacts with the cell.
-
-[F0.d] Grid cells have sun and water levels. The incoming sun and water for each cell is somehow randomly generated each turn. Sun energy cannot be stored in a cell (it is used immediately or lost) while water moisture can be slowly accumulated over several turns.
-
-Each grid cell has sun and water levels defined by the Cell class. The updateWaterLevel() and updateSunLevel() methods handle the random generation of water and sun levels, which are updated per day. Water accumulates over turns but is capped at a maximum capacity to prevent infinite storage, while sun is randomly generated for each cell at the start of each turn and does not persist between turns. Water levels can build up, ensuring that moisture can be stored and accumulated, but the sun levels are reset each turn, following the rule that sun energy cannot be stored.
-
-[F0.e] Each plant on the grid has a distinct type (e.g. one of 3 species) and a growth level (e.g. “level 1”, “level 2”, “level 3”).
-
-Each plant is represented by an instance of the Plant class, which has a type (such as "carrots", "roses", or "corns") and a growthLevel that starts at 0. The plant’s growth is tracked and updated in the updateGrowth() method based on the sun and water levels in the grid cell. When conditions are met (sufficient sun and water), the plant’s growth level increases, and its sprite changes to reflect the plant’s current stage of growth. The visual representation of the plant changes based on its growth level via the updateSprite method, ensuring distinct progression states.
-
-[F0.f] Simple spatial rules govern plant growth based on sun, water, and nearby plants (growth is unlocked by satisfying conditions).
-
-Plant growth is managed through the updateGrowth() method in the Plant class. For each plant, growth is dependent on the sun and water levels available in the surrounding grid cell. If the sun and water levels meet the plant's required thresholds (sunNeeded and waterNeeded), the growth level of the plant increases, and the sprite is updated to reflect the next stage of growth. The GridManager class checks all plants in the grid every turn and updates their growth based on the current resource levels in their respective cells. This ensures that growth follows a spatial rule set, where each plant's growth is influenced by its location and the resources available.
-
-[F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
-
-The win condition is checked in checkWinCondition, which evaluates whether the required number of plants has reached a specified growth level. For example, achieving at least 9 plants at growth level 3 triggers a victory message, concluding the scenario when the condition is met.
-
-## Devlog F0 Reflection
-
-Our team's approach has evolved from an early focus on getting basic functionality working to a more structured design that considers long-term scalability, maintainability, and the requirements for future features. While the initial implementation had several challenges, including random resource generation and lack of class separation, the team’s reflection and changes to tools, materials, and roles helped address those issues. These adjustments also set the foundation for future development, ensuring that the game logic could be expanded and refined as needed. 

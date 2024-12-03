@@ -1,4 +1,7 @@
-const RAND_SUN_MAX = 3;
+// This isn't used anymore, so we can delete it
+
+/*
+const RAND_SUN_MAX = 5;
 const RAND_WATER_MAX = 2;
 const MAX_WATER_CAPACITY = 10;
 
@@ -7,9 +10,10 @@ class Cell {
         this.x = x;
         this.y = y;
         this.waterLevel = waterLevel;
+        this.plant = null; 
         this.waterText = null;
         this.sunLevel = sunLevel;
-        this.plantDensity = 0; // increment when spawning nearby plants.
+        this.plantDensity = 0; // Initialize plantDensity to 0
     }
 
     drawWaterLevel(scene, cellSize) {
@@ -32,15 +36,15 @@ class Cell {
 
     updateWaterLevel(){
         let newWaterLevel = this.waterLevel + Math.floor(Math.random() * RAND_WATER_MAX);
-        // clamp to max water capacity
+
+        // Clamp to max water capacity
         newWaterLevel = Math.min(newWaterLevel, MAX_WATER_CAPACITY);
         this.waterLevel = newWaterLevel;
-        // console.log ("Water level: " + this.waterLevel);
     }
 
     updateSunLevel() {
-        this.sunLevel = Math.floor(Math.random() * RAND_SUN_MAX);
-        // console.log ("Sun level: " + this.sunLevel);
+        // Generate a new random sun level (not stored, as sun doesn't accumulate)
+        this.sunLevel = Phaser.Math.Between(0, RAND_SUN_MAX);
     }
 
     setPlant(plant) {
@@ -49,6 +53,10 @@ class Cell {
 
     getWaterLevel() {
         return this.waterLevel;
+    }
+
+    setWaterLevel(waterLevel) {
+        this.waterLevel = waterLevel;
     }
 
     getSunLevel() {
@@ -66,10 +74,21 @@ class Cell {
         this.drawSunLevel(scene, cellSize);
     }
 
-    // placeholder for f1
+    // Calculate the number of adjacent cells with plants (including diagonals)
+    calculatePlantDensity() {
+        const adjacentCells = my.gridManager.returnAdjacentCells(this.x, this.y);
+        let count = 0;
+        adjacentCells.forEach(adjCell => {
+            if (adjCell.getPlant()) {
+                count++;
+            }
+        });
+        this.plantDensity = count;
+    }
+
+    // Placeholder for undo functionality
     undoTurn(){
-        // note. will need to add an "actual water level" variable because water capacity is capped.
-        //      e.g. if cell with 10 water is watered again, it stays at 10.
-        //           undoing that, it should still stay at 10
+        // Implementation for undoing a turn if needed
     }
 }
+*/

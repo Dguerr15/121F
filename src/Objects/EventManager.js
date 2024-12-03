@@ -1,6 +1,7 @@
 class EventManager {
     constructor() {
         this.endTurnListeners = [];
+        this.customListeners = {};
     }
 
     addTurnListener(listener) {
@@ -8,6 +9,12 @@ class EventManager {
             this.endTurnListeners.push(listener);
         } else {
             throw new Error('Listener must be a function');
+        }
+    }
+
+    emit(event, data) {
+        if (this.customListeners[event]) {
+            this.customListeners[event].forEach(listener => listener(data));
         }
     }
 
