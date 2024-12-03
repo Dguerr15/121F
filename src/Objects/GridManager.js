@@ -263,4 +263,74 @@ class GridManager {
         }
         return count >= requiredPlants;
     }
+
+    // get and set grid state for game saving
+    getGridState() {
+        console.log("getting grid state");
+        const gridState = [];
+        for (let x = 0; x < this.gridWidth; x++) {
+            for (let y = 0; y < this.gridHeight; y++) {
+                gridState.push({
+                    x: x,
+                    y: y,
+                    waterLevel: this.getWaterLevel(x, y),
+                    sunLevel: this.getSunLevel(x, y),
+                    plantType: this.getPlantType(x, y),
+                    growthLevel: this.getGrowthLevel(x, y)
+                });
+            }
+        }
+
+        return gridState;
+    }
+
+    setGridState(gridState, scene) {
+        console.log("setting grid state");
+
+        // clear existing grid ui and text
+        for (let key in this.plantSprites) {
+            this.plantSprites[key].destroy();
+        }
+        this.plantSprites = {};
+
+        for (let key in this.waterTexts) {
+            this.waterTexts[key].destroy();
+        }
+        this.waterTexts = {};
+
+        for (let key in this.sunTexts) {
+            this.sunTexts[key].destroy();
+        }
+        this.sunTexts = {};
+
+        // set new grid state
+        gridState.forEach(cell => {
+            const x = cell.x;
+            const y = cell.y;
+
+            this.setWaterLevel(x, y, cell.waterLevel);
+            this.setSunLevel(x, y, cell.sunLevel);
+            this.setPlantType(x, y, cell.plantType);
+            this.setGrowthLevel(x, y, cell.growthLevel);
+
+            // redraw plants if exist
+            if (cell.plantType !== PlantTypes.NONE) {
+                const plantType = cell.plantType;
+                const growthLevel = cell.growthLevel;
+                const textureKey = this.getPlantTextureKey(plantType, growthLevel);
+
+                const posX = x * this.cellSize + this.cellSize / 2;
+                const posY = y * this.cellSize + this.cellSize / 2;
+
+                const plantSprite = scene.physics.add.image(posX, posY, textureKey);
+                plantSprite.setScale(2.5);
+
+                this.plantSprites[`${x},${y}`] = plantSprite;
+            }
+
+            // redraw cell info
+            this.drawCellInfo(scene, x, y);
+        });
+    }
+
 }

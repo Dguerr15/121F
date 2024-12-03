@@ -2,6 +2,7 @@ class farming extends Phaser.Scene {
     constructor() {
         super("farming");
         this.selectedPlant = 'carrots';
+        this.saveSlots = ['saveSlot1', 'saveSlot2', 'saveSlot3'];
     }
 
     // Define variables
@@ -53,7 +54,7 @@ class farming extends Phaser.Scene {
     // Create game objects
     create() {
         // Initialize event manager
-        my.eventMan = new EventManager();
+        my.eventMan = new EventManager(this);
 
         // Initialize grid manager
         const cols = Math.floor(game.config.width / this.cellSize);
@@ -125,6 +126,27 @@ class farming extends Phaser.Scene {
         this.spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+        // Save/load keys
+        this.input.keyboard.on('keydown-K', () => {
+            const slot = prompt("Enter save slot number (1-3):");
+            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+                my.eventMan.saveGame(`saveSlot${slot}`);
+            } else {
+                console.error("Invalid save slot.");
+            }
+        })
+
+        this.input.keyboard.on('keydown-L', () => {
+            const slot = prompt("Enter save slot number (1-3):");
+            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+                my.eventMan.loadGame(`saveSlot${slot}`);
+                this.updateInventory();
+            } else {
+                console.error("Invalid save slot.");
+            }
+        });
+
     }
 
     // Select a plant type
