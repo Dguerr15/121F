@@ -4,6 +4,8 @@ class EventManager {
 
         this.endTurnListeners = [];
         this.customListeners = {};
+
+        this.previousStates = [];
     }
 
     addTurnListener(listener) {
@@ -77,6 +79,21 @@ class EventManager {
 
     // placeholder for f1
     undoTurn() {
-
+        console.log("Undo button pressed.");
+        if (this.previousStates.length > 0) {
+            const lastState = this.previousStates.pop();
+    
+            // Restore grid and day count
+            my.gridManager.setGridState(lastState.gridState, this.scene);
+            this.scene.dayCount = lastState.dayCount;
+    
+            // Update UI
+            my.text.dayCount.setText(`Day: ${this.scene.dayCount}`);
+            this.scene.updateInventory();
+    
+            console.log("Undo successful: Reverted to the previous state.");
+        } else {
+            console.log("No previous state to undo.");
+        }
     }
 }

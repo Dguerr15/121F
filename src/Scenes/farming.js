@@ -172,6 +172,10 @@ class farming extends Phaser.Scene {
             }
         });
 
+        this.input.keyboard.on('keydown-U', () => {
+            my.eventMan.undoTurn();
+        });
+
     }
 
     autoSavePrompt() {
@@ -278,11 +282,21 @@ class farming extends Phaser.Scene {
     // Advance time in the game
     advanceTime() {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+            // Save the current state before moving to the next day
+            const currentState = {
+                gridState: my.gridManager.getGridState(),
+                dayCount: this.dayCount
+            };
+            my.eventMan.previousStates.push(currentState);
+    
+            // Advance day count
             this.dayCount++;
             my.text.dayCount.setText(`Day: ${this.dayCount}`);
-
+    
+            // Trigger end-of-turn logic
             my.eventMan.endTurn();
-
+    
+            // Check for win condition
             if (my.gridManager.checkWinCondition(9, 3)) {
                 this.winGame();
             }
