@@ -248,7 +248,7 @@ class farming extends Phaser.Scene {
 
             if (plantTypeCode !== PlantTypes.NONE) {
                 // Make plant command.
-                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel, this.inventory);
+                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel, this.inventory, this);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
 

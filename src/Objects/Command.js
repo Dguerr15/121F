@@ -34,13 +34,14 @@ class PlantCropCommand {
 }
 
 class RemovePlantCommand {
-    constructor(gridManager, gridX, gridY, plantTypeCode, growthLevel, inventory) {
+    constructor(gridManager, gridX, gridY, plantTypeCode, growthLevel, inventory, scene) {
         this.gridManager = gridManager;
         this.gridX = gridX;
         this.gridY = gridY;
         this.plantTypeCode = plantTypeCode;
         this.growthLevel = growthLevel;
         this.inventory = inventory;
+        this.scene = scene;
     }
 
     execute() {
@@ -50,10 +51,10 @@ class RemovePlantCommand {
     }
 
     undo() {
-        // Replant the crop.
-        this.gridManager.plantCrop(this.gridX, this.gridY, this.plantTypeCode, this.growthLevel);
-        // Decrement inventory.
         const plantType = this.gridManager.getPlantTypeName(this.plantTypeCode);
+        // Replant the crop.
+        this.gridManager.plantCrop(this.gridX, this.gridY, plantType, this.scene);
+        // Decrement inventory.
         this.inventory[plantType]--;
         // Update growth level
         this.gridManager.setGrowthLevel(this.gridX, this.gridY, this.growthLevel);

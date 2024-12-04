@@ -217,6 +217,7 @@ class GridManager {
     }
 
     getPlantTypeCode(plantTypeName) {
+        console.log ("attempting to get PlantTypes[] of plantTypeName: " + plantTypeName);
         return PlantTypes[plantTypeName.toUpperCase()];
     }
 
