@@ -62,6 +62,9 @@ class farming extends Phaser.Scene {
         my.gridManager = new GridManager(cols, rows, this.cellSize);
         my.gridManager.initializeGrid(this);
 
+        // Initialize command manager.
+        my.commandMan = new CommandManager(my.gridManager);
+
         // Create ground and player
         this.createGround();
         this.createPlayer();
