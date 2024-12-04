@@ -39,7 +39,9 @@ class EventManager {
                 y: my.sprite.player.y
             },
             inventory: this.scene.inventory,
-            dayCount: this.scene.dayCount
+            dayCount: this.scene.dayCount,
+            // history: my.commandMan.history,
+            // redoStack: my.commandMan.redoStack
         };
 
         localStorage.setItem(`${saveSlotName}`, JSON.stringify(saveData));
@@ -69,6 +71,10 @@ class EventManager {
         // update text and ui
         this.scene.updateInventory();
         my.text.dayCount.setText(`Day: ${this.scene.dayCount}`);
+
+        // load command history
+        // my.commandMan.history = saveData.history;
+        // my.commandMan.redoStack = saveData.redoStack;
 
         console.log(`Game loaded from slot ${saveSlotName}`);
         return true;

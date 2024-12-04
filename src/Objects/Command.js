@@ -25,10 +25,16 @@ class PlantCropCommand {
     }
 
     serialize() {
-
+        return {
+            command: "PlantCropCommand",
+            gridX: this.gridX,
+            gridY: this.gridY,
+            plantName: this.plantName
+        };
     }
 
     static deserialize(gridManager, data) {
+        return new PlantCropCommand(gridManager, data.gridX, data.gridY, data.plantName);
 
     }
 }
@@ -61,7 +67,13 @@ class RemovePlantCommand {
     }
 
     serialize() {
-
+        return {
+            command: "RemovePlantCommand",
+            gridX: this.gridX,
+            gridY: this.gridY,
+            plantTypeCode: this.plantTypeCode,
+            growthLevel: this.growthLevel
+        };
     }
 
     static deserialize(gridManager, data) {

@@ -29,17 +29,17 @@ class CommandManager {
 
     serialize() {
         // Chat code.
-        // return this.history.map(cmd => cmd.serialize());
+        return this.history.map(cmd => cmd.serialize());
     }
 
     deserialize(data) {
         // Chat code.
-        // this.history = data.map(serializedCmd => {
-        //     if (serializedCmd.command === "PlantCropCommand") {
-        //         return PlantCropCommand.deserialize(this.gridManager, serializedCmd);
-        //     } else if (serializedCmd.command === "RemovePlantCommand") {
-        //         return RemovePlantCommand.deserialize(this.gridManager, serializedCmd);
-        //     }
-        // });
+        this.history = data.map(serializedCmd => {
+            if (serializedCmd.command === "PlantCropCommand") {
+                return PlantCropCommand.deserialize(this.gridManager, serializedCmd);
+            } else if (serializedCmd.command === "RemovePlantCommand") {
+                return RemovePlantCommand.deserialize(this.gridManager, serializedCmd);
+            }
+        });
     }
 }
