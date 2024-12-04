@@ -5,22 +5,20 @@ class Command {
 }
 
 class PlantCropCommand {
-    constructor(gridManager, gridX, gridY, plantName, inventory, scene) {
+    constructor(gridManager, gridX, gridY, plantName) {
         this.gridManager = gridManager; // Reference to the grid manager
         this.gridX = gridX; // X position of the crop
         this.gridY = gridY; // Y position of the crop
         this.plantName = plantName // Type of crop to plant
-        this.inventory = inventory; // Reference to the inventory
-        this.scene = scene; // Reference to the scene
     }
 
     execute() {
-        this.gridManager.plantCrop(this.gridX, this.gridY, this.plantName, this.scene); // Plant the crop
-        this.inventory[this.plantName]--;
+        this.gridManager.plantCrop(this.gridX, this.gridY, this.plantName, my.scene); // Plant the crop
+        my.inventory[this.plantName]--;
     }
 
     undo() {
-        this.inventory[this.plantName]++;
+        my.inventory[this.plantName]++;
         this.gridManager.removePlant(this.gridX, this.gridY); // Reverse by removing the crop
     }
 
@@ -40,30 +38,31 @@ class PlantCropCommand {
 }
 
 class RemovePlantCommand {
-    constructor(gridManager, gridX, gridY, plantTypeCode, growthLevel, inventory, scene) {
+    constructor(gridManager, gridX, gridY, plantTypeCode, growthLevel) {
         this.gridManager = gridManager;
         this.gridX = gridX;
         this.gridY = gridY;
         this.plantTypeCode = plantTypeCode;
         this.growthLevel = growthLevel;
-        this.inventory = inventory;
-        this.scene = scene;
     }
 
     execute() {
         const plantType = this.gridManager.getPlantTypeName(this.plantTypeCode);
-        this.inventory[plantType]++;
+        my.inventory[plantType]++;
         this.gridManager.removePlant(this.gridX, this.gridY);
     }
 
     undo() {
         const plantType = this.gridManager.getPlantTypeName(this.plantTypeCode);
         // Replant the crop.
-        this.gridManager.plantCrop(this.gridX, this.gridY, plantType, this.scene);
+        this.gridManager.plantCrop(this.gridX, this.gridY, plantType, my.scene);
         // Decrement inventory.
-        this.inventory[plantType]--;
+        my.inventory[plantType]--;
         // Update growth level
         this.gridManager.setGrowthLevel(this.gridX, this.gridY, this.growthLevel);
+        this.gridManager.updatePlantSprite(this.gridX, this.gridY);
+        // update display of growth level
+
     }
 
     serialize() {
@@ -77,6 +76,6 @@ class RemovePlantCommand {
     }
 
     static deserialize(gridManager, data) {
-        
+        return new RemovePlantCommand(gridManager, data.gridX, data.gridY, data.plantTypeCode, data.growthLevel);
     }
 }

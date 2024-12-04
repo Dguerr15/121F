@@ -62,6 +62,12 @@ class farming extends Phaser.Scene {
         my.gridManager = new GridManager(cols, rows, this.cellSize);
         my.gridManager.initializeGrid(this);
 
+        // Add a reference to inventory to the global context
+        my.inventory = this.inventory;
+
+        // Add a reference to the scene to the global context
+        my.scene = this;
+
         // Initialize command manager.
         my.commandMan = new CommandManager(my.gridManager);
 
@@ -248,7 +254,7 @@ class farming extends Phaser.Scene {
 
             if (plantTypeCode !== PlantTypes.NONE) {
                 // Make plant command.
-                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel, this.inventory, this);
+                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
 
@@ -267,7 +273,7 @@ class farming extends Phaser.Scene {
 
             if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
                 // Make plant command
-                const command = new PlantCropCommand(my.gridManager, gridX, gridY, this.selectedPlant, this.inventory, this);
+                const command = new PlantCropCommand(my.gridManager, gridX, gridY, this.selectedPlant);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
                 // my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);

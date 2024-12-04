@@ -40,8 +40,8 @@ class EventManager {
             },
             inventory: this.scene.inventory,
             dayCount: this.scene.dayCount,
-            // history: my.commandMan.history,
-            // redoStack: my.commandMan.redoStack
+            history: my.commandMan.serializeHistory(),
+            redoStack: my.commandMan.serializeRedoStack()
         };
 
         localStorage.setItem(`${saveSlotName}`, JSON.stringify(saveData));
@@ -73,8 +73,8 @@ class EventManager {
         my.text.dayCount.setText(`Day: ${this.scene.dayCount}`);
 
         // load command history
-        // my.commandMan.history = saveData.history;
-        // my.commandMan.redoStack = saveData.redoStack;
+        my.commandMan.deserialize(saveData.history);
+        my.commandMan.deserializeRedoStack(saveData.redoStack);
 
         console.log(`Game loaded from slot ${saveSlotName}`);
         return true;

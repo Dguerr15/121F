@@ -27,19 +27,50 @@ class CommandManager {
         }
     }
 
-    serialize() {
+    serializeHistory() {
         // Chat code.
         return this.history.map(cmd => cmd.serialize());
     }
 
-    deserialize(data) {
+    serializeRedoStack() {
         // Chat code.
-        this.history = data.map(serializedCmd => {
-            if (serializedCmd.command === "PlantCropCommand") {
-                return PlantCropCommand.deserialize(this.gridManager, serializedCmd);
-            } else if (serializedCmd.command === "RemovePlantCommand") {
-                return RemovePlantCommand.deserialize(this.gridManager, serializedCmd);
+        return this.redoStack.map(cmd => cmd.serialize());
+    }
+
+    deserialize(data) {
+        // Ensure that we are iterating over the data array.
+        this.history = data.map((cmdData) => {  // Correctly map over the data
+            let command;
+            switch (cmdData.command) {
+                case "PlantCropCommand":
+                    command = PlantCropCommand.deserialize(this.gridManager, cmdData);
+                    break;
+                case "RemovePlantCommand":
+                    command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
+                    break;
+                // Add more cases for other command types if necessary
+                default:
+                    throw new Error(`Unknown command type: ${cmdData.command}`);
             }
+            return command;
+        });
+    }
+
+    deserializeRedoStack(data){
+        this.redoStack = data.map((cmdData) => {  // Correctly map over the data
+            let command;
+            switch (cmdData.command) {
+                case "PlantCropCommand":
+                    command = PlantCropCommand.deserialize(this.gridManager, cmdData);
+                    break;
+                case "RemovePlantCommand":
+                    command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
+                    break;
+                // Add more cases for other command types if necessary
+                default:
+                    throw new Error(`Unknown command type: ${cmdData.command}`);
+            }
+            return command;
         });
     }
 }
