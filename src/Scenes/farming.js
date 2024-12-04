@@ -155,6 +155,10 @@ class farming extends Phaser.Scene {
         this.eKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.E);
         this.qKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
+        // Undo / redo
+        this.zKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
+        this.xKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.X);
+
         // Save/load keys
         this.input.keyboard.on('keydown-K', () => {
             const slot = prompt("Enter save slot number (1-2):");
@@ -199,6 +203,8 @@ class farming extends Phaser.Scene {
         this.advanceTime();
         this.pickUpPlant();
         this.plantCrop();
+        this.undoKey();
+        this.redoKey();
     }
 
     // Create a 2D grid over the game
@@ -235,16 +241,75 @@ class farming extends Phaser.Scene {
     // Picking up plants with the E key
     pickUpPlant() {
         if (Phaser.Input.Keyboard.JustDown(this.eKey)) {
+
+            const { gridX, gridY } = this.getPlayerGridPosition();
+            const plantTypeCode = my.gridManager.getPlantType(gridX, gridY);
+            const growthLevel = my.gridManager.getGrowthLevel(gridX, gridY);
+
+            if (plantTypeCode !== PlantTypes.NONE) {
+                // Make plant command.
+                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel, this.inventory);
+                // Execute with CommandManager (also pushes to history stack).
+                my.commandMan.executeCommand(command);
+
+                // const plantType = my.gridManager.getPlantTypeName(plantTypeCode);
+                // this.inventory[plantType]++;
+                this.updateInventory();
+                // my.gridManager.removePlant(gridX, gridY);
+            }
+        }
+    }
+
+    // Plant crops with the Q key
+    plantCrop() {
+        if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
             const { gridX, gridY } = this.getPlayerGridPosition();
 
-            const plantTypeCode = my.gridManager.getPlantType(gridX, gridY);
-            if (plantTypeCode !== PlantTypes.NONE) {
-                const plantType = my.gridManager.getPlantTypeName(plantTypeCode);
-                this.inventory[plantType]++;
+            if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
+                // Make plant command
+                const command = new PlantCropCommand(my.gridManager, gridX, gridY, this.selectedPlant, this.inventory, this);
+                // Execute with CommandManager (also pushes to history stack).
+                my.commandMan.executeCommand(command);
+                // my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
+                // this.inventory[this.selectedPlant]--;
+                
                 this.updateInventory();
-
-                my.gridManager.removePlant(gridX, gridY);
+                my.text.message.setText('');
+            } else {
+                my.text.message.setText('Cannot plant here.');
+                this.time.delayedCall(3000, () => {
+                    my.text.message.setText('');
+                });
             }
+        }
+    }
+    // Advance time in the game with the Spacebar.
+    advanceTime() {
+        if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
+            this.dayCount++;
+            my.text.dayCount.setText(`Day: ${this.dayCount}`);
+
+            my.eventMan.endTurn();
+
+            if (my.gridManager.checkWinCondition(9, 3)) {
+                this.winGame();
+            }
+        }
+    }
+
+    // Undo with Z
+    undoKey() {
+        if (Phaser.Input.Keyboard.JustDown(this.zKey)) {
+            my.commandMan.undo();
+            this.updateInventory();
+        }
+    }
+
+    // Redo with X
+    redoKey() {
+        if (Phaser.Input.Keyboard.JustDown(this.xKey)) {
+            my.commandMan.redo();
+            this.updateInventory();
         }
     }
 
@@ -259,38 +324,7 @@ class farming extends Phaser.Scene {
         }
     }
 
-    // Plant crops with the Q key
-    plantCrop() {
-        if (Phaser.Input.Keyboard.JustDown(this.qKey) && this.inventory[this.selectedPlant] > 0) {
-            const { gridX, gridY } = this.getPlayerGridPosition();
 
-            if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
-                my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
-                this.inventory[this.selectedPlant]--;
-                this.updateInventory();
-                my.text.message.setText('');
-            } else {
-                my.text.message.setText('Cannot plant here.');
-                this.time.delayedCall(3000, () => {
-                    my.text.message.setText('');
-                });
-            }
-        }
-    }
-
-    // Advance time in the game
-    advanceTime() {
-        if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-            this.dayCount++;
-            my.text.dayCount.setText(`Day: ${this.dayCount}`);
-
-            my.eventMan.endTurn();
-
-            if (my.gridManager.checkWinCondition(9, 3)) {
-                this.winGame();
-            }
-        }
-    }
 
     // Handle winning the game
     winGame() {

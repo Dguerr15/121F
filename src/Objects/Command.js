@@ -5,18 +5,23 @@ class Command {
 }
 
 class PlantCropCommand {
-    constructor(gridManager, position, cropType) {
+    constructor(gridManager, gridX, gridY, plantName, inventory, scene) {
         this.gridManager = gridManager; // Reference to the grid manager
-        this.position = position;      // Position to plant the crop
-        this.cropType = cropType;      // Type of crop to plant
+        this.gridX = gridX; // X position of the crop
+        this.gridY = gridY; // Y position of the crop
+        this.plantName = plantName // Type of crop to plant
+        this.inventory = inventory; // Reference to the inventory
+        this.scene = scene; // Reference to the scene
     }
 
     execute() {
-        this.gridManager.plantCrop(this.position, this.cropType); // Plant the crop
+        this.gridManager.plantCrop(this.gridX, this.gridY, this.plantName, this.scene); // Plant the crop
+        this.inventory[this.plantName]--;
     }
 
     undo() {
-        this.gridManager.removePlant(this.position); // Reverse by removing the crop
+        this.inventory[this.plantName]++;
+        this.gridManager.removePlant(this.gridX, this.gridY); // Reverse by removing the crop
     }
 
     serialize() {
@@ -29,21 +34,29 @@ class PlantCropCommand {
 }
 
 class RemovePlantCommand {
-    constructor(gridManager, position) {
+    constructor(gridManager, gridX, gridY, plantTypeCode, growthLevel, inventory) {
         this.gridManager = gridManager;
-        this.position = position;
-        this.removedCrop = null; // Will hold details of the removed crop
+        this.gridX = gridX;
+        this.gridY = gridY;
+        this.plantTypeCode = plantTypeCode;
+        this.growthLevel = growthLevel;
+        this.inventory = inventory;
     }
 
     execute() {
-        this.removedCrop = this.gridManager.getCrop(this.position); // Save the crop being removed
-        this.gridManager.removePlant(this.position); // Remove the crop
+        const plantType = this.gridManager.getPlantTypeName(this.plantTypeCode);
+        this.inventory[plantType]++;
+        this.gridManager.removePlant(this.gridX, this.gridY);
     }
 
     undo() {
-        if (this.removedCrop) {
-            this.gridManager.plantCrop(this.position, this.removedCrop); // Replant the crop
-        }
+        // Replant the crop.
+        this.gridManager.plantCrop(this.gridX, this.gridY, this.plantTypeCode, this.growthLevel);
+        // Decrement inventory.
+        const plantType = this.gridManager.getPlantTypeName(this.plantTypeCode);
+        this.inventory[plantType]--;
+        // Update growth level
+        this.gridManager.setGrowthLevel(this.gridX, this.gridY, this.growthLevel);
     }
 
     serialize() {
