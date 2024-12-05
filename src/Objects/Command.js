@@ -87,8 +87,6 @@ class AdvanceTimeCommand {
     }
 
     execute() {
-        // End the turn by notifying listeners
-        // my.eventMan.endTurn();
         this.advanceOneDay();
 
         // Increment day count
@@ -97,15 +95,10 @@ class AdvanceTimeCommand {
     }
 
     undo () {
-
-        // my.eventMan.undoTurn();
         this.undoOneDay();
-
+        
         my.scene.dayCount--;
         my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
-
-        
-
     }
 
     serialize(){
