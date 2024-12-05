@@ -165,22 +165,6 @@ class GridManager {
         }
     }
 
-    undoPlantGrowth(x, y){
-        // const plantType = this.getPlantType(x, y);
-        // if (plantType !== PlantTypes.NONE) {
-        //     const growthLevel = this.getGrowthLevel(x, y);
-        //     if (growthLevel > 0) {
-        //         const sunLevel = this.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
-        //         const waterLevel = this.getWaterLevel(x, y);
-        //         if (waterLevel < this.getPlantAttributesByCode(plantType).waterNeeded){
-        //             this.setWaterLevel(x, y, waterLevel + this.getPlantAttributesByCode(plantType).waterNeeded);
-        //             this.setGrowthLevel(x, y, growthLevel - 1);
-        //         }
-        //         this.updatePlantSprite(x, y);
-        //     }
-        // }
-    }
-
     // Used for easy reverse engineering for undo
     getFakeRand(gridX, gridY, dayCount){
         // return some number based on parameters gridx gridy daycount. +1 to avoid 0.

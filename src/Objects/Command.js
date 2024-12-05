@@ -94,11 +94,6 @@ class AdvanceTimeCommand {
         // Increment day count
         my.scene.dayCount++;
         my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
-
-        // Check for the win condition
-        if (my.gridManager.checkWinCondition(9, 3)) {
-            this.scene.winGame();
-        }
     }
 
     undo () {

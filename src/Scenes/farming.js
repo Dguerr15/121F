@@ -84,12 +84,12 @@ class farming extends Phaser.Scene {
         // Set up input controls
         this.setupInput();
 
-        // this.time.addEvent({
-        //     delay: 5000, // 5 seconds
-        //     callback: this.autoSavePrompt,
-        //     callbackScope: this,
-        //     loop: true
-        // });
+        this.time.addEvent({
+            delay: 5000, // 5 seconds
+            callback: this.autoSavePrompt,
+            callbackScope: this,
+            loop: true
+        });
 
         this.promptContinue();
     }
@@ -167,7 +167,7 @@ class farming extends Phaser.Scene {
 
         // Save/load keys
         this.input.keyboard.on('keydown-K', () => {
-            const slot = prompt("Enter save slot number (1-2):");
+            const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.saveGame(`saveSlot${slot}`);
             } else {
@@ -176,7 +176,7 @@ class farming extends Phaser.Scene {
         })
 
         this.input.keyboard.on('keydown-L', () => {
-            const slot = prompt("Enter save slot number (1-2):");
+            const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.loadGame(`saveSlot${slot}`);
                 this.updateInventory();
@@ -294,11 +294,6 @@ class farming extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
             const command = new AdvanceTimeCommand();
             my.commandMan.executeCommand(command);
-            // this.dayCount++;
-            // my.text.dayCount.setText(`Day: ${this.dayCount}`);
-
-            // my.eventMan.endTurn();
-
             if (my.gridManager.checkWinCondition(9, 3)) {
                 this.winGame();
             }
@@ -331,8 +326,6 @@ class farming extends Phaser.Scene {
             textObj.setColor(colors[plant]);
         }
     }
-
-
 
     // Handle winning the game
     winGame() {
