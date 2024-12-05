@@ -30,6 +30,9 @@ class GridManager {
         this.plantSprites = {};
         this.waterTexts = {};
         this.sunTexts = {};
+
+        // Add a growth history map
+        this.growthHistory = {}; // Format: {"x,y": [{day: 1, level: 1}, ...]}
     }
 
     initializeGrid(scene) {
@@ -99,7 +102,7 @@ class GridManager {
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
                 this.undoResources(x, y);
-                this.undoPlantGrowth(x, y); // not implemented yet.
+                this.undoPlantGrowth(x, y); // Revert plant growth to the appropriate level
                 this.drawCellInfo(scene, x, y);
             }
         }
@@ -154,34 +157,58 @@ class GridManager {
             const sunLevel = this.getSunLevel(x, y);
             const waterLevel = this.getWaterLevel(x, y);
             const plantData = this.getPlantAttributesByCode(plantType);
-
+    
             if (sunLevel >= plantData.sunNeeded && waterLevel >= plantData.waterNeeded) {
                 if (growthLevel < 3) {
-                    this.setGrowthLevel(x, y, growthLevel + 1);
+                    const newGrowthLevel = growthLevel + 1;
+                    this.setGrowthLevel(x, y, newGrowthLevel);
                     this.updatePlantSprite(x, y);
+    
+                    // Record the growth history
+                    this.recordGrowthHistory(x, y, my.scene.dayCount, newGrowthLevel);
                 }
                 this.setWaterLevel(x, y, waterLevel - plantData.waterNeeded);
             }
         }
+    }    
+
+    recordGrowthHistory(x, y, day, growthLevel) {
+        const key = `${x},${y}`;
+        if (!this.growthHistory[key]) {
+            this.growthHistory[key] = [];
+        }
+        this.growthHistory[key].push({ day, level: growthLevel });
     }
 
-    /*
-    undoPlantGrowth(x, y){
+    getLastGrowthBeforeDay(x, y, day) {
+        const key = `${x},${y}`;
+        const history = this.growthHistory[key];
+        if (!history) return 0; // Default to no growth
+        // Find the last growth level before the specified day
+        for (let i = history.length - 1; i >= 0; i--) {
+            if (history[i].day < day) {
+                return history[i].level;
+            }
+        }
+        return 0; // Default to no growth if none found
+    }
+
+    undoPlantGrowth(x, y) {
+        const currentDay = my.scene.dayCount;
         const plantType = this.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
-            const growthLevel = this.getGrowthLevel(x, y);
-            if (growthLevel > 0) {
-                const sunLevel = this.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
-                const waterLevel = this.getWaterLevel(x, y);
-                if (waterLevel < this.getPlantAttributesByCode(plantType).waterNeeded){
-                    this.setWaterLevel(x, y, waterLevel + this.getPlantAttributesByCode(plantType).waterNeeded);
-                    this.setGrowthLevel(x, y, growthLevel - 1);
-                }
-                this.updatePlantSprite(x, y);
+            const lastGrowthLevel = this.getLastGrowthBeforeDay(x, y, currentDay);
+            this.setGrowthLevel(x, y, lastGrowthLevel);
+            this.updatePlantSprite(x, y);
+    
+            // Remove the most recent history entry if it's for the current day
+            const key = `${x},${y}`;
+            if (this.growthHistory[key]) {
+                this.growthHistory[key] = this.growthHistory[key].filter(entry => entry.day < currentDay);
             }
         }
     }
-*/
+    
 
     // Used for easy reverse engineering for undo
     getFakeRand(gridX, gridY, dayCount){
@@ -237,12 +264,15 @@ class GridManager {
     removePlant(x, y) {
         this.setPlantType(x, y, PlantTypes.NONE);
         this.setGrowthLevel(x, y, 0);
-
-        const spriteKey = `${x},${y}`;
-        if (this.plantSprites[spriteKey]) {
-            this.plantSprites[spriteKey].destroy();
-            delete this.plantSprites[spriteKey];
+    
+        const key = `${x},${y}`;
+        if (this.plantSprites[key]) {
+            this.plantSprites[key].destroy();
+            delete this.plantSprites[key];
         }
+    
+        // Clear growth history
+        delete this.growthHistory[key];
     }
 
     updatePlantSprite(x, y) {
