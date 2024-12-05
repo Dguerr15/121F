@@ -2,6 +2,7 @@ class Command {
     execute() { throw new Error("execute() must be implemented"); }
     undo() { throw new Error("undo() must be implemented"); }
     serialize() { throw new Error("serialize() must be implemented"); }
+    static deserialize(data) { throw new Error("deserialize() must be implemented"); }
 }
 
 class PlantCropCommand {
@@ -77,5 +78,43 @@ class RemovePlantCommand {
 
     static deserialize(gridManager, data) {
         return new RemovePlantCommand(gridManager, data.gridX, data.gridY, data.plantTypeCode, data.growthLevel);
+    }
+    
+}
+
+class AdvanceTimeCommand {
+    constructor() {
+    }
+
+    execute() {
+        // End the turn by notifying listeners
+        my.eventMan.endTurn();
+
+        // Increment day count
+        my.scene.dayCount++;
+        my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
+
+        // Check for the win condition
+        if (my.gridManager.checkWinCondition(9, 3)) {
+            this.scene.winGame();
+        }
+    }
+
+    undo () {
+
+        my.scene.dayCount--;
+        my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
+
+        my.eventMan.undoTurn();
+    }
+
+    serialize(){
+        return {
+            command: "AdvanceTimeCommand"
+        };
+    }
+
+    static deserialize(data){
+        return new AdvanceTimeCommand();
     }
 }

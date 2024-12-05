@@ -3,6 +3,8 @@ class EventManager {
         this.scene = scene;
 
         this.endTurnListeners = [];
+        this.undoTurnListeners = [];
+
         this.customListeners = {};
     }
 
@@ -13,13 +15,6 @@ class EventManager {
             throw new Error('Listener must be a function');
         }
     }
-
-    emit(event, data) {
-        if (this.customListeners[event]) {
-            this.customListeners[event].forEach(listener => listener(data));
-        }
-    }
-
     removeTurnListener(listener) {
         this.endTurnListeners = this.endTurnListeners.filter(l => l !== listener);
     }
@@ -28,6 +23,26 @@ class EventManager {
         this.endTurnListeners.forEach(listener => listener());
     }
 
+    addUndoListener(listener){
+        if (typeof listener === 'function') {
+            this.undoTurnListeners.push(listener);
+        } else {
+            throw new Error('Listener must be a function');
+        }
+    }
+    removeUndoListener(listener){
+        this.undoTurnListeners = this.undoTurnListeners.filter(l => l !== listener);
+    }
+    undoTurn() {
+        this.undoTurnListeners.forEach(listener => listener());
+    }
+
+    // deprecated? unused?
+    emit(event, data) {
+        if (this.customListeners[event]) {
+            this.customListeners[event].forEach(listener => listener(data));
+        }
+    }
 
     //game saving stuff
     saveGame(saveSlotName) {
@@ -78,11 +93,5 @@ class EventManager {
 
         console.log(`Game loaded from slot ${saveSlotName}`);
         return true;
-    }
-
-
-    // placeholder for f1
-    undoTurn() {
-
     }
 }

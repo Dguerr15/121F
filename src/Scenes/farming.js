@@ -292,10 +292,12 @@ class farming extends Phaser.Scene {
     // Advance time in the game with the Spacebar.
     advanceTime() {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-            this.dayCount++;
-            my.text.dayCount.setText(`Day: ${this.dayCount}`);
+            const command = new AdvanceTimeCommand(my.gridManager);
+            my.commandMan.executeCommand(command);
+            // this.dayCount++;
+            // my.text.dayCount.setText(`Day: ${this.dayCount}`);
 
-            my.eventMan.endTurn();
+            // my.eventMan.endTurn();
 
             if (my.gridManager.checkWinCondition(9, 3)) {
                 this.winGame();

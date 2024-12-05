@@ -48,6 +48,9 @@ class CommandManager {
                 case "RemovePlantCommand":
                     command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
                     break;
+                case "AdvanceTimeCommand":
+                    command = AdvanceTimeCommand.deserialize(this.gridManager, cmdData);
+                    break;
                 // Add more cases for other command types if necessary
                 default:
                     throw new Error(`Unknown command type: ${cmdData.command}`);
@@ -65,6 +68,9 @@ class CommandManager {
                     break;
                 case "RemovePlantCommand":
                     command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
+                    break;
+                case "AdvanceTimeCommand":
+                    command = AdvanceTimeCommand.deserialize(this.gridManager, cmdData);
                     break;
                 // Add more cases for other command types if necessary
                 default:
