@@ -97,7 +97,7 @@ class AdvanceTimeCommand {
 
         // Check for the win condition
         if (my.gridManager.checkWinCondition(9, 3)) {
-            this.scene.winGame();
+            my.scene.winGame();
         }
     }
 

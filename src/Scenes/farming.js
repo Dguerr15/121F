@@ -332,8 +332,6 @@ class farming extends Phaser.Scene {
         }
     }
 
-
-
     // Handle winning the game
     winGame() {
         this.input.keyboard.enabled = false;

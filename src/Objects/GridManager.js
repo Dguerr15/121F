@@ -165,6 +165,7 @@ class GridManager {
         }
     }
 
+    /*
     undoPlantGrowth(x, y){
         const plantType = this.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
@@ -180,6 +181,7 @@ class GridManager {
             }
         }
     }
+*/
 
     // Used for easy reverse engineering for undo
     getFakeRand(gridX, gridY, dayCount){
