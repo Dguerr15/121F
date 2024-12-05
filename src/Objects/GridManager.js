@@ -166,25 +166,25 @@ class GridManager {
     }
 
     undoPlantGrowth(x, y){
-        // const plantType = this.getPlantType(x, y);
-        // if (plantType !== PlantTypes.NONE) {
-        //     const growthLevel = this.getGrowthLevel(x, y);
-        //     if (growthLevel > 0) {
-        //         const sunLevel = this.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_SUN_MAX;
-        //         const waterLevel = this.getWaterLevel(x, y);
-        //         const plantData = this.getPlantAttributesByCode(plantType);
+        const plantType = this.getPlantType(x, y);
+        if (plantType !== PlantTypes.NONE) {
+            const growthLevel = this.getGrowthLevel(x, y);
+            if (growthLevel > 0) {
+                const sunLevel = this.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_SUN_MAX;
+                const waterLevel = this.getWaterLevel(x, y);
+                const plantData = this.getPlantAttributesByCode(plantType);
     
-        //         // Check if the plant grew on the previous turn
-        //         if (sunLevel >= plantData.sunNeeded && 
-        //             waterLevel + plantData.waterNeeded <= MAX_WATER_CAPACITY) {
+                // Check if the plant grew on the previous turn
+                if (sunLevel >= plantData.sunNeeded && 
+                    waterLevel + plantData.waterNeeded <= MAX_WATER_CAPACITY) {
                     
-        //             // Reverse the growth
-        //             this.setGrowthLevel(x, y, growthLevel - 1);
-        //             this.setWaterLevel(x, y, waterLevel + plantData.waterNeeded); // Restore water
-        //             this.updatePlantSprite(x, y); // Update the sprite to reflect growth decrement
-        //         }
-        //     }
-        // }
+                    // Reverse the growth
+                    this.setGrowthLevel(x, y, growthLevel - 1);
+                    this.setWaterLevel(x, y, waterLevel + plantData.waterNeeded); // Restore water
+                    this.updatePlantSprite(x, y); // Update the sprite to reflect growth decrement
+                }
+            }
+        }
     }
 
     // Used for easy reverse engineering for undo

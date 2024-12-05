@@ -82,6 +82,7 @@ class EventManager {
         // restore inv and day ct
         this.scene.inventory = saveData.inventory;
         this.scene.dayCount = saveData.dayCount;
+        my.inventory = saveData.inventory;
 
         // update text and ui
         this.scene.updateInventory();

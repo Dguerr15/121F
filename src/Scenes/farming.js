@@ -84,12 +84,12 @@ class farming extends Phaser.Scene {
         // Set up input controls
         this.setupInput();
 
-        this.time.addEvent({
-            delay: 5000, // 5 seconds
-            callback: this.autoSavePrompt,
-            callbackScope: this,
-            loop: true
-        });
+        // this.time.addEvent({
+        //     delay: 5000, // 5 seconds
+        //     callback: this.autoSavePrompt,
+        //     callbackScope: this,
+        //     loop: true
+        // });
 
         this.promptContinue();
     }

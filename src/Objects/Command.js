@@ -19,6 +19,7 @@ class PlantCropCommand {
     }
 
     undo() {
+        console.log ("undoing plant crop command: ", this.plantName);
         my.inventory[this.plantName]++;
         this.gridManager.removePlant(this.gridX, this.gridY); // Reverse by removing the crop
     }
@@ -102,10 +103,11 @@ class AdvanceTimeCommand {
 
     undo () {
 
+        my.eventMan.undoTurn();
+
         my.scene.dayCount--;
         my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
 
-        my.eventMan.undoTurn();
     }
 
     serialize(){
