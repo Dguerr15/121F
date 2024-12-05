@@ -127,14 +127,6 @@ class GridManager {
         this.setWaterLevel(x, y, Math.max(currentWater - additionalWater, 0));
     }
 
-    updateAllSunLevel(){
-        for (let x = 0; x < this.gridWidth; x++) {
-            for (let y = 0; y < this.gridHeight; y++) {
-                this.updateSunLevel(x, y);
-            }
-        }
-    }
-
     updateSunLevel(x, y) {
         // console.log ("updating sun level, fake rand: " + this.getFakeRand(x, y, my.scene.dayCount));
         const sun = this.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
