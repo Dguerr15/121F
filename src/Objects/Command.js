@@ -108,6 +108,8 @@ class AdvanceTimeCommand {
         my.scene.dayCount--;
         my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
 
+        
+
     }
 
     serialize(){
