@@ -30,9 +30,11 @@ Same as last week.
 
 Same as last week.
 
-[F1.a] The important state of your game's grid must be backed by a single contiguous byte array in AoS or SoA format. If your game stores the grid state in multiple format, the byte array format must be the primary format (i.e. other formats are decoded from it as needed).
+[F1.a] The important state of your game's grid must be backed by a single contiguous byte array in AoS or SoA format. If your game stores the grid state in multiple format, the byte array format must be the primary format (i.e. other formats are decoded from it as needed). Each command, such as PlantCropCommand or RemovePlantCommand, is stored as an individual object with all its related properties (like gridX, gridY, plantName) bundled together within the object. These command objects are then collected in arrays, such as history or redoStack in the CommandManager, where each entry is a fully-formed command object.
 
-In our farming game, we satisfy the requirement by backing the grid state with a single contiguous array in an Array of Structures (AoS) format. Each grid cell is represented as an object containing the relevant data for the plant type and growth stage. This array is the primary format for managing the grid state, and all other derived formats, such as visual representations and plant behaviors, are decoded from this central structure as needed, ensuring consistency and efficient state management across the game.
+
+
+We backed the grid state with a single contiguous array in an AoS format. Each grid cell is represented as an object containing the relevant data for the plant type and growth stage. This array is the primary format for managing the grid state, and all other derived formats, such as visual representations and plant behaviors, are decoded from this central structure as needed. 
 
 [F1.b] The player must be able to manually save their progress in the game. This must allow them to load state and continue play another day (i.e. after quitting the game app). The player must be able to manage multiple save files/slots.
 
@@ -40,9 +42,11 @@ We satisfy the requirement for manual saving by using the localStorage API to al
 
 [F1.c] The game must implement an implicit auto-save system to support recovery from unexpected quits. (For example, when the game is launched, if an auto-save entry is present, the game might ask the player "do you want to continue where you left off?" The auto-save entry might or might not be visible among the list of manual save entries available for the player to load as part of F1.b.)
 
-We satisfy the requirement for an implicit auto-save system by periodically saving the game state to saveSlot3. This auto-save process is triggered every 5 seconds using the autoSavePrompt method, which automatically saves the player's current progress (including inventory, grid state, and day count) to the specified slot. When the game is launched, the player is prompted with the option to continue from the auto-save entry, ensuring that they can recover their progress after an unexpected quit. This feature works alongside the manual save system, allowing the player to manage multiple save files, including the auto-save slot.
+We satisfy the requirement for an implicit auto-save system by periodically saving the game state to saveSlot3. This auto-save process is triggered every 5 seconds using the autoSavePrompt method, which automatically saves the player's current progress (including inventory, grid state, and day count) to the specified slot. When the game is launched, the player is prompted with the option to continue from the auto-save entry, ensuring that they can recover their progress after an unexpected quit. This feature works alongside the manual save system, allowing the player to manage multiple save files, including the auto-save slot. The player will only be prompted to continue off the last auto-save if there is an auto-save slot present.
 
 [F1.d] The player must be able to undo every major choice (all the way back to the start of play), even from a saved game. They should be able to redo (undo of undo operations) multiple times.
+
+We used the Command Pattern to enable undo and redo functionality for all major player actions, such as planting crops, removing plants, and advancing time. Each action is encapsulated in a command class (PlantCropCommand, RemovePlantCommand, AdvanceTimeCommand) that implements execute, undo, and serialize methods, ensuring reversible and persistent operations. A CommandManager tracks a history stack for undo and a redo stack, allowing players to step backward or forward through their actions. 
 
 ## Reflection
 
