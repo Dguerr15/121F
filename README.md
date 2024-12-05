@@ -1,3 +1,57 @@
+# Devlog F0 Software Requirement Satisfaction 12/04
+
+## How we satisfied the software requirements
+
+[F0.a] You control a character moving over a 2D grid.
+
+Same as last week.
+
+[F0.b] You advance time manually in the turn-based simulation.
+
+Same as last week.
+
+[F0.c] You can reap or sow plants on grid cells only when you are near them.
+
+Same as last week.
+
+[F0.d] Grid cells have sun and water levels. The incoming sun and water for each cell is somehow randomly generated each turn. Sun energy cannot be stored in a cell (it is used immediately or lost) while water moisture can be slowly accumulated over several turns.
+
+Same as last week.
+
+[F0.e] Each plant on the grid has a distinct type (e.g. one of 3 species) and a growth level (e.g. “level 1”, “level 2”, “level 3”).
+
+Same as last week.
+
+[F0.f] Simple spatial rules govern plant growth based on sun, water, and nearby plants (growth is unlocked by satisfying conditions).
+
+Same as last week.
+
+[F0.g] A play scenario is completed when some condition is satisfied (e.g. at least X plants at growth level Y or above).
+
+Same as last week.
+
+[F1.a] The important state of your game's grid must be backed by a single contiguous byte array in AoS or SoA format. If your game stores the grid state in multiple format, the byte array format must be the primary format (i.e. other formats are decoded from it as needed).
+
+In our farming game, we satisfy the requirement by backing the grid state with a single contiguous array in an Array of Structures (AoS) format. Each grid cell is represented as an object containing the relevant data for the plant type and growth stage. This array is the primary format for managing the grid state, and all other derived formats, such as visual representations and plant behaviors, are decoded from this central structure as needed, ensuring consistency and efficient state management across the game.
+
+[F1.b] The player must be able to manually save their progress in the game. This must allow them to load state and continue play another day (i.e. after quitting the game app). The player must be able to manage multiple save files/slots.
+
+We satisfy the requirement for manual saving by using the localStorage API to allow players to save their progress in multiple slots. The player can save their progress by pressing the 'K' key, which triggers a prompt for selecting one of the available save slots (saveSlot1, saveSlot2, or saveSlot3). The game state, including inventory, grid, and day count, is stored in the chosen slot, and players can load their progress from a specific slot using the 'L' key. This enables the player to resume their game from the point they left off, even after quitting and restarting the game.
+
+[F1.c] The game must implement an implicit auto-save system to support recovery from unexpected quits. (For example, when the game is launched, if an auto-save entry is present, the game might ask the player "do you want to continue where you left off?" The auto-save entry might or might not be visible among the list of manual save entries available for the player to load as part of F1.b.)
+
+We satisfy the requirement for an implicit auto-save system by periodically saving the game state to saveSlot3. This auto-save process is triggered every 5 seconds using the autoSavePrompt method, which automatically saves the player's current progress (including inventory, grid state, and day count) to the specified slot. When the game is launched, the player is prompted with the option to continue from the auto-save entry, ensuring that they can recover their progress after an unexpected quit. This feature works alongside the manual save system, allowing the player to manage multiple save files, including the auto-save slot.
+
+[F1.d] The player must be able to undo every major choice (all the way back to the start of play), even from a saved game. They should be able to redo (undo of undo operations) multiple times.
+
+## Reflection
+
+Looking back on how we achieved the new F1 requirements, our team’s plan evolved as we considered the complexity of managing actions in the game. Initially, we used a direct approach to handle actions like planting and advancing time, but this made it difficult to implement robust undo functionality. We switched to the command pattern to address this, as it allowed us to encapsulate each action as a command object, making it easier to manage the history of actions and reverse them when needed. This change also gave us more flexibility in handling future game mechanics and ensuring the game's state could be easily modified without disrupting other systems. Ultimately, the command pattern improved the game's scalability and feedback mechanisms, providing a more robust foundation for implementing undo/redo features and evolving our game design.
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 # Devlog F0 Software Requirement Satisfaction 11/27
 
 ## How we satisfied the software requirements
@@ -33,6 +87,9 @@ The win condition is checked in checkWinCondition(), which evaluates whether the
 ## Reflection
 
 Our team's approach has evolved from an early focus on getting basic functionality working to a more structured design that considers long-term scalability, maintainability, and the requirements for future features. While the initial implementation had several challenges, including random resource generation and getting all of the plants to grow correctly, the team’s reflection and changes to tools, materials, and roles helped address those issues. These adjustments also set the foundation for future development, ensuring that the game logic could be expanded and refined as needed. 
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 # Devlog Entry - 11/14
