@@ -32,7 +32,7 @@ Same as last week.
 
 [F1.a] The important state of your game's grid must be backed by a single contiguous byte array in AoS or SoA format. If your game stores the grid state in multiple format, the byte array format must be the primary format (i.e. other formats are decoded from it as needed). Each command, such as PlantCropCommand or RemovePlantCommand, is stored as an individual object with all its related properties (like gridX, gridY, plantName) bundled together within the object. These command objects are then collected in arrays, such as history or redoStack in the CommandManager, where each entry is a fully-formed command object.
 
-
+![diagram](https://github.com/user-attachments/assets/dede9a6c-8a4d-45cd-9c5a-c7276a335e3b)
 
 We backed the grid state with a single contiguous array in an AoS format. Each grid cell is represented as an object containing the relevant data for the plant type and growth stage. This array is the primary format for managing the grid state, and all other derived formats, such as visual representations and plant behaviors, are decoded from this central structure as needed. 
 
