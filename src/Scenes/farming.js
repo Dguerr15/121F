@@ -254,7 +254,7 @@ class farming extends Phaser.Scene {
 
             if (plantTypeCode !== PlantTypes.NONE) {
                 // Make plant command.
-                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel);
+                const command = new RemovePlantCommand(gridX, gridY, plantTypeCode, growthLevel);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
 
@@ -273,7 +273,7 @@ class farming extends Phaser.Scene {
 
             if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
                 // Make plant command
-                const command = new PlantCropCommand(my.gridManager, gridX, gridY, this.selectedPlant);
+                const command = new PlantCropCommand(gridX, gridY, this.selectedPlant);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
                 // my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
@@ -292,7 +292,7 @@ class farming extends Phaser.Scene {
     // Advance time in the game with the Spacebar.
     advanceTime() {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-            const command = new AdvanceTimeCommand(my.gridManager);
+            const command = new AdvanceTimeCommand();
             my.commandMan.executeCommand(command);
             // this.dayCount++;
             // my.text.dayCount.setText(`Day: ${this.dayCount}`);
