@@ -1,0 +1,21 @@
+# Scenario File: scenario1.toml
+[scenario]
+name = "Farmer's First Day"
+starting_day = 1
+victory_condition_amount = 9
+victory_condition_level = 3
+
+# Starting conditions for crops
+[crops]
+carrots = 5
+roses = 5
+corns = 5
+
+# Weather configuration
+[weather]
+RAND_SUN_MIN = 0
+RAND_SUN_MAX = 4
+RAND_WATER_MIN = 0
+RAND_WATER_MAX = 2
+MAX_WATER_CAPACITY = 10;
+
