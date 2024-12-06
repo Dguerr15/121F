@@ -14,7 +14,7 @@ corns = 5
 # Weather configuration
 [weather]
 RAND_SUN_MIN = 0
-RAND_SUN_MAX = 4
+RAND_SUN_MAX = 5
 RAND_WATER_MIN = 0
 RAND_WATER_MAX = 2
 MAX_WATER_CAPACITY = 10;
