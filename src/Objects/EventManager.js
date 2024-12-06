@@ -1,49 +1,7 @@
 class EventManager {
     constructor(scene) {
         this.scene = scene;
-
-        // this.endTurnListeners = [];
-        // this.undoTurnListeners = [];
-
-        // this.customListeners = {};
     }
-
-    // addTurnListener(listener) {
-    //     if (typeof listener === 'function') {
-    //         this.endTurnListeners.push(listener);
-    //     } else {
-    //         throw new Error('Listener must be a function');
-    //     }
-    // }
-    // removeTurnListener(listener) {
-    //     this.endTurnListeners = this.endTurnListeners.filter(l => l !== listener);
-    // }
-
-    // endTurn() {
-    //     this.endTurnListeners.forEach(listener => listener());
-    // }
-
-    // addUndoListener(listener){
-    //     if (typeof listener === 'function') {
-    //         this.undoTurnListeners.push(listener);
-    //     } else {
-    //         throw new Error('Listener must be a function');
-    //     }
-    // }
-    // removeUndoListener(listener){
-    //     this.undoTurnListeners = this.undoTurnListeners.filter(l => l !== listener);
-    // }
-    // undoTurn() {
-    //     this.undoTurnListeners.forEach(listener => listener());
-    // }
-
-    // // deprecated? unused?
-    // emit(event, data) {
-    //     if (this.customListeners[event]) {
-    //         this.customListeners[event].forEach(listener => listener(data));
-    //     }
-    // }
-
     //game saving stuff
     saveGame(saveSlotName) {
         console.log("saving game");

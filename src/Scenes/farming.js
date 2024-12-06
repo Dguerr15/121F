@@ -61,6 +61,9 @@ class farming extends Phaser.Scene {
         const rows = Math.floor(game.config.height / this.cellSize);
         my.gridManager = new GridManager(cols, rows, this.cellSize);
         my.gridManager.initializeGrid(this);
+        
+        // Initialize command manager.
+        my.commandMan = new CommandManager();
 
         // Add a reference to inventory to the global context
         my.inventory = this.inventory;
@@ -68,8 +71,6 @@ class farming extends Phaser.Scene {
         // Add a reference to the scene to the global context
         my.scene = this;
 
-        // Initialize command manager.
-        my.commandMan = new CommandManager(my.gridManager);
 
         // Create ground and player
         this.createGround();
@@ -258,10 +259,7 @@ class farming extends Phaser.Scene {
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
 
-                // const plantType = my.gridManager.getPlantTypeName(plantTypeCode);
-                // this.inventory[plantType]++;
                 this.updateInventory();
-                // my.gridManager.removePlant(gridX, gridY);
             }
         }
     }
@@ -276,8 +274,6 @@ class farming extends Phaser.Scene {
                 const command = new PlantCropCommand(gridX, gridY, this.selectedPlant);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
-                // my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
-                // this.inventory[this.selectedPlant]--;
                 
                 this.updateInventory();
                 my.text.message.setText('');

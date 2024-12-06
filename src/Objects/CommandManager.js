@@ -1,6 +1,5 @@
 class CommandManager {
-    constructor(gridManager) {
-        this.gridManager = gridManager; // The gridManager to manipulate
+    constructor() {
         this.history = [];
         this.redoStack = [];
     }

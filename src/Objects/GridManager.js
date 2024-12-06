@@ -41,9 +41,6 @@ class GridManager {
                 this.setGrowthLevel(x, y, 0);
             }
         }
-
-        // my.eventMan.addTurnListener(this.endOfTurnUpdate.bind(this, scene));
-        // my.eventMan.addUndoListener(this.undoTurnUpdate.bind(this, scene));
     }
 
     // Accessor methods
@@ -82,88 +79,6 @@ class GridManager {
     setGrowthLevel(x, y, value) {
         this.gridDataView.setUint8(this.getCellOffset(x, y) + 3, value);
     }
-
-    // // End of turn updates. performed pre increment of daycount.
-    // endOfTurnUpdate(scene) {
-    //     for (let x = 0; x < this.gridWidth; x++) {
-    //         for (let y = 0; y < this.gridHeight; y++) {
-    //             this.updateResources(x, y);
-    //             this.updatePlantGrowth(x, y);
-    //             this.drawCellInfo(scene, x, y);
-    //         }
-    //     }
-    // }
-
-    // // Undo turn updates. performed post decrement of daycount.
-    // undoTurnUpdate(scene) {
-    //     for (let x = 0; x < this.gridWidth; x++) {
-    //         for (let y = 0; y < this.gridHeight; y++) {
-    //             this.undoResources(x, y);
-    //             this.undoPlantGrowth(x, y); // not implemented yet.
-    //             this.drawCellInfo(scene, x, y);
-    //         }
-    //     }
-    // }
-
-    // updateResources(x, y) {
-    //     this.updateWaterLevel(x, y);
-    //     this.updateSunLevel(x, y);
-    // }
-
-    // undoResources(x, y){
-    //     this.undoWaterLevel(x, y);
-    //     this.undoSunLevel(x, y); // sun level is not accumulated, can reuse update function.
-    // }
-
-    // updateWaterLevel(x, y) {
-    //     const currentWater = this.getWaterLevel(x, y);
-    //     const additionalWater = this.getFakeRand(x, y, my.scene.dayCount) % RAND_WATER_MAX;
-    //     this.setWaterLevel(x, y, Math.min(currentWater + additionalWater, MAX_WATER_CAPACITY));
-    // }
-
-    // undoWaterLevel(x, y){
-    //     const currentWater = this.getWaterLevel(x, y);
-    //     const additionalWater = this.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_WATER_MAX;
-    //     this.setWaterLevel(x, y, Math.max(currentWater - additionalWater, 0));
-    // }
-
-    // updateAllSunLevel(){
-    //     for (let x = 0; x < this.gridWidth; x++) {
-    //         for (let y = 0; y < this.gridHeight; y++) {
-    //             this.updateSunLevel(x, y);
-    //         }
-    //     }
-    // }
-
-    // updateSunLevel(x, y) {
-    //     // console.log ("updating sun level, fake rand: " + this.getFakeRand(x, y, my.scene.dayCount));
-    //     const sun = this.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
-    //     this.setSunLevel(x, y, sun);
-    // }
-
-    // undoSunLevel(x, y){
-    //     // console.log ("undoing sun level, fake rand: " + this.getFakeRand(x, y, my.scene.dayCount));
-    //     const sun = this.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_SUN_MAX;
-    //     this.setSunLevel(x, y, sun);
-    // }
-
-    // updatePlantGrowth(x, y) {
-    //     const plantType = this.getPlantType(x, y);
-    //     if (plantType !== PlantTypes.NONE) {
-    //         const growthLevel = this.getGrowthLevel(x, y);
-    //         const sunLevel = this.getSunLevel(x, y);
-    //         const waterLevel = this.getWaterLevel(x, y);
-    //         const plantData = this.getPlantAttributesByCode(plantType);
-
-    //         if (sunLevel >= plantData.sunNeeded && waterLevel >= plantData.waterNeeded) {
-    //             if (growthLevel < 3) {
-    //                 this.setGrowthLevel(x, y, growthLevel + 1);
-    //                 this.updatePlantSprite(x, y);
-    //             }
-    //             this.setWaterLevel(x, y, waterLevel - plantData.waterNeeded);
-    //         }
-    //     }
-    // }
 
     // Used for easy reverse engineering for undo
     getFakeRand(gridX, gridY, dayCount){

@@ -96,7 +96,7 @@ class AdvanceTimeCommand {
 
     undo () {
         this.undoOneDay();
-        
+        // Decrement day count
         my.scene.dayCount--;
         my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
     }
