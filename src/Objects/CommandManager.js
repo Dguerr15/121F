@@ -1,6 +1,5 @@
 class CommandManager {
-    constructor(gridManager) {
-        this.gridManager = gridManager; // The gridManager to manipulate
+    constructor() {
         this.history = [];
         this.redoStack = [];
     }
@@ -43,13 +42,13 @@ class CommandManager {
             let command;
             switch (cmdData.command) {
                 case "PlantCropCommand":
-                    command = PlantCropCommand.deserialize(this.gridManager, cmdData);
+                    command = PlantCropCommand.deserialize(cmdData);
                     break;
                 case "RemovePlantCommand":
-                    command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
+                    command = RemovePlantCommand.deserialize(cmdData);
                     break;
                 case "AdvanceTimeCommand":
-                    command = AdvanceTimeCommand.deserialize(this.gridManager, cmdData);
+                    command = AdvanceTimeCommand.deserialize(cmdData);
                     break;
                 // Add more cases for other command types if necessary
                 default:
@@ -64,13 +63,13 @@ class CommandManager {
             let command;
             switch (cmdData.command) {
                 case "PlantCropCommand":
-                    command = PlantCropCommand.deserialize(this.gridManager, cmdData);
+                    command = PlantCropCommand.deserialize(cmdData);
                     break;
                 case "RemovePlantCommand":
-                    command = RemovePlantCommand.deserialize(this.gridManager, cmdData);
+                    command = RemovePlantCommand.deserialize(cmdData);
                     break;
                 case "AdvanceTimeCommand":
-                    command = AdvanceTimeCommand.deserialize(this.gridManager, cmdData);
+                    command = AdvanceTimeCommand.deserialize(cmdData);
                     break;
                 // Add more cases for other command types if necessary
                 default:

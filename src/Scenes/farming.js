@@ -61,6 +61,9 @@ class farming extends Phaser.Scene {
         const rows = Math.floor(game.config.height / this.cellSize);
         my.gridManager = new GridManager(cols, rows, this.cellSize);
         my.gridManager.initializeGrid(this);
+        
+        // Initialize command manager.
+        my.commandMan = new CommandManager();
 
         // Add a reference to inventory to the global context
         my.inventory = this.inventory;
@@ -68,8 +71,6 @@ class farming extends Phaser.Scene {
         // Add a reference to the scene to the global context
         my.scene = this;
 
-        // Initialize command manager.
-        my.commandMan = new CommandManager(my.gridManager);
 
         // Create ground and player
         this.createGround();
@@ -84,12 +85,12 @@ class farming extends Phaser.Scene {
         // Set up input controls
         this.setupInput();
 
-        // this.time.addEvent({
-        //     delay: 5000, // 5 seconds
-        //     callback: this.autoSavePrompt,
-        //     callbackScope: this,
-        //     loop: true
-        // });
+        this.time.addEvent({
+            delay: 5000, // 5 seconds
+            callback: this.autoSavePrompt,
+            callbackScope: this,
+            loop: true
+        });
 
         this.promptContinue();
     }
@@ -167,7 +168,7 @@ class farming extends Phaser.Scene {
 
         // Save/load keys
         this.input.keyboard.on('keydown-K', () => {
-            const slot = prompt("Enter save slot number (1-2):");
+            const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.saveGame(`saveSlot${slot}`);
             } else {
@@ -176,7 +177,7 @@ class farming extends Phaser.Scene {
         })
 
         this.input.keyboard.on('keydown-L', () => {
-            const slot = prompt("Enter save slot number (1-2):");
+            const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.loadGame(`saveSlot${slot}`);
                 this.updateInventory();
@@ -254,14 +255,11 @@ class farming extends Phaser.Scene {
 
             if (plantTypeCode !== PlantTypes.NONE) {
                 // Make plant command.
-                const command = new RemovePlantCommand(my.gridManager, gridX, gridY, plantTypeCode, growthLevel);
+                const command = new RemovePlantCommand(gridX, gridY, plantTypeCode, growthLevel);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
 
-                // const plantType = my.gridManager.getPlantTypeName(plantTypeCode);
-                // this.inventory[plantType]++;
                 this.updateInventory();
-                // my.gridManager.removePlant(gridX, gridY);
             }
         }
     }
@@ -273,11 +271,9 @@ class farming extends Phaser.Scene {
 
             if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)) {
                 // Make plant command
-                const command = new PlantCropCommand(my.gridManager, gridX, gridY, this.selectedPlant);
+                const command = new PlantCropCommand(gridX, gridY, this.selectedPlant);
                 // Execute with CommandManager (also pushes to history stack).
                 my.commandMan.executeCommand(command);
-                // my.gridManager.plantCrop(gridX, gridY, this.selectedPlant, this);
-                // this.inventory[this.selectedPlant]--;
                 
                 this.updateInventory();
                 my.text.message.setText('');
@@ -292,13 +288,8 @@ class farming extends Phaser.Scene {
     // Advance time in the game with the Spacebar.
     advanceTime() {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
-            const command = new AdvanceTimeCommand(my.gridManager);
+            const command = new AdvanceTimeCommand();
             my.commandMan.executeCommand(command);
-            // this.dayCount++;
-            // my.text.dayCount.setText(`Day: ${this.dayCount}`);
-
-            // my.eventMan.endTurn();
-
             if (my.gridManager.checkWinCondition(9, 3)) {
                 this.winGame();
             }
