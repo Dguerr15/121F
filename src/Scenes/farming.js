@@ -1,3 +1,7 @@
+// global variables
+let victory_condition_amount = 9
+let victory_condition_level = 3
+
 class farming extends Phaser.Scene {
     constructor() {
         super("farming");
@@ -15,6 +19,10 @@ class farming extends Phaser.Scene {
             corns: 5
         };
         this.cellSize = 70;
+
+        // Initialize the ScenarioManager
+        this.scenarioManager = new ScenarioManager(this);
+        this.scenarioManager.loadScenario('scenario1');  // Load the TOML scenario file
     }
 
     // Preload assets
@@ -290,7 +298,7 @@ class farming extends Phaser.Scene {
         if (Phaser.Input.Keyboard.JustDown(this.spacebar)) {
             const command = new AdvanceTimeCommand();
             my.commandMan.executeCommand(command);
-            if (my.gridManager.checkWinCondition(9, 3)) {
+            if (my.gridManager.checkWinCondition(victory_condition_amount, victory_condition_level)) {
                 this.winGame();
             }
         }

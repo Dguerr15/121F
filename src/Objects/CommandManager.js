@@ -27,12 +27,10 @@ class CommandManager {
     }
 
     serializeHistory() {
-        // Chat code.
         return this.history.map(cmd => cmd.serialize());
     }
 
     serializeRedoStack() {
-        // Chat code.
         return this.redoStack.map(cmd => cmd.serialize());
     }
 
