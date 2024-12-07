@@ -29,6 +29,28 @@ class ScenarioManager {
   }
 */
 
+  async loadScenario(fileName) {
+    try {
+      const filePath = `./src/Scenarios/${fileName}.json`;
+      const response = await fetch(filePath);
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch scenario file: ${response.statusText}`);
+      }
+
+      const jsonData = await response.json();
+
+      // Assign the loaded JSON data to scenarioData
+      this.scenarioData = jsonData;
+
+      // Apply the loaded scenario data
+      this.applyScenario();
+    } catch (error) {
+      console.error('Error loading or parsing scenario:', error);
+    }
+  }
+
+
   // Apply the loaded scenario data to the game
   applyScenario() {
     if (this.scenarioData.scenario) {
