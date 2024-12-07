@@ -8,7 +8,7 @@ class ScenarioManager {
   // Load a scenario from a TOML file
   async loadScenario(fileName) {
     try {
-      const filePath = `./src/Scenarios/${fileName}.toml`;
+      const filePath = `./src/Scenarios/${fileName}.json`;
       const response = await fetch(filePath);
 
       if (!response.ok) {
@@ -18,7 +18,7 @@ class ScenarioManager {
       const tomlText = await response.text();
 
       // Parse the TOML text
-      const toml = require('@iarna/toml');
+      const toml = require('toml');
       this.scenarioData = toml.parse(tomlText);
 
       // Apply the parsed scenario data

@@ -1,0 +1,19 @@
+{
+  "crops": {
+    "carrots": 6,
+    "corns": 6,
+    "roses": 6
+  },
+  "scenario": {
+    "starting_day": 2,
+    "victory_condition_amount": 9,
+    "victory_condition_level": 3
+  },
+  "weather": {
+    "MAX_WATER_CAPACITY": 10,
+    "RAND_SUN_MAX": 5,
+    "RAND_SUN_MIN": 0,
+    "RAND_WATER_MAX": 2,
+    "RAND_WATER_MIN": 0
+  }
+}
