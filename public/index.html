@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farming Game</title>
+    <!-- <script src="./lib/phaser.js"></script>
+    <script src="./src/Scenes/farming.js"></script>
+    <script src="./src/main.js"></script>
+    <script src="./src/Objects/Plant.js"></script>
+    <script src="./src/Objects/Cell.js"></script>
+    <script src="./src/Objects/EventManager.js"></script>
+    <script src="./src/Objects/GridManager.js"></script>
+    <script src="./src/Objects/Command.js"></script>
+    <script src="./src/Objects/CommandManager.js"></script>
+    <script src="./src/Objects/ScenarioManager.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
+
+    <style>
+        /* Add styles for layout and design */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+        #game-container {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+            margin: 20px;
+        }
+        #phaser-game {
+            flex-grow: 1;
+            max-width: 1300px;
+            margin-right: 20px;
+        }
+        #controls {
+            width: 250px;
+            padding: 10px;
+            background-color: #222;
+            color: #fff;
+            border-radius: 8px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        #controls h3 {
+            margin: 0;
+            font-size: 1.4em;
+            text-align: center;
+            text-transform: uppercase;
+        }
+        #controls ul {
+            padding: 0;
+            list-style-type: none;
+        }
+        #controls li {
+            margin: 8px 0;
+            font-size: 1em;
+        }
+        #controls strong {
+            color: #ffa500;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Phaser game container -->
+        <div id="phaser-game"></div>
+        <!-- Add controls section -->
+        <div id="controls">
+            <h3>Controls</h3>
+            <ul>
+                <li><strong>W/A/S/D</strong>: Move</li>
+                <li><strong>E</strong>: Pick up</li>
+                <li><strong>Q</strong>: Plant</li>
+                <li><strong>1</strong>: Select Carrots</li>
+                <li><strong>2</strong>: Select Corn</li>
+                <li><strong>3</strong>: Select Roses</li>
+                <li><strong>SPACE</strong>: Advance Time</li>
+                <li><strong>K</strong>: Save Game</li>
+                <li><strong>L</strong>: Load Game</li>
+            </ul>
+        </div>
+    </div>
+    <!-- Load bundled code-->
+    <script src="../dist/bundle.js"></script>
+</body>
+</html>
