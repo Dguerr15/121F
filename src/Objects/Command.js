@@ -192,9 +192,6 @@ class AdvanceTimeCommand {
         if (plantType !== PlantTypes.NONE) {
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
             const plantData = my.gridManager.getPlantAttributesByCode(plantType);
-
-            console.log ("undoing plant growth: ", plantType, growthLevel);
-            console.log ("undone plant growth will be: ", growthLevel - 1);
             if (growthLevel > 0) {
                 my.gridManager.setGrowthLevel(x, y, growthLevel - 1);
                 my.gridManager.setWaterLevel(x, y, my.gridManager.getWaterLevel(x, y) + plantData.waterNeeded);
