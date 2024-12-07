@@ -160,14 +160,6 @@ class GridManager {
     }
 
     // Helper methods
-    getPlantAttributesByCode(plantType) {
-        const plantAttributes = {
-            [PlantTypes.CARROTS]: { sunNeeded: 3, waterNeeded: 2 },
-            [PlantTypes.CORNS]: { sunNeeded: 4, waterNeeded: 3 },
-            [PlantTypes.ROSES]: { sunNeeded: 2, waterNeeded: 4 }
-        };
-        return plantAttributes[plantType];
-    }
 
     getPlantTextureKey(plantType, growthLevel) {
         const textures = {

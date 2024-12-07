@@ -5,8 +5,9 @@ class Command {
     static deserialize(data) { throw new Error("deserialize() must be implemented"); }
 }
 
-class PlantCropCommand {
+class PlantCropCommand extends Command {
     constructor(gridX, gridY, plantName) {
+        super();
         this.gridX = gridX; // X position of the crop
         this.gridY = gridY; // Y position of the crop
         this.plantName = plantName; // Type of crop to plant
@@ -34,12 +35,12 @@ class PlantCropCommand {
 
     static deserialize(data) {
         return new PlantCropCommand(data.gridX, data.gridY, data.plantName);
-
     }
 }
 
-class RemovePlantCommand {
+class RemovePlantCommand extends Command {
     constructor(gridX, gridY, plantTypeCode, growthLevel) {
+        super();
         this.gridX = gridX;
         this.gridY = gridY;
         this.plantTypeCode = plantTypeCode;
@@ -61,8 +62,6 @@ class RemovePlantCommand {
         // Update growth level
         my.gridManager.setGrowthLevel(this.gridX, this.gridY, this.growthLevel);
         my.gridManager.updatePlantSprite(this.gridX, this.gridY);
-        // update display of growth level
-
     }
 
     serialize() {
@@ -78,11 +77,11 @@ class RemovePlantCommand {
     static deserialize(data) {
         return new RemovePlantCommand(data.gridX, data.gridY, data.plantTypeCode, data.growthLevel);
     }
-    
 }
 
-class AdvanceTimeCommand {
+class AdvanceTimeCommand extends Command {
     constructor() {
+        super();
         this.growthEvents = new Map();
     }
 
@@ -125,35 +124,52 @@ class AdvanceTimeCommand {
         this.updateWaterLevel(x, y);
         this.updateSunLevel(x, y);
     }
+
     updateWaterLevel(x, y) {
         const currentWater = my.gridManager.getWaterLevel(x, y);
         const additionalWater = my.gridManager.getFakeRand(x, y, my.scene.dayCount) % RAND_WATER_MAX;
         my.gridManager.setWaterLevel(x, y, Math.min(currentWater + additionalWater, MAX_WATER_CAPACITY));
     }
+
     updateSunLevel(x, y) {
         const sun = my.gridManager.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
         my.gridManager.setSunLevel(x, y, sun);
     }
+
     updatePlantGrowth(x, y) {
         const plantType = my.gridManager.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
             const sunLevel = my.gridManager.getSunLevel(x, y);
             const waterLevel = my.gridManager.getWaterLevel(x, y);
-            const plantData = my.gridManager.getPlantAttributesByCode(plantType);
 
-            if (sunLevel >= plantData.sunNeeded && waterLevel >= plantData.waterNeeded) {
-                if (growthLevel < 3) {
-                    // Growth Event.
-                    my.gridManager.setGrowthLevel(x, y, growthLevel + 1);
-                    my.gridManager.setWaterLevel(x, y, waterLevel - plantData.waterNeeded);
-                    my.gridManager.updatePlantSprite(x, y);
-                    // Store in some kind of data structure inside the command object here:
-                    // Check that it doesn't already exist in the data structure.
-                    const eventKey = '${x},${y}';
-                    if (!this.growthEvents.has(eventKey)) {
-                        this.growthEvents.set(eventKey, {x, y});
-                    }
+            const neighbors = my.gridManager.returnAdjacentCells(x, y);
+            const growthDef = GrowthDefinitions[plantType];
+            if (!growthDef) return;
+
+            const conditions = growthDef.growthConditions;
+            const context = { 
+                sunLevel, 
+                waterLevel, 
+                neighbors, 
+                gridManager: my.gridManager 
+            };
+
+            // Check if all conditions are met
+            const canGrow = conditions.every(cond => cond.check(context));
+
+            if (canGrow && growthLevel < 3) {
+                // Growth Event.
+                my.gridManager.setGrowthLevel(x, y, growthLevel + 1);
+                // Consume resources based on DSL definition
+                const consume = growthDef.consumeResources;
+                my.gridManager.setWaterLevel(x, y, waterLevel - consume.waterNeeded);
+                my.gridManager.updatePlantSprite(x, y);
+
+                // Store growth event
+                const eventKey = `${x},${y}`;
+                if (!this.growthEvents.has(eventKey)) {
+                    this.growthEvents.set(eventKey, {x, y});
                 }
             }
         }
@@ -176,28 +192,36 @@ class AdvanceTimeCommand {
 
     undoResources(x, y){
         this.undoWaterLevel(x, y);
-        this.undoSunLevel(x, y); // sun level is not accumulated, can reuse update function.
+        this.undoSunLevel(x, y);
     }
+
     undoWaterLevel(x, y){
         const currentWater = my.gridManager.getWaterLevel(x, y);
         const additionalWater = my.gridManager.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_WATER_MAX;
         my.gridManager.setWaterLevel(x, y, Math.max(currentWater - additionalWater, 0));
     }
+
     undoSunLevel(x, y){
         const sun = my.gridManager.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_SUN_MAX;
         my.gridManager.setSunLevel(x, y, sun);
     }
+
     undoPlantGrowth(x, y){
         const plantType = my.gridManager.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
-            const plantData = my.gridManager.getPlantAttributesByCode(plantType);
-            if (growthLevel > 0) {
+            const growthDef = GrowthDefinitions[plantType];
+            if (!growthDef) return;
+
+            if (growthLevel > 1) {
+                // Revert the last growth step
                 my.gridManager.setGrowthLevel(x, y, growthLevel - 1);
-                my.gridManager.setWaterLevel(x, y, my.gridManager.getWaterLevel(x, y) + plantData.waterNeeded);
+                // Return resources consumed
+                const consume = growthDef.consumeResources;
+                const currentWater = my.gridManager.getWaterLevel(x, y);
+                my.gridManager.setWaterLevel(x, y, Math.min(currentWater + consume.waterNeeded, MAX_WATER_CAPACITY));
                 my.gridManager.updatePlantSprite(x, y);
             }
         }
-        
     }
 }

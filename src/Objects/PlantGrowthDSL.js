@@ -1,4 +1,3 @@
-
 class GrowthCondition {
     constructor(condition) {
         this.condition = condition;
@@ -29,6 +28,16 @@ class GrowthConditionBuilder {
         });
     }
 
+    static noDifferentPlantsAdjacent(requiredPlantType) {
+        return new GrowthCondition(({ neighbors, gridManager }) => {
+            // ensure no neighbours of different plant type
+            return neighbors.every(cell => {
+                const plantType = gridManager.getPlantType(cell.x, cell.y);
+                return plantType === 0 || plantType === requiredPlantType;
+            });
+        });
+    }
+
     static moderateSoil(requiredMin, requiredMax) {
         return new GrowthCondition(({ waterLevel }) => {
             return waterLevel >= requiredMin && waterLevel <= requiredMax;
@@ -46,7 +55,7 @@ class PlantGrowthDSL {
     }
 }
 
-// Define growth conditions globally
+// define growth conditions 
 const GrowthDefinitions = {
     1: PlantGrowthDSL.definePlantGrowth(
         1,
@@ -55,7 +64,10 @@ const GrowthDefinitions = {
     ),
     2: PlantGrowthDSL.definePlantGrowth(
         2,
-        [ GrowthConditionBuilder.sunAndWaterNeeded(4, 3) ],
+        [
+            GrowthConditionBuilder.sunAndWaterNeeded(4, 3),
+            GrowthConditionBuilder.noDifferentPlantsAdjacent(2)
+        ],
         { waterNeeded: 3, sunNeeded: 4 }
     ),
     3: PlantGrowthDSL.definePlantGrowth(
