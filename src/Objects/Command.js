@@ -83,7 +83,7 @@ class RemovePlantCommand {
 
 class AdvanceTimeCommand {
     constructor() {
-        this.growthEvents = [];
+        this.growthEvents = new Map();
     }
 
     execute() {
@@ -149,7 +149,11 @@ class AdvanceTimeCommand {
                     my.gridManager.setWaterLevel(x, y, waterLevel - plantData.waterNeeded);
                     my.gridManager.updatePlantSprite(x, y);
                     // Store in some kind of data structure inside the command object here:
-                    this.growthEvents.push({x, y});
+                    // Check that it doesn't already exist in the data structure.
+                    const eventKey = '${x},${y}';
+                    if (!this.growthEvents.has(eventKey)) {
+                        this.growthEvents.set(eventKey, {x, y});
+                    }
                 }
             }
         }
@@ -162,8 +166,9 @@ class AdvanceTimeCommand {
                 my.gridManager.drawCellInfo(my.scene, x, y);
             }
         }
-        for (let i = this.growthEvents.length - 1; i >= 0; i--) {
-            const {x, y} = this.growthEvents[i];
+        const eventsArray = Array.from(this.growthEvents.values());
+        for (let i = eventsArray.length - 1; i >= 0; i--) {
+            const {x, y} = eventsArray[i];
             this.undoPlantGrowth(x, y);
             my.gridManager.drawCellInfo(my.scene, x, y);
         }
@@ -188,6 +193,8 @@ class AdvanceTimeCommand {
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
             const plantData = my.gridManager.getPlantAttributesByCode(plantType);
 
+            console.log ("undoing plant growth: ", plantType, growthLevel);
+            console.log ("undone plant growth will be: ", growthLevel - 1);
             if (growthLevel > 0) {
                 my.gridManager.setGrowthLevel(x, y, growthLevel - 1);
                 my.gridManager.setWaterLevel(x, y, my.gridManager.getWaterLevel(x, y) + plantData.waterNeeded);
