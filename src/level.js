@@ -159,7 +159,7 @@ export class MyLevel extends Scene {
             const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.loadGame(`saveSlot${slot}`);
-                this.updateInventory(this.dayCount);
+                this.updateInventory();
             } else {
                 console.error("Invalid save slot.");
             }
@@ -171,13 +171,13 @@ export class MyLevel extends Scene {
             //console.log ("Z pressed"); // test
             // Undo last command
             my.commandMan.undo();
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }
         if (engine.input.keyboard.wasPressed(Keys.X)) {
             //console.log ("X pressed"); // test
             // Redo last command
             my.commandMan.redo();
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }   
     }
 
@@ -199,7 +199,7 @@ export class MyLevel extends Scene {
             const continueGame = window.confirm("Do you want to continue from where you left off?");
             if (continueGame) {
                 my.eventMan.loadGame('saveSlot3');
-                this.updateInventory(this.dayCount);
+                this.updateInventory();
                 //console.log("Game loaded from saveSlot3");
             } else {
                 //console.log("Starting a new game...");
@@ -257,7 +257,7 @@ export class MyLevel extends Scene {
             // Execute with CommandManager (also pushes to history stack).
             my.commandMan.executeCommand(command);
             
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
             // my.text.message.setText('');
         } else {
             // my.text.message.setText('Cannot plant here.');
@@ -277,7 +277,7 @@ export class MyLevel extends Scene {
             // Execute with CommandManager (also pushes to history stack).
             my.commandMan.executeCommand(command);
 
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }
     }
 
@@ -285,27 +285,27 @@ export class MyLevel extends Scene {
         if (engine.input.keyboard.wasPressed(Keys.Key1)) {
             //console.log ("ONE pressed"); // test
             this.selectPlant('carrots');
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }
         if (engine.input.keyboard.wasPressed(Keys.Key2)) {
             //console.log ("TWO pressed"); // test 
             this.selectPlant('roses');
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }
         if (engine.input.keyboard.wasPressed(Keys.Key3)) {
             //console.log ("THREE pressed"); // test
             this.selectPlant('corns');
-            this.updateInventory(this.dayCount);
+            this.updateInventory();
         }
     }
 
     selectPlant(plant){
         this.selectedPlant = plant;
         //console.log ("selected plant: ", this.selectedPlant); // test
-        this.updateInventory(this.dayCount);
+        this.updateInventory();
     }
 
-    updateInventory(dayCt){
+    updateInventory(){
         const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
         colors[this.selectedPlant] = '#aaffaa';
         for (const key in this.inventoryText) {
@@ -313,9 +313,9 @@ export class MyLevel extends Scene {
             this.inventoryText[key].text = `${key}: ${this.inventory[key]}`;
         }
 
-        console.log("day count: ", dayCt); // test
-        this.dayCount = dayCt;
-        this.dayCountText.text = `Day: ${dayCt}`;
+        // console.log("day count: ", dayCt); // test
+        // this.dayCount = dayCt;
+        // this.dayCountText.text = `Day: ${dayCt}`;
     }
 
     initUI(){

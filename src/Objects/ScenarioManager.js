@@ -34,7 +34,7 @@ export class ScenarioManager {
         console.log("scendata: ", this.scenarioData);
         const { starting_day, victory_condition_amount, victory_condition_level } = this.scenarioData.scenario;
         console.log("Scenario manager: Starting day: ", starting_day);
-        this.dayCount = starting_day || 1;
+        // this.dayCount = starting_day || 1;
         console.log("Scenario manager: Victory condition amount: ", victory_condition_amount);
         this.scene.victoryConditionAmount = victory_condition_amount || 9;
         console.log("Scenario manager: Victory condition level: ", victory_condition_level);
@@ -46,7 +46,7 @@ export class ScenarioManager {
         this.scene.inventory.roses = crops.roses;
         this.scene.inventory.corns = crops.corns;
 
-        this.scene.updateInventory(starting_day);
+        // this.scene.updateInventory(starting_day);
         /*
         // Apply weather conditions
         const weather = this.scenarioData.weather;
