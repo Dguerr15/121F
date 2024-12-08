@@ -25,7 +25,7 @@ export class PlantSprite extends Actor {
       pos: vec(150, 150),
       width: 100,
       height: 100,
-      z: 5, // Z is the draw order, higher means closer to the screen
+      z: 3, // Z is the draw order, higher means closer to the screen
             // 1 ground
             // 2 grid lines
             // 3 plants/crops

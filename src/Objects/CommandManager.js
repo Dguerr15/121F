@@ -1,3 +1,5 @@
+import { PlantCropCommand, RemovePlantCommand, AdvanceTimeCommand } from "./Command.js";
+
 export class CommandManager {
     constructor() {
         this.history = [];

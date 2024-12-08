@@ -1,3 +1,5 @@
+import { my } from "../Globals.js";
+
 export class EventManager {
     constructor(scene) {
         this.scene = scene;
@@ -8,8 +10,8 @@ export class EventManager {
         const saveData = {
             grid: my.gridManager.getGridState(),
             player: {
-                x: my.sprite.player.x,
-                y: my.sprite.player.y
+                x: my.player.pos.x,
+                y: my.player.pos.y,
             },
             inventory: this.scene.inventory,
             dayCount: this.scene.dayCount,
@@ -34,8 +36,8 @@ export class EventManager {
         my.gridManager.setGridState(saveData.grid, this.scene);
 
         // restore player state
-        my.sprite.player.x = saveData.player.x;
-        my.sprite.player.y = saveData.player.y;
+        my.player.pos.x = saveData.player.x;
+        my.player.pos.y = saveData.player.y;
 
         // restore inv and day ct
         this.scene.inventory = saveData.inventory;

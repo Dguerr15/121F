@@ -96,6 +96,45 @@ export class MyLevel extends Scene {
         this.handlePlantSelectionKeys(engine);
         this.handlePlantingKeys(engine);
         this.handleAdvanceTimeKey(engine);
+        this.handleUndoRedoKeys(engine);
+        this.handleSaveLoadKeys(engine);
+    }
+
+    handleSaveLoadKeys(engine){
+        if (engine.input.keyboard.wasPressed(Keys.K)){
+            // save
+            const slot = prompt("Enter save slot number (1-3):");
+            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+                my.eventMan.saveGame(`saveSlot${slot}`);
+            } else {
+                console.error("Invalid save slot.");
+            }
+        }
+        if (engine.input.keyboard.wasPressed(Keys.L)){
+            //load
+            const slot = prompt("Enter save slot number (1-3):");
+            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+                my.eventMan.loadGame(`saveSlot${slot}`);
+                this.updateInventory();
+            } else {
+                console.error("Invalid save slot.");
+            }
+        }
+    }
+
+    handleUndoRedoKeys(engine){
+        if (engine.input.keyboard.wasPressed(Keys.Z)) {
+            console.log ("Z pressed"); // test
+            // Undo last command
+            my.commandMan.undo();
+            this.updateInventory();
+        }
+        if (engine.input.keyboard.wasPressed(Keys.X)) {
+            console.log ("X pressed"); // test
+            // Redo last command
+            my.commandMan.redo();
+            this.updateInventory();
+        }   
     }
 
     handleAdvanceTimeKey(engine){

@@ -300,17 +300,17 @@ export class GridManager {
 
         // clear existing grid ui and text
         for (let key in this.plantSprites) {
-            this.plantSprites[key].destroy();
+            this.plantSprites[key].kill();
         }
         this.plantSprites = {};
 
         for (let key in this.waterTexts) {
-            this.waterTexts[key].destroy();
+            this.waterTexts[key].kill();
         }
         this.waterTexts = {};
 
         for (let key in this.sunTexts) {
-            this.sunTexts[key].destroy();
+            this.sunTexts[key].kill();
         }
         this.sunTexts = {};
 
@@ -333,9 +333,10 @@ export class GridManager {
                 const posX = x * this.cellSize + this.cellSize / 2;
                 const posY = y * this.cellSize + this.cellSize / 2;
 
-                const plantSprite = scene.physics.add.image(posX, posY, textureKey);
-                plantSprite.setScale(2.5);
-
+                const plantSprite = new PlantSprite();
+                plantSprite.initSprite(posX, posY, textureKey);
+                my.scene.add(plantSprite);
+                
                 this.plantSprites[`${x},${y}`] = plantSprite;
             }
 

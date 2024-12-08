@@ -1,5 +1,6 @@
 import { my } from "../Globals.js";
 import { RAND_SUN_MAX, RAND_WATER_MAX, MAX_WATER_CAPACITY, PlantTypes } from "./GridManager.js";
+import { Label } from "excalibur";
 import { GrowthDefinitions } from "./PlantGrowthDSL.js";
 
 export class Command {
@@ -94,14 +95,14 @@ export class AdvanceTimeCommand extends Command {
 
         // Increment day count
         my.scene.dayCount++;
-        my.dayCountText = `Day: ${my.scene.dayCount}`;
+        my.scene.dayCountText.text = `Day: ${my.scene.dayCount}`;
     }
 
     undo () {
         this.undoOneDay();
         // Decrement day count
         my.scene.dayCount--;
-        my.dayCountText = `Day: ${my.scene.dayCount}`;
+        my.scene.dayCountText.text = `Day: ${my.scene.dayCount}`;
     }
 
     serialize(){
@@ -170,9 +171,11 @@ export class AdvanceTimeCommand extends Command {
                 my.gridManager.setWaterLevel(x, y, waterLevel - consume.waterNeeded);
                 my.gridManager.updatePlantSprite(x, y);
 
+                console.log ("growth conditions met");
                 // Store growth event
                 const eventKey = `${x},${y}`;
                 if (!this.growthEvents.has(eventKey)) {
+                    console.log ("growth event stored at x, y: " + x + ", " + y);
                     this.growthEvents.set(eventKey, {x, y});
                 }
             }
@@ -188,6 +191,7 @@ export class AdvanceTimeCommand extends Command {
         }
         const eventsArray = Array.from(this.growthEvents.values());
         for (let i = eventsArray.length - 1; i >= 0; i--) {
+            console.log ("growth event found for undo at x, y: " + eventsArray[i].x + ", " + eventsArray[i].y);
             const {x, y} = eventsArray[i];
             this.undoPlantGrowth(x, y);
             my.gridManager.drawCellInfo(my.scene, x, y);
