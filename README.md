@@ -1,4 +1,30 @@
-# Devlog F0 Software Requirement Satisfaction 12/04
+# Devlog F2 Software Requirement Satisfaction 12/08
+
+## How we satisfied the software requirements
+
+[F0+F1]
+
+No major changes were made.
+
+[External DSL for Scenario Design]
+
+
+
+[Internal DSL for Plants and Growth Conditions]
+
+
+
+[Switch to Alternate Platform]
+
+
+
+## Reflection
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+# Devlog F1 Software Requirement Satisfaction 12/04
 
 ## How we satisfied the software requirements
 
