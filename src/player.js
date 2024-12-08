@@ -1,4 +1,4 @@
-import { Actor, vec } from "excalibur";
+import { Actor, vec, Keys } from "excalibur";
 import { Resources } from "./resources.js";
 
 // Actors are the main unit of composition you'll likely use, anything that you want to draw and move around the screen
@@ -39,7 +39,7 @@ export class Player extends Actor {
     // 2. You need excalibur to be initialized & started 
     // 3. Deferring logic to run time instead of constructor time
     // 4. Lazy instantiation
-    this.graphics.add(Resources.Sword.toSprite());
+    this.graphics.add(Resources.player.toSprite());
 
     // Actions are useful for scripting common behavior, for example patrolling enemies
     // this.actions.delay(2000);
@@ -58,21 +58,29 @@ export class Player extends Actor {
   }
 
   update(engine, delta){
-    console.log ("Update is being called");
+    let moveSpeed = 200.0;
+    let moveRight = 0.0;
+    let moveDown = 0.0;
     // check wasd keys if they are currently pressed
-    if (engine.input.keyboard.isHeld('a')) {
-      console.log('a is held');
-      this.pos.x -= 1;
+    if (engine.input.keyboard.isHeld(Keys.A)) {
+      moveRight -= moveSpeed;
     }
-    if (engine.input.keyboard.isHeld('d')) {
-      this.pos.x += 1;
+    if (engine.input.keyboard.isHeld(Keys.D)) {
+      moveRight += moveSpeed;
     }
-    if (engine.input.keyboard.isHeld('w')) {
-      this.pos.y -= 1;
+    if (engine.input.keyboard.isHeld(Keys.W)) {
+      moveDown -= moveSpeed;
     }
-    if (engine.input.keyboard.isHeld('s')) {
-      this.pos.y += 1;
+    if (engine.input.keyboard.isHeld(Keys.S)) {
+      moveDown += moveSpeed;
     }
+    if (moveRight !== 0 && moveDown !== 0) {
+      moveRight /= Math.sqrt(2);
+      moveDown /= Math.sqrt(2);
+    }
+    let deltaTimeSeconds = delta / 1000;
+    this.pos.x += moveRight * deltaTimeSeconds;
+    this.pos.y += moveDown * deltaTimeSeconds;
   }
 
   onPreUpdate(engine, elapsedMs) {
