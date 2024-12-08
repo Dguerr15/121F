@@ -1,11 +1,11 @@
-class Command {
+export class Command {
     execute() { throw new Error("execute() must be implemented"); }
     undo() { throw new Error("undo() must be implemented"); }
     serialize() { throw new Error("serialize() must be implemented"); }
     static deserialize(data) { throw new Error("deserialize() must be implemented"); }
 }
 
-class PlantCropCommand extends Command {
+export class PlantCropCommand extends Command {
     constructor(gridX, gridY, plantName) {
         super();
         this.gridX = gridX; // X position of the crop

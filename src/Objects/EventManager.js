@@ -1,4 +1,4 @@
-class EventManager {
+export class EventManager {
     constructor(scene) {
         this.scene = scene;
     }

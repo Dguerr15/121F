@@ -4,7 +4,7 @@ const RAND_WATER_MAX = 2;
 const MAX_WATER_CAPACITY = 10;
 
 // Enumeration for plant types
-const PlantTypes = {
+export const PlantTypes = {
     NONE: 0,
     CARROTS: 1,
     CORNS: 2,
@@ -13,7 +13,7 @@ const PlantTypes = {
 
 // GridManager.js
 
-class GridManager {
+export class GridManager {
     constructor(gridWidth, gridHeight, cellSize) {
         this.gridWidth = gridWidth;
         this.gridHeight = gridHeight;

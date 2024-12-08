@@ -1,4 +1,4 @@
-class CommandManager {
+export class CommandManager {
     constructor() {
         this.history = [];
         this.redoStack = [];

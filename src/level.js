@@ -1,7 +1,12 @@
 
-import { Scene, Color, Actor, vec } from "excalibur";
+import { Scene, Label, Font, FontUnit, Color, Actor, vec, Keys } from "excalibur";
 import { Player } from "./player.js";
 import { GroundTile } from "./groundTile.js";
+import { my } from "./Globals.js";
+
+import { EventManager } from "./Objects/EventManager.js";
+import { CommandManager } from "./Objects/CommandManager.js";
+import { GridManager } from "./Objects/GridManager.js";
 
 export class MyLevel extends Scene {
     onInitialize(engine) {
@@ -9,9 +14,46 @@ export class MyLevel extends Scene {
         const player = new Player();
         this.add(player); // Actors need to be added to a scene to be drawn
 
+        this.dayCount = 1;
+        this.inventory = {
+            carrots: 5,
+            roses: 5,
+            corns: 5
+        };
+        this.inventoryText = {carrots: null, roses: null, corns: null};
+        this.inventoryText.carrots = new Label({
+                    text: `Carrots: ${this.inventory['carrots']}`,
+                    pos: vec(10, 10),
+                    font: new Font({
+                        family: 'impact',
+                        size: 24,
+                        unit: FontUnit.Px
+                    }),
+                    z: 4
+                    }); 
+        this.add (this.inventoryText.carrots);
+        this.inventoryText.roses = new Label({
+                    text: `Roses: ${this.inventory['roses']}`,
+                    pos: vec(10, 100),
+                    fontSize: 80,
+                    color: '#ffffff',
+                    fontFamily: Font.SansSerif,
+                    z: 4
+                    });
+        this.add (this.inventoryText.roses);
+        this.inventoryText.corns = new Label({
+                    text: `Corns: ${this.inventory['corns']}`,
+                    pos: vec(10, 190),
+                    fontSize: 80,
+                    color: '#ffffff',
+                    fontFamily: Font.SansSerif,
+                    z: 4
+                    });
+        this.add (this.inventoryText.corns);
+
         this.cellSize = 64;
-        this.gridWidth = 17;
-        this.gridHeight = 11;
+        this.gridWidth = 13;
+        this.gridHeight = 10;
         for (let i = 0; i < this.gridWidth; i++) {
             for (let j = 0; j < this.gridHeight; j++) {
                 const ground = new GroundTile();
@@ -20,39 +62,68 @@ export class MyLevel extends Scene {
                 this.add(ground);
             }
         }
-    }
 
-    onPreLoad(loader) {
-        // Add any scene specific resources to load
     }
 
     onActivate(context) {
         // Called when Excalibur transitions to this scene
         // Only 1 scene is active at a time
+        console.log ("level onActivate called"); // test
 
-        console.log ("level onActivate called");
+        // Draw grid lines on z 2
         this.drawGrid (this.cellSize, this.gridWidth * this.cellSize, this.gridHeight * this.cellSize, this);
-    }
+        
+        // Initialize event manager
+        my.eventMan = new EventManager(this);
+        
+        // Initialize grid manager
+        const cols = this.gridWidth;
+        const rows = this.gridHeight;
+        my.gridManager = new GridManager(cols, rows, this.cellSize);
+        my.gridManager.initializeGrid(this);
 
-    onDeactivate(context) {
-        // Called when Excalibur transitions away from this scene
-        // Only 1 scene is active at a time
-    }
+        // Initialize command manager. WIP*
 
+        // Initialize scenario manager. WIP*
+
+        // Initialize UI elements. WIP*
+
+        // Add autosave. WIP* 
+
+        // this.promptContinue(); WIP*
+
+    
+    }
     onPreUpdate(engine, elapsedMs) {
         // Called before anything updates in the scene
     }
 
     onPostUpdate(engine, elapsedMs) {
         // Called after everything updates in the scene
+        this.handlePlantSelection(engine);
     }
 
-    onPreDraw(ctx, elapsedMs) {
-        // Called before Excalibur draws to the screen
+    handlePlantSelection(engine){
+        if (engine.input.keyboard.wasPressed(Keys.Key1)) {
+            console.log ("ONE pressed"); // test
+        }
+        if (engine.input.keyboard.wasPressed(Keys.Key2)) {
+            console.log ("TWO pressed"); // test 
+        }
+        if (engine.input.keyboard.wasPressed(Keys.Key3)) {
+            console.log ("THREE pressed"); // test
+        }
     }
 
-    onPostDraw(ctx, elapsedMs) {
-        // Called after Excalibur draws to the screen
+    selectPlant(plant){
+        this.selectedPlant = plant;
+        // update inventory WIP*
+    }
+
+    updateInventory(){
+        const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
+        colors[this.selectedPlant] = '#aaffaa';
+        // for item in inventory, 
     }
 
     drawGrid(cellSize, gameWidth, gameHeight, scene) {
@@ -80,4 +151,22 @@ export class MyLevel extends Scene {
           scene.add(horizontalLine);
         }
     }
+
+    onPreLoad(loader) {
+        // Add any scene specific resources to load
+    }
+
+    onDeactivate(context) {
+        // Called when Excalibur transitions away from this scene
+        // Only 1 scene is active at a time
+    }
+
+    onPreDraw(ctx, elapsedMs) {
+        // Called before Excalibur draws to the screen
+    }
+
+    onPostDraw(ctx, elapsedMs) {
+        // Called after Excalibur draws to the screen
+    }
+
 }

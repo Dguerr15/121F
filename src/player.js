@@ -25,7 +25,12 @@ export class Player extends Actor {
       pos: vec(150, 150),
       width: 100,
       height: 100,
-      z: 3, // Z is the draw order, higher means closer to the screen
+      z: 4, // Z is the draw order, higher means closer to the screen
+            // 1 ground
+            // 2 grid lines
+            // 3 plants/crops
+            // 4 player
+            // 5 UI
       // anchor: vec(0, 0), // Actors default center colliders and graphics with anchor (0.5, 0.5)
       // collisionType: CollisionType.Active, // Collision Type Active means this participates in collisions read more https://excaliburjs.com/docs/collisiontypes
     });
@@ -59,6 +64,10 @@ export class Player extends Actor {
   }
 
   update(engine, delta){
+    this.handleMovement(engine, delta);
+  }
+
+  handleMovement(engine, delta){
     let moveSpeed = 200.0;
     let moveRight = 0.0;
     let moveDown = 0.0;
