@@ -107,12 +107,16 @@ export class AdvanceTimeCommand extends Command {
 
     serialize(){
         return {
-            command: "AdvanceTimeCommand"
+            command: "AdvanceTimeCommand",
+            growthEvents: Array.from (this.growthEvents.entries())
         };
     }
 
     static deserialize(data){
-        return new AdvanceTimeCommand();
+        const command = new AdvanceTimeCommand();
+        // Convert array of key-value pairs back to a Map
+        command.growthEvents = new Map(data.growthEvents);
+        return command;
     }
 
     advanceOneDay(){
