@@ -1,5 +1,5 @@
 
-import { Scene, Label, Font, FontUnit, Color, Actor, vec, Keys } from "excalibur";
+import { Scene, Label, Font, FontUnit, Color, Actor, vec, Keys, Timer } from "excalibur";
 import { Player } from "./player.js";
 import { GroundTile } from "./groundTile.js";
 import { my } from "./Globals.js";
@@ -100,11 +100,22 @@ export class MyLevel extends Scene {
         // Initialize UI elements. WIP*
 
         // Add autosave. WIP* 
+        // Every 5 seconds, save the game to the autosave slot 3.
+        const autoSaveTimer = new Timer({
+            interval: 5000,
+            fcn: () => {
+                this.autoSavePrompt();
+            },
+            repeats: true
+        });
 
-        // this.promptContinue(); WIP*
+        this.add(autoSaveTimer);
+        autoSaveTimer.start();
 
-    
+        // Prompt to continue game from autosave
+        this.promptContinue();
     }
+
     onPreUpdate(engine, elapsedMs) {
         // Called before anything updates in the scene
     }
@@ -165,6 +176,27 @@ export class MyLevel extends Scene {
                 this.winGame();
             }
         }
+    }
+
+    promptContinue() {
+        // Check if saveSlot3 exists
+        if (localStorage.getItem('saveSlot3')) {
+            const continueGame = window.confirm("Do you want to continue from where you left off?");
+            if (continueGame) {
+                my.eventMan.loadGame('saveSlot3');
+                this.updateInventory();
+                console.log("Game loaded from saveSlot3");
+            } else {
+                console.log("Starting a new game...");
+            }
+        } else {
+            console.log("No previous save found. Starting a new game...");
+        }
+    }
+
+    autoSavePrompt() {
+        my.eventMan.saveGame('saveSlot3');
+        console.log("Game saved to autosave slot 3");
     }
     
     // Handle winning the game
