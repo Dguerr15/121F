@@ -25,26 +25,6 @@ interface GameConfig extends Phaser.Types.Core.GameConfig {
 }
 
 
-// Global `my` object type
-interface GlobalContext {
-    sprite: Record<string, Phaser.GameObjects.Sprite | Phaser.Physics.Arcade.Sprite>;
-    text: Record<string, Phaser.GameObjects.Text>;
-    vfx: Record<string, any>;
-    grid: Record<string, any>;
-    eventMan: Record<string, any>;
-    inventory?: Record<string, number>;
-    scene?: farming;
-    commandMan?: any;
-}
-
-const my: GlobalContext = {
-    sprite: {},
-    text: {},
-    vfx: {},
-    grid: {},
-    eventMan: {}
-};
-
 
 // Game configuration
 const config: GameConfig = {
@@ -76,4 +56,4 @@ const game = new Phaser.Game(config);
 
 
 
-export { SCALE, game, my};
+export { SCALE, game };

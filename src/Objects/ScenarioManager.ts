@@ -1,5 +1,3 @@
-// You may need to adjust these interfaces based on the exact data structure in your code.
-
 interface ScenarioInfo {
     starting_day?: number;
     victory_condition_amount?: number;
