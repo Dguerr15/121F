@@ -9,6 +9,8 @@ import { PlantCropCommand, RemovePlantCommand, AdvanceTimeCommand } from "./Obje
 import { EventManager } from "./Objects/EventManager.js";
 import { CommandManager } from "./Objects/CommandManager.js";
 import { GridManager } from "./Objects/GridManager.js";
+import { ScenarioManager } from "./Objects/ScenarioManager.js";
+import { SpecialEventManager } from "./Objects/SpecialEventManager.js";
 
 // global variables
 let victory_condition_amount = 9
@@ -18,8 +20,8 @@ let victory_condition_level = 3
 const PlantTypes = {
     NONE: 0,
     CARROTS: 1,
-    CORNS: 2,
-    ROSES: 3
+    ROSES: 2,
+    CORNS: 3
 };
 
 const language = {
@@ -71,12 +73,25 @@ export class MyLevel extends Scene {
 
         my.player = player; // add player instance to the global container
         my.inventory = this.inventory; // add inventory to the global container 
+
+        //init special events
+        my.specialEvents = {};
+
+
+        //scenario manager
+        my.scenarioManager = new ScenarioManager(this);
+        my.scenarioManager.loadScenario('scenario1');
+
+
+        //special event manager
+        //this.specialEventManager = new SpecialEventManager(this);
+        //my.specialEventMan = this.specialEventManager;
     }
 
     onActivate(context) {
         // Called when Excalibur transitions to this scene
         // Only 1 scene is active at a time
-        console.log ("level onActivate called"); // test
+        // console.log ("level onActivate called"); // test
 
         // Draw grid lines on z 2
         this.drawGrid (this.cellSize, this.gridWidth * this.cellSize, this.gridHeight * this.cellSize, this);
@@ -144,7 +159,7 @@ export class MyLevel extends Scene {
             const slot = prompt("Enter save slot number (1-3):");
             if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
                 my.eventMan.loadGame(`saveSlot${slot}`);
-                this.updateInventory();
+                this.updateInventory(this.dayCount);
             } else {
                 console.error("Invalid save slot.");
             }
@@ -153,22 +168,22 @@ export class MyLevel extends Scene {
 
     handleUndoRedoKeys(engine){
         if (engine.input.keyboard.wasPressed(Keys.Z)) {
-            console.log ("Z pressed"); // test
+            //console.log ("Z pressed"); // test
             // Undo last command
             my.commandMan.undo();
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }
         if (engine.input.keyboard.wasPressed(Keys.X)) {
-            console.log ("X pressed"); // test
+            //console.log ("X pressed"); // test
             // Redo last command
             my.commandMan.redo();
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }   
     }
 
     handleAdvanceTimeKey(engine){
         if (engine.input.keyboard.wasPressed(Keys.Space)) {
-            console.log ("Space pressed"); // test
+            //console.log ("Space pressed"); // test
             // Advance time
             const command = new AdvanceTimeCommand();
             my.commandMan.executeCommand(command);
@@ -184,19 +199,19 @@ export class MyLevel extends Scene {
             const continueGame = window.confirm("Do you want to continue from where you left off?");
             if (continueGame) {
                 my.eventMan.loadGame('saveSlot3');
-                this.updateInventory();
-                console.log("Game loaded from saveSlot3");
+                this.updateInventory(this.dayCount);
+                //console.log("Game loaded from saveSlot3");
             } else {
-                console.log("Starting a new game...");
+                //console.log("Starting a new game...");
             }
         } else {
-            console.log("No previous save found. Starting a new game...");
+            //console.log("No previous save found. Starting a new game...");
         }
     }
 
     autoSavePrompt() {
         my.eventMan.saveGame('saveSlot3');
-        console.log("Game saved to autosave slot 3");
+        //console.log("Game saved to autosave slot 3");
     }
     
     // Handle winning the game
@@ -204,7 +219,7 @@ export class MyLevel extends Scene {
         this.input.keyboard.enabled = false;
         this.winMessageText.text = 'You win!\nLoad from save to continue.';
 
-        console.log ("You win!");
+        //console.log ("You win!");
 
         // this.time.delayedCall(2500, () => {
         //     this.input.keyboard.enabled = true;
@@ -215,14 +230,14 @@ export class MyLevel extends Scene {
 
     handlePlantingKeys(engine){
         if (engine.input.keyboard.wasPressed(Keys.Q)) {
-            console.log ("Q pressed"); // test
+            //console.log ("Q pressed"); // test
             // plant selected plant
             const { gridX, gridY } = this.getPlayerGridPosition();
-            console.log ("Player is at grid position: ", gridX, gridY); // test
+            //console.log ("Player is at grid position: ", gridX, gridY); // test
             this.plantCrop();
         }
         if (engine.input.keyboard.wasPressed(Keys.E)) {
-            console.log ("W pressed"); // test 
+            //console.log ("W pressed"); // test 
             // pull selected plant
             this.pickUpPlant();
 
@@ -231,7 +246,7 @@ export class MyLevel extends Scene {
 
     plantCrop(){
         if (this.inventory[this.selectedPlant] <= 0) {
-            console.log ("No more plants of this type in inventory");
+            //console.log ("No more plants of this type in inventory");
             return;
         }
         const { gridX, gridY } = this.getPlayerGridPosition();
@@ -242,7 +257,7 @@ export class MyLevel extends Scene {
             // Execute with CommandManager (also pushes to history stack).
             my.commandMan.executeCommand(command);
             
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
             // my.text.message.setText('');
         } else {
             // my.text.message.setText('Cannot plant here.');
@@ -262,41 +277,45 @@ export class MyLevel extends Scene {
             // Execute with CommandManager (also pushes to history stack).
             my.commandMan.executeCommand(command);
 
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }
     }
 
     handlePlantSelectionKeys(engine){
         if (engine.input.keyboard.wasPressed(Keys.Key1)) {
-            console.log ("ONE pressed"); // test
+            //console.log ("ONE pressed"); // test
             this.selectPlant('carrots');
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }
         if (engine.input.keyboard.wasPressed(Keys.Key2)) {
-            console.log ("TWO pressed"); // test 
+            //console.log ("TWO pressed"); // test 
             this.selectPlant('roses');
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }
         if (engine.input.keyboard.wasPressed(Keys.Key3)) {
-            console.log ("THREE pressed"); // test
+            //console.log ("THREE pressed"); // test
             this.selectPlant('corns');
-            this.updateInventory();
+            this.updateInventory(this.dayCount);
         }
     }
 
     selectPlant(plant){
         this.selectedPlant = plant;
-        console.log ("selected plant: ", this.selectedPlant); // test
-        this.updateInventory();
+        //console.log ("selected plant: ", this.selectedPlant); // test
+        this.updateInventory(this.dayCount);
     }
 
-    updateInventory(){
+    updateInventory(dayCt){
         const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
         colors[this.selectedPlant] = '#aaffaa';
         for (const key in this.inventoryText) {
             this.inventoryText[key].font.color = colors[key];
             this.inventoryText[key].text = `${key}: ${this.inventory[key]}`;
         }
+
+        console.log("day count: ", dayCt); // test
+        this.dayCount = dayCt;
+        this.dayCountText.text = `Day: ${dayCt}`;
     }
 
     initUI(){
@@ -318,7 +337,7 @@ export class MyLevel extends Scene {
     }
 
     initDayCountText(){
-        console.log ("initDayCountText called"); // test
+        //console.log ("initDayCountText called"); // test
         this.dayCountText = new Label({
             text: `Day: ${this.dayCount}`,
             pos: vec(10, this.textHeight),

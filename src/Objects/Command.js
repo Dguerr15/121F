@@ -107,43 +107,59 @@ export class AdvanceTimeCommand extends Command {
 
     serialize(){
         return {
-            command: "AdvanceTimeCommand"
+            command: "AdvanceTimeCommand",
+            growthEvents: Array.from (this.growthEvents.entries())
         };
     }
 
     static deserialize(data){
-        return new AdvanceTimeCommand();
+        const command = new AdvanceTimeCommand();
+        // Convert array of key-value pairs back to a Map
+        command.growthEvents = new Map(data.growthEvents);
+        return command;
     }
 
     advanceOneDay(){
+        let special_water = 0;
+        let special_sun = 0;
+
+        let special_event_today = my.specialEvents[my.scene.dayCount] || null;
+
+        if (special_event_today) {
+            special_water = special_event_today.water;
+            special_sun = special_event_today.sun;
+        }
+        
         for (let x = 0; x < my.gridManager.gridWidth; x++) {
             for (let y = 0; y < my.gridManager.gridHeight; y++) {
-                this.updateResources(x, y);
+                this.updateResources(x, y, special_water, special_sun);
                 this.updatePlantGrowth(x, y);
                 my.gridManager.drawCellInfo(my.scene, x, y);
             }
         }
     }
 
-    updateResources(x, y) {
-        this.updateWaterLevel(x, y);
-        this.updateSunLevel(x, y);
+    updateResources(x, y, special_water, special_sun) {
+        this.updateWaterLevel(x, y, special_water);
+        this.updateSunLevel(x, y, special_sun);
     }
 
-    updateWaterLevel(x, y) {
+    updateWaterLevel(x, y, special_water) {
         const currentWater = my.gridManager.getWaterLevel(x, y);
         const additionalWater = my.gridManager.getFakeRand(x, y, my.scene.dayCount) % RAND_WATER_MAX;
-        my.gridManager.setWaterLevel(x, y, Math.min(currentWater + additionalWater, MAX_WATER_CAPACITY));
+        my.gridManager.setWaterLevel(x, y, Math.min(currentWater + additionalWater + special_water, MAX_WATER_CAPACITY));
     }
 
-    updateSunLevel(x, y) {
+    updateSunLevel(x, y, special_sun) {
         const sun = my.gridManager.getFakeRand(x, y, my.scene.dayCount) % RAND_SUN_MAX;
-        my.gridManager.setSunLevel(x, y, sun);
+        my.gridManager.setSunLevel(x, y, Math.max(sun + special_sun, 0));
     }
 
     updatePlantGrowth(x, y) {
         const plantType = my.gridManager.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
+            console.log ("updating plant growth: plant type: " + plantType);
+
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
             const sunLevel = my.gridManager.getSunLevel(x, y);
             const waterLevel = my.gridManager.getWaterLevel(x, y);
@@ -160,8 +176,10 @@ export class AdvanceTimeCommand extends Command {
                 gridManager: my.gridManager 
             };
 
+            console.log("checking conditions");
             // Check if all conditions are met
             const canGrow = conditions.every(cond => cond.check(context));
+            console.log("condition results: " + canGrow);
 
             if (canGrow && growthLevel < 3) {
                 // Growth Event.
