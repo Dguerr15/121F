@@ -23,7 +23,6 @@ export class MyLevel extends Scene {
         // Scene.onInitialize is where we recommend you perform the composition for your game
         const player = new Player();
         this.add(player); // Actors need to be added to a scene to be drawn
-        my.player = player; // add player instance to the global container
 
         this.dayCount = 1;
         this.inventory = {
@@ -31,11 +30,8 @@ export class MyLevel extends Scene {
             roses: 5,
             corns: 5
         };
-        my.inventory = this.inventory; // add inventory to the global container 
-        this.inventoryText = {carrots: null, roses: null, corns: null};
-        this.initInventoryDisplay(); // creates label objects for inventory display
 
-        this.selectedPlant = 'carrots';
+        this.initUI();
 
         this.cellSize = 64;
         this.gridWidth = 13;
@@ -49,6 +45,8 @@ export class MyLevel extends Scene {
             }
         }
 
+        my.player = player; // add player instance to the global container
+        my.inventory = this.inventory; // add inventory to the global container 
     }
 
     onActivate(context) {
@@ -179,10 +177,38 @@ export class MyLevel extends Scene {
         }
     }
 
+    initUI(){
+        this.textHeight = 10;
+        this.textHeightIncrement = 70;
+        this.dayCountText = null;
+        this.initDayCountText();
+
+        this.inventoryText = {carrots: null, roses: null, corns: null};
+        this.initInventoryDisplay(); // creates label objects for inventory display
+        this.selectPlant ('carrots'); // default selected plant
+    }
+
+    initDayCountText(){
+        console.log ("initDayCountText called"); // test
+        this.dayCountText = new Label({
+            text: `Day: ${this.dayCount}`,
+            pos: vec(10, this.textHeight),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#ffffff'
+            }),
+            z: 4
+            });
+        this.add (this.dayCountText);
+        this.textHeight += this.textHeightIncrement;
+    }
+
     initInventoryDisplay(){
         this.inventoryText.carrots = new Label({
             text: `carrots: ${this.inventory['carrots']}`,
-            pos: vec(10, 10),
+            pos: vec(10, this.textHeight),
             font: new Font({
                 family: 'impact',
                 size: 24,
@@ -192,9 +218,10 @@ export class MyLevel extends Scene {
             z: 4
             }); 
         this.add (this.inventoryText.carrots);
+        this.textHeight += this.textHeightIncrement;
         this.inventoryText.roses = new Label({
                     text: `roses: ${this.inventory['roses']}`,
-                    pos: vec(10, 90),
+                    pos: vec(10, this.textHeight),
                     font: new Font({
                         family: 'impact',
                         size: 24,
@@ -204,9 +231,10 @@ export class MyLevel extends Scene {
                     z: 4
                     });
         this.add (this.inventoryText.roses);
+        this.textHeight += this.textHeightIncrement;
         this.inventoryText.corns = new Label({
                     text: `corns: ${this.inventory['corns']}`,
-                    pos: vec(10, 170),
+                    pos: vec(10, this.textHeight),
                     font: new Font({
                         family: 'impact',
                         size: 24,
@@ -216,6 +244,7 @@ export class MyLevel extends Scene {
                     z: 4
                     });
         this.add (this.inventoryText.corns);
+        this.textHeight += this.textHeightIncrement;
     }
 
     getPlayerGridPosition() {
