@@ -1,11 +1,11 @@
 import { PlantSprite } from "../PlantSprite.js";
-import { Actor } from "excalibur";
 import { my } from "../Globals.js";
+import { Actor, Label, Font, Color, vec } from "excalibur";
 
 // Constants for resource limits
-const RAND_SUN_MAX = 5;
-const RAND_WATER_MAX = 2;
-const MAX_WATER_CAPACITY = 10;
+export const RAND_SUN_MAX = 5;
+export const RAND_WATER_MAX = 2;
+export const MAX_WATER_CAPACITY = 10;
 
 // Enumeration for plant types
 export const PlantTypes = {
@@ -105,15 +105,59 @@ export class GridManager {
 
         // Water Level Text
         if (!this.waterTexts[key]) {
-            this.waterTexts[key] = scene.add.text(posX, posY, '', { fontSize: '12px', fill: '#00f' });
+            this.addWaterText (scene, x, y);
         }
-        this.waterTexts[key].setText(`W: ${waterLevel}`);
+        this.waterTexts[key].text = `W: ${waterLevel}`;
 
         // Sun Level Text
         if (!this.sunTexts[key]) {
-            this.sunTexts[key] = scene.add.text(posX, posY + 14, '', { fontSize: '12px', fill: '#ff0' });
+            this.addSunText (scene, x, y);
         }
-        this.sunTexts[key].setText(`S: ${sunLevel}`);
+        this.sunTexts[key].text = `S: ${sunLevel}`;
+    }
+
+    addWaterText(scene, x, y) {
+        const cellSize = scene.cellSize;
+        const posX = x * cellSize;
+        const posY = y * cellSize;
+
+        const waterLevel = this.getWaterLevel(x, y);
+
+        const key = `${x},${y}`;
+
+        // Water Level Text
+        if (!this.waterTexts[key]) {
+            this.waterTexts[key] = new Label({
+                text: `W: ${waterLevel}`,
+                pos: vec(posX, posY),
+                fontSize: 12,
+                color: Color.Blue,
+                z: 4
+            });
+            scene.add (this.waterTexts[key]);
+        }
+    }
+
+    addSunText(scene, x, y) {
+        const cellSize = scene.cellSize;
+        const posX = x * cellSize;
+        const posY = y * cellSize;
+
+        const sunLevel = this.getSunLevel(x, y);
+
+        const key = `${x},${y}`;
+
+        // Sun Level Text
+        if (!this.sunTexts[key]) {
+            this.sunTexts[key] = new Label({
+                text: `S: ${sunLevel}`,
+                pos: vec(posX, posY + 14),
+                fontSize: 12,
+                color: Color.Yellow,
+                z: 4
+            });
+            scene.add (this.sunTexts[key]);
+        }
     }
 
     // Planting methods

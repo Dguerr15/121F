@@ -56,7 +56,7 @@ class PlantGrowthDSL {
 }
 
 // define growth conditions 
-const GrowthDefinitions = {
+export const GrowthDefinitions = {
     1: PlantGrowthDSL.definePlantGrowth(
         1,
         [ GrowthConditionBuilder.sunAndWaterNeeded(3, 2) ],

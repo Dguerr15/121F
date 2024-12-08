@@ -62,6 +62,42 @@ export class PlantSprite extends Actor {
 
   }
 
+  setTexture(sprite){
+
+    switch (sprite){
+      case 'carrotsSeedling':
+        this.graphics.use(Resources.carrotsSeedling.toSprite());
+        break;
+      case 'rosesSeedling':
+        this.graphics.use(Resources.rosesSeedling.toSprite());
+        break;
+      case 'cornsSeedling':
+        this.graphics.use(Resources.cornsSeedling.toSprite());
+        break;
+      case 'carrotsGrowing':
+        this.graphics.use(Resources.carrotsGrowing.toSprite());
+        break;
+      case 'rosesGrowing':
+        this.graphics.use(Resources.rosesGrowing.toSprite());
+        break;
+      case 'cornsGrowing':
+        this.graphics.use(Resources.cornsGrowing.toSprite());
+        break;
+      case 'carrotsFullGrown':
+        this.graphics.use(Resources.carrotsFullGrown.toSprite());
+        break;
+      case 'rosesFullGrown':
+        this.graphics.use(Resources.rosesFullGrown.toSprite());
+        break;
+      case 'cornsFullGrown':
+        this.graphics.use(Resources.cornsFullGrown.toSprite());
+        break;
+      default:
+        this.graphics.use(Resources.carrotsSeedling.toSprite());
+        break;
+    }
+  }
+
   getPlantSprite(name){
     switch (name){
       case 'carrotsSeedling':

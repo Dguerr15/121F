@@ -44,7 +44,7 @@ export class EventManager {
 
         // update text and ui
         this.scene.updateInventory();
-        my.text.dayCount.setText(`Day: ${this.scene.dayCount}`);
+        my.dayCountText = `Day: ${this.scene.dayCount}`;
 
         // load command history
         my.commandMan.deserialize(saveData.history);

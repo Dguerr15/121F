@@ -1,4 +1,6 @@
 import { my } from "../Globals.js";
+import { RAND_SUN_MAX, RAND_WATER_MAX, MAX_WATER_CAPACITY, PlantTypes } from "./GridManager.js";
+import { GrowthDefinitions } from "./PlantGrowthDSL.js";
 
 export class Command {
     execute() { throw new Error("execute() must be implemented"); }
@@ -92,14 +94,14 @@ export class AdvanceTimeCommand extends Command {
 
         // Increment day count
         my.scene.dayCount++;
-        my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
+        my.dayCountText = `Day: ${my.scene.dayCount}`;
     }
 
     undo () {
         this.undoOneDay();
         // Decrement day count
         my.scene.dayCount--;
-        my.text.dayCount.setText(`Day: ${my.scene.dayCount}`);
+        my.dayCountText = `Day: ${my.scene.dayCount}`;
     }
 
     serialize(){

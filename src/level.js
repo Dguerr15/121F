@@ -10,6 +10,10 @@ import { EventManager } from "./Objects/EventManager.js";
 import { CommandManager } from "./Objects/CommandManager.js";
 import { GridManager } from "./Objects/GridManager.js";
 
+// global variables
+let victory_condition_amount = 9
+let victory_condition_level = 3
+
 // Enumeration for plant types
 const PlantTypes = {
     NONE: 0,
@@ -23,6 +27,8 @@ export class MyLevel extends Scene {
         // Scene.onInitialize is where we recommend you perform the composition for your game
         const player = new Player();
         this.add(player); // Actors need to be added to a scene to be drawn
+
+        this.saveSlots = ['saveSlot1', 'saveSlot2', 'saveSlot3'];
 
         this.dayCount = 1;
         this.inventory = {
@@ -89,6 +95,33 @@ export class MyLevel extends Scene {
         // Called after everything updates in the scene
         this.handlePlantSelectionKeys(engine);
         this.handlePlantingKeys(engine);
+        this.handleAdvanceTimeKey(engine);
+    }
+
+    handleAdvanceTimeKey(engine){
+        if (engine.input.keyboard.wasPressed(Keys.Space)) {
+            console.log ("Space pressed"); // test
+            // Advance time
+            const command = new AdvanceTimeCommand();
+            my.commandMan.executeCommand(command);
+            if (my.gridManager.checkWinCondition(victory_condition_amount, victory_condition_level)) {
+                this.winGame();
+            }
+        }
+    }
+    
+    // Handle winning the game
+    winGame() {
+        this.input.keyboard.enabled = false;
+        this.winMessageText.text = 'You win!\nLoad from save to continue.';
+
+        console.log ("You win!");
+
+        // this.time.delayedCall(2500, () => {
+        //     this.input.keyboard.enabled = true;
+        //     my.text.winMessage.setText('');
+        //     this.scene.restart();
+        // });
     }
 
     handlePlantingKeys(engine){
@@ -181,11 +214,18 @@ export class MyLevel extends Scene {
         this.textHeight = 10;
         this.textHeightIncrement = 70;
         this.dayCountText = null;
+        my.dayCountText = this.dayCountText; // make a global reference
         this.initDayCountText();
 
         this.inventoryText = {carrots: null, roses: null, corns: null};
         this.initInventoryDisplay(); // creates label objects for inventory display
         this.selectPlant ('carrots'); // default selected plant
+
+        this.messageText = null;
+        this.initMessageText();
+
+        this.winMessageText = null;
+        this.initWinMessageText();
     }
 
     initDayCountText(){
@@ -245,6 +285,41 @@ export class MyLevel extends Scene {
                     });
         this.add (this.inventoryText.corns);
         this.textHeight += this.textHeightIncrement;
+    }
+
+    initMessageText(){
+        this.messageText = new Label({
+            text: 'a',
+            pos: vec(10, this.textHeight),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#aa0000'
+            }),
+            z: 4
+            });
+        this.add (this.messageText);
+        this.textHeight += this.textHeightIncrement;
+    }
+
+    initWinMessageText(){
+        const width = this.gridWidth * this.cellSize;
+        console.log ("width: ", width); // test 
+        const height = this.gridHeight * this.cellSize;
+        console.log ("height: ", height); // test
+        this.winMessageText = new Label({
+            text: '',
+            pos: vec(360, 300),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#44dd44'
+            }),
+            z: 4
+            });
+        this.add (this.winMessageText);
     }
 
     getPlayerGridPosition() {
