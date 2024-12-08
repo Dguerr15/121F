@@ -5,7 +5,7 @@ export const my = {
     inventory: null,
     scene: null,
     player: null,
-    dayCountText: null
+    dayCountText: null,
+    language: 'en'
     // text exists in scenes not objects that can be stored outside(?)
-
 };

@@ -22,6 +22,24 @@ const PlantTypes = {
     ROSES: 3
 };
 
+const language = {
+    "en": {
+        "carrots": "carrots",
+        "roses": "roses",
+        "corns": "corns"
+    },
+    "ar": {
+        "carrots": "جزر",
+        "roses": "ورود",
+        "corns": "ذرة"
+    },
+    "zh": {
+        "carrots": "胡萝卜",
+        "roses": "玫瑰",
+        "corns": "玉米"
+    },
+};
+
 export class MyLevel extends Scene {
     onInitialize(engine) {
         // Scene.onInitialize is where we recommend you perform the composition for your game
@@ -284,9 +302,11 @@ export class MyLevel extends Scene {
         this.textHeight += this.textHeightIncrement;
     }
 
-    initInventoryDisplay(){
+    initInventoryDisplay() {
+        const currentLang = language['zh']; // Replace 'en' with dynamic language selection if needed
+    
         this.inventoryText.carrots = new Label({
-            text: `carrots: ${this.inventory['carrots']}`,
+            text: `${currentLang['carrots']}: ${this.inventory['carrots']}`,
             pos: vec(10, this.textHeight),
             font: new Font({
                 family: 'impact',
@@ -295,34 +315,36 @@ export class MyLevel extends Scene {
                 color: '#ffffff'
             }),
             z: 5
-            }); 
-        this.add (this.inventoryText.carrots);
+        });
+        this.add(this.inventoryText.carrots);
         this.textHeight += this.textHeightIncrement;
+    
         this.inventoryText.roses = new Label({
-                    text: `roses: ${this.inventory['roses']}`,
-                    pos: vec(10, this.textHeight),
-                    font: new Font({
-                        family: 'impact',
-                        size: 24,
-                        unit: FontUnit.Px,
-                        color: '#ffffff'
-                    }),
-                    z: 5
-                    });
-        this.add (this.inventoryText.roses);
+            text: `${currentLang['roses']}: ${this.inventory['roses']}`,
+            pos: vec(10, this.textHeight),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#ffffff'
+            }),
+            z: 5
+        });
+        this.add(this.inventoryText.roses);
         this.textHeight += this.textHeightIncrement;
+    
         this.inventoryText.corns = new Label({
-                    text: `corns: ${this.inventory['corns']}`,
-                    pos: vec(10, this.textHeight),
-                    font: new Font({
-                        family: 'impact',
-                        size: 24,
-                        unit: FontUnit.Px,
-                        color: '#ffffff'
-                    }),
-                    z: 5
-                    });
-        this.add (this.inventoryText.corns);
+            text: `${currentLang['corns']}: ${this.inventory['corns']}`,
+            pos: vec(10, this.textHeight),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#ffffff'
+            }),
+            z: 5
+        });
+        this.add(this.inventoryText.corns);
         this.textHeight += this.textHeightIncrement;
     }
 
