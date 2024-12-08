@@ -1,29 +1,31 @@
-// debug with extreme prejudice
-"use strict"
+import { Color, DisplayMode, Engine, FadeInOut } from "excalibur";
+import { loader } from "./resources.js";
+import { MyLevel } from "./level.js";
 
-// game config
-let config = {
-    parent: 'phaser-game',
-    type: Phaser.CANVAS,
-    render: {
-        pixelArt: true  // prevent pixel art from getting blurred when scaled
-    },
-    physics: {
-        default: 'arcade',
-        arcade: {
-            debug: true,
-            gravity: {
-                x: 0,
-                y: 0
-            }
-        }
-    },
-    width: 1280,  // 16:9 aspect ratio
-    height: 720,  // 16:9 aspect ratio
-    scene: [farming]
-}
+// Goal is to keep main.ts small and just enough to configure the engine
 
-const SCALE = 2.0;
-var my = {sprite: {}, text: {}, vfx: {}, grid: {}, eventMan: {}};
+const game = new Engine({
+  width: 800, // Logical width and height in game pixels
+  height: 600,
+  displayMode: DisplayMode.FitScreenAndFill, // Display mode tells excalibur how to fill the window
+  pixelArt: true, // pixelArt will turn on the correct settings to render pixel art without jaggies or shimmering artifacts
+  scenes: {
+    start: MyLevel
+  },
+  // physics: {
+  //   solver: SolverStrategy.Realistic,
+  //   substep: 5 // Sub step the physics simulation for more robust simulations
+  // },
+  // fixedUpdateTimestep: 16 // Turn on fixed update timestep when consistent physic simulation is important
+});
 
-const game = new Phaser.Game(config);
+game.start('start', { // name of the start scene 'start'
+  loader, // Optional loader (but needed for loading images/sounds)
+  inTransition: new FadeInOut({ // Optional in transition
+    duration: 1000,
+    direction: 'in',
+    color: Color.ExcaliburBlue
+  })
+}).then(() => {
+  // Do something after the game starts
+});
