@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "excalibur": "^0.29.3"
+  },
+  "devDependencies": {
+    "vite": "^6.0.3"
+  }
+}
