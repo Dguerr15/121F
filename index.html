@@ -5,8 +5,99 @@
     <link rel="icon" href="favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excalibur Vanilla JS</title>
+    <style>
+        body {
+            margin: 0;
+            display: flex;
+            flex-direction: row-reverse; /* Swap the order of the flex items */
+            font-family: Arial, sans-serif;
+        }
+
+        #game-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #controls-panel {
+            width: 250px;
+            background-color: #f4f4f4;
+            padding: 15px;
+            border-right: 1px solid #ccc; /* Border on the right to match the new order */
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        #controls-panel h2 {
+            margin-top: 0;
+            font-size: 20px;
+        }
+
+        #controls-panel ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        #controls-panel ul li {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+
+        /* Style for language buttons */
+        #language-controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .lang-btn:hover {
+            background-color: #ddd;
+        }
+
+        /* Display current language */
+        #current-language {
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
+    <div id="game-container"></div>
+    <div id="controls-panel">
+        <h2 id="controls-header">Controls</h2> <!-- Added ID for header -->
+        <ul id="control-list">
+            <li><b>W/A/S/D:</b> Move</li>
+            <li><b>E:</b> Pick Up</li>
+            <li><b>Q:</b> Plant</li>
+            <li><b>1:</b> Select Carrots</li>
+            <li><b>2:</b> Select Corn</li>
+            <li><b>3:</b> Select Roses</li>
+            <li><b>SPACE:</b> Advance Time</li>
+            <li><b>K:</b> Save Game</li>
+            <li><b>L:</b> Load Game</li>
+            <li><b>Z:</b> Undo</li>
+            <li><b>X:</b> Redo</li>
+        </ul>
+
+        <!-- Language selection buttons -->
+        <div id="language-controls">
+            <button id="btn-english" class="lang-btn">English</button>
+            <button id="btn-chinese" class="lang-btn">中文</button>
+            <button id="btn-arabic" class="lang-btn">العربية</button>
+        </div>
+
+        <!-- Display the current language -->
+        <div id="current-language">Current Language: English</div>
+    </div>
+
     <script type="importmap">
         {
             "imports": {
@@ -14,6 +105,87 @@
             }
         }
     </script>
-    <script type="module" src="src/main.js"></script>
+    <script type="module">
+        // Language data for controls
+        const translations = {
+            "en": {
+                "controls": "Controls",
+                "move": "Move",
+                "pickUp": "Pick Up",
+                "plant": "Plant",
+                "selectCarrots": "Select Carrots",
+                "selectCorn": "Select Corn",
+                "selectRoses": "Select Roses",
+                "advanceTime": "Advance Time",
+                "saveGame": "Save Game",
+                "loadGame": "Load Game",
+                "undo": "Undo",
+                "redo": "Redo"
+            },
+            "zh": {
+                "controls": "控制",
+                "move": "移动",
+                "pickUp": "捡起",
+                "plant": "种植",
+                "selectCarrots": "选择胡萝卜",
+                "selectCorn": "选择玉米",
+                "selectRoses": "选择玫瑰",
+                "advanceTime": "推进时间",
+                "saveGame": "保存游戏",
+                "loadGame": "加载游戏",
+                "undo": "撤销",
+                "redo": "重做"
+            },
+            "ar": {
+                "controls": "التحكمات",
+                "move": "تحرك",
+                "pickUp": "إلتقط",
+                "plant": "زرع",
+                "selectCarrots": "اختيار الجزر",
+                "selectCorn": "اختيار الذرة",
+                "selectRoses": "اختيار الورود",
+                "advanceTime": "تقدم بالوقت",
+                "saveGame": "حفظ اللعبة",
+                "loadGame": "تحميل اللعبة",
+                "undo": "تراجع",
+                "redo": "إعادة"
+            }
+        };
+
+        // Function to update the controls panel with selected language
+        function updateLanguage(language) {
+            const controlList = document.getElementById('control-list');
+            const listItems = controlList.querySelectorAll('li');
+            document.getElementById('controls-header').textContent = translations[language].controls; // Translate the Controls header
+
+            listItems[0].innerHTML = `<b>W/A/S/D:</b> ${translations[language].move}`;
+            listItems[1].innerHTML = `<b>E:</b> ${translations[language].pickUp}`;
+            listItems[2].innerHTML = `<b>Q:</b> ${translations[language].plant}`;
+            listItems[3].innerHTML = `<b>1:</b> ${translations[language].selectCarrots}`;
+            listItems[4].innerHTML = `<b>2:</b> ${translations[language].selectCorn}`;
+            listItems[5].innerHTML = `<b>3:</b> ${translations[language].selectRoses}`;
+            listItems[6].innerHTML = `<b>SPACE:</b> ${translations[language].advanceTime}`;
+            listItems[7].innerHTML = `<b>K:</b> ${translations[language].saveGame}`;
+            listItems[8].innerHTML = `<b>L:</b> ${translations[language].loadGame}`;
+            listItems[9].innerHTML = `<b>Z:</b> ${translations[language].undo}`;
+            listItems[10].innerHTML = `<b>X:</b> ${translations[language].redo}`;
+
+            // Update the displayed current language
+            document.getElementById('current-language').textContent = `Current Language: ${language === 'en' ? 'English' : language === 'zh' ? '中文' : 'العربية'}`;
+
+            // Store the selected language in localStorage
+            localStorage.setItem('language', language);
+        }
+
+        // Check for stored language on page load
+        const storedLanguage = localStorage.getItem('language') || 'en';
+        updateLanguage(storedLanguage);
+
+        // Event listeners for language buttons
+        document.getElementById('btn-english').addEventListener('click', () => updateLanguage('en'));
+        document.getElementById('btn-chinese').addEventListener('click', () => updateLanguage('zh'));
+        document.getElementById('btn-arabic').addEventListener('click', () => updateLanguage('ar'));
+    </script>
+    <script type="module" src="src/main.js"></script> <!-- Your game script -->
 </body>
 </html>

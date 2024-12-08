@@ -68,7 +68,7 @@ export class Player extends Actor {
   }
 
   handleMovement(engine, delta){
-    let moveSpeed = 200.0;
+    let moveSpeed = 300.0;
     let moveRight = 0.0;
     let moveDown = 0.0;
     // check wasd keys if they are currently pressed
@@ -91,7 +91,35 @@ export class Player extends Actor {
     let deltaTimeSeconds = delta / 1000;
     this.pos.x += moveRight * deltaTimeSeconds;
     this.pos.y += moveDown * deltaTimeSeconds;
+
+    this.constrainToGrid();
   }
+
+  constrainToGrid() {
+    // Grid properties
+    const cellSize = 64; // Size of each tile
+    const gridWidth = 13; // Grid width (number of tiles)
+    const gridHeight = 10; // Grid height (number of tiles)
+
+    // Constrain player position within grid bounds
+    const halfWidth = this.width / 2;
+    const halfHeight = this.height / 2;
+
+    // Horizontal constraint (left and right edges)
+    if (this.pos.x - halfWidth < 0) {
+      this.pos.x = halfWidth; // Player can't go past the left edge
+    } else if (this.pos.x + halfWidth > gridWidth * cellSize) {
+      this.pos.x = gridWidth * cellSize - halfWidth; // Player can't go past the right edge
+    }
+
+    // Vertical constraint with extra leeway upwards
+    const extraUpwardSpace = 32; // Amount of space to allow movement upwards beyond grid top
+    if (this.pos.y - halfHeight < -extraUpwardSpace) {
+      this.pos.y = halfHeight - extraUpwardSpace; // Allow some upward movement past grid top
+    } else if (this.pos.y + halfHeight > gridHeight * cellSize) {
+      this.pos.y = gridHeight * cellSize - halfHeight; // Player can't go past the bottom edge
+    }
+}
 
   onPreUpdate(engine, elapsedMs) {
     // Put any update logic here runs every frame before Actor builtins
