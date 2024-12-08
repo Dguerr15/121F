@@ -1,11 +1,11 @@
 {
   "crops": {
-    "carrots": 6,
-    "corns": 6,
-    "roses": 6
+    "carrots": 3,
+    "corns": 1,
+    "roses": 7
   },
   "scenario": {
-    "starting_day": 2,
+    "starting_day": 1,
     "victory_condition_amount": 9,
     "victory_condition_level": 3
   },
@@ -15,5 +15,21 @@
     "RAND_SUN_MIN": 0,
     "RAND_WATER_MAX": 2,
     "RAND_WATER_MIN": 0
+  },
+  "special_events": {
+    "event1":{
+      "day_of_event": 6,
+      "event": {
+        "water": 3,
+        "sun": 0
+      }
+    },
+    "event2":{
+      "day_of_event": 2,
+      "event": {
+        "water": 0,
+        "sun": -2
+      }
+    }
   }
 }

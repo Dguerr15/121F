@@ -8,14 +8,16 @@ class GrowthCondition {
 }
 
 class GrowthConditionBuilder {
-    static sunAndWaterNeeded(sunNeeded, waterNeeded) {
+    static sunAndWaterNeeded(waterNeeded, sunNeeded) {
         return new GrowthCondition(({ sunLevel, waterLevel }) => {
+            console.log("waterLevel: " + waterLevel + ", sunLevel: " + sunLevel);
             return sunLevel >= sunNeeded && waterLevel >= waterNeeded;
         });
     }
 
     static adjacencyNeeded(minAdjacentPlants, requiredPlantType = null) {
         return new GrowthCondition(({ neighbors, gridManager }) => {
+            console.log("minAdjacentPlants: " + minAdjacentPlants + ", requiredPlantType: " + requiredPlantType);
             const count = neighbors.reduce((acc, cell) => {
                 const t = gridManager.getPlantType(cell.x, cell.y);
                 if (requiredPlantType == null) {
@@ -33,6 +35,8 @@ class GrowthConditionBuilder {
             // ensure no neighbours of different plant type
             return neighbors.every(cell => {
                 const plantType = gridManager.getPlantType(cell.x, cell.y);
+                console.log("neighbor plantType: " + plantType + ", requiredPlantType: " + requiredPlantType);
+                console.log("eval:" + (plantType === 0 || plantType === requiredPlantType));
                 return plantType === 0 || plantType === requiredPlantType;
             });
         });
@@ -57,23 +61,26 @@ class PlantGrowthDSL {
 
 // define growth conditions 
 export const GrowthDefinitions = {
+    //carrots
     1: PlantGrowthDSL.definePlantGrowth(
         1,
-        [ GrowthConditionBuilder.sunAndWaterNeeded(3, 2) ],
-        { waterNeeded: 2, sunNeeded: 3 }
+        [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ],
+        { waterNeeded: 5, sunNeeded: 4 }
     ),
-    2: PlantGrowthDSL.definePlantGrowth(
-        2,
-        [
-            GrowthConditionBuilder.sunAndWaterNeeded(4, 3),
-            GrowthConditionBuilder.noDifferentPlantsAdjacent(2)
-        ],
-        { waterNeeded: 3, sunNeeded: 4 }
-    ),
+    //roses
     3: PlantGrowthDSL.definePlantGrowth(
         3,
         [
-            GrowthConditionBuilder.sunAndWaterNeeded(2, 4),
+            GrowthConditionBuilder.sunAndWaterNeeded(3, 4),
+            GrowthConditionBuilder.noDifferentPlantsAdjacent(3)
+        ],
+        { waterNeeded: 3, sunNeeded: 4 }
+    ),
+    //corn
+    2: PlantGrowthDSL.definePlantGrowth(
+        2,
+        [
+            GrowthConditionBuilder.sunAndWaterNeeded(4, 2),
             GrowthConditionBuilder.adjacencyNeeded(1)
         ],
         { waterNeeded: 4, sunNeeded: 2 }
