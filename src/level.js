@@ -21,35 +21,9 @@ export class MyLevel extends Scene {
             corns: 5
         };
         this.inventoryText = {carrots: null, roses: null, corns: null};
-        this.inventoryText.carrots = new Label({
-                    text: `Carrots: ${this.inventory['carrots']}`,
-                    pos: vec(10, 10),
-                    font: new Font({
-                        family: 'impact',
-                        size: 24,
-                        unit: FontUnit.Px
-                    }),
-                    z: 4
-                    }); 
-        this.add (this.inventoryText.carrots);
-        this.inventoryText.roses = new Label({
-                    text: `Roses: ${this.inventory['roses']}`,
-                    pos: vec(10, 100),
-                    fontSize: 80,
-                    color: '#ffffff',
-                    fontFamily: Font.SansSerif,
-                    z: 4
-                    });
-        this.add (this.inventoryText.roses);
-        this.inventoryText.corns = new Label({
-                    text: `Corns: ${this.inventory['corns']}`,
-                    pos: vec(10, 190),
-                    fontSize: 80,
-                    color: '#ffffff',
-                    fontFamily: Font.SansSerif,
-                    z: 4
-                    });
-        this.add (this.inventoryText.corns);
+        this.initInventoryDisplay(); // creates label objects for inventory display
+
+        this.selectedPlant = 'carrots';
 
         this.cellSize = 64;
         this.gridWidth = 13;
@@ -106,12 +80,18 @@ export class MyLevel extends Scene {
     handlePlantSelection(engine){
         if (engine.input.keyboard.wasPressed(Keys.Key1)) {
             console.log ("ONE pressed"); // test
+            this.selectPlant('carrots');
+            this.updateInventory();
         }
         if (engine.input.keyboard.wasPressed(Keys.Key2)) {
             console.log ("TWO pressed"); // test 
+            this.selectPlant('roses');
+            this.updateInventory();
         }
         if (engine.input.keyboard.wasPressed(Keys.Key3)) {
             console.log ("THREE pressed"); // test
+            this.selectPlant('corns');
+            this.updateInventory();
         }
     }
 
@@ -123,9 +103,50 @@ export class MyLevel extends Scene {
     updateInventory(){
         const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
         colors[this.selectedPlant] = '#aaffaa';
-        // for item in inventory, 
+        for (const key in this.inventoryText) {
+            this.inventoryText[key].font.color = colors[key];
+            this.inventoryText[key].text = `${key}: ${this.inventory[key]}`;
+        }
     }
 
+    initInventoryDisplay(){
+        this.inventoryText.carrots = new Label({
+            text: `Carrots: ${this.inventory['carrots']}`,
+            pos: vec(10, 10),
+            font: new Font({
+                family: 'impact',
+                size: 24,
+                unit: FontUnit.Px,
+                color: '#ffffff'
+            }),
+            z: 4
+            }); 
+        this.add (this.inventoryText.carrots);
+        this.inventoryText.roses = new Label({
+                    text: `Roses: ${this.inventory['roses']}`,
+                    pos: vec(10, 90),
+                    font: new Font({
+                        family: 'impact',
+                        size: 24,
+                        unit: FontUnit.Px,
+                        color: '#ffffff'
+                    }),
+                    z: 4
+                    });
+        this.add (this.inventoryText.roses);
+        this.inventoryText.corns = new Label({
+                    text: `Corns: ${this.inventory['corns']}`,
+                    pos: vec(10, 170),
+                    font: new Font({
+                        family: 'impact',
+                        size: 24,
+                        unit: FontUnit.Px,
+                        color: '#ffffff'
+                    }),
+                    z: 4
+                    });
+        this.add (this.inventoryText.corns);
+    }
     drawGrid(cellSize, gameWidth, gameHeight, scene) {
         // Create vertical lines
         for (let x = 0; x < gameWidth; x += cellSize) {
