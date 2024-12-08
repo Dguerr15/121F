@@ -201,9 +201,19 @@ export class AdvanceTimeCommand extends Command {
     }
 
     undoOneDay(){
+        let special_water = 0;
+        let special_sun = 0;
+        
+        let special_event_today = my.specialEvents[my.scene.dayCount-1] || null;
+
+        if (special_event_today) {
+            special_water = special_event_today.water;
+            special_sun = special_event_today.sun;
+        }
+
         for (let x = 0; x < my.gridManager.gridWidth; x++) {
             for (let y = 0; y < my.gridManager.gridHeight; y++) {
-                this.undoResources(x, y);
+                this.undoResources(x, y, special_water, special_sun);
                 my.gridManager.drawCellInfo(my.scene, x, y);
             }
         }
@@ -216,20 +226,20 @@ export class AdvanceTimeCommand extends Command {
         }
     }
 
-    undoResources(x, y){
-        this.undoWaterLevel(x, y);
-        this.undoSunLevel(x, y);
+    undoResources(x, y, special_water, special_sun){
+        this.undoWaterLevel(x, y, special_water);
+        this.undoSunLevel(x, y, special_sun);
     }
 
-    undoWaterLevel(x, y){
+    undoWaterLevel(x, y, special_water){
         const currentWater = my.gridManager.getWaterLevel(x, y);
         const additionalWater = my.gridManager.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_WATER_MAX;
-        my.gridManager.setWaterLevel(x, y, Math.max(currentWater - additionalWater, 0));
+        my.gridManager.setWaterLevel(x, y, Math.max(currentWater - additionalWater - special_water, 0));
     }
 
-    undoSunLevel(x, y){
+    undoSunLevel(x, y, special_sun){
         const sun = my.gridManager.getFakeRand(x, y, my.scene.dayCount - 1) % RAND_SUN_MAX;
-        my.gridManager.setSunLevel(x, y, sun);
+        my.gridManager.setSunLevel(x, y, Math.max(sun + special_sun, 0));
     }
 
     undoPlantGrowth(x, y){
