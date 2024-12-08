@@ -1,3 +1,5 @@
+import { my } from "../Globals.js";
+
 export class Command {
     execute() { throw new Error("execute() must be implemented"); }
     undo() { throw new Error("undo() must be implemented"); }
@@ -38,7 +40,7 @@ export class PlantCropCommand extends Command {
     }
 }
 
-class RemovePlantCommand extends Command {
+export class RemovePlantCommand extends Command {
     constructor(gridX, gridY, plantTypeCode, growthLevel) {
         super();
         this.gridX = gridX;
@@ -79,7 +81,7 @@ class RemovePlantCommand extends Command {
     }
 }
 
-class AdvanceTimeCommand extends Command {
+export class AdvanceTimeCommand extends Command {
     constructor() {
         super();
         this.growthEvents = new Map();

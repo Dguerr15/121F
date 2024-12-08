@@ -4,15 +4,26 @@ import { Player } from "./player.js";
 import { GroundTile } from "./groundTile.js";
 import { my } from "./Globals.js";
 
+
+import { PlantCropCommand, RemovePlantCommand, AdvanceTimeCommand } from "./Objects/Command.js";
 import { EventManager } from "./Objects/EventManager.js";
 import { CommandManager } from "./Objects/CommandManager.js";
 import { GridManager } from "./Objects/GridManager.js";
+
+// Enumeration for plant types
+const PlantTypes = {
+    NONE: 0,
+    CARROTS: 1,
+    CORNS: 2,
+    ROSES: 3
+};
 
 export class MyLevel extends Scene {
     onInitialize(engine) {
         // Scene.onInitialize is where we recommend you perform the composition for your game
         const player = new Player();
         this.add(player); // Actors need to be added to a scene to be drawn
+        my.player = player; // add player instance to the global container
 
         this.dayCount = 1;
         this.inventory = {
@@ -20,6 +31,7 @@ export class MyLevel extends Scene {
             roses: 5,
             corns: 5
         };
+        my.inventory = this.inventory; // add inventory to the global container 
         this.inventoryText = {carrots: null, roses: null, corns: null};
         this.initInventoryDisplay(); // creates label objects for inventory display
 
@@ -47,6 +59,8 @@ export class MyLevel extends Scene {
         // Draw grid lines on z 2
         this.drawGrid (this.cellSize, this.gridWidth * this.cellSize, this.gridHeight * this.cellSize, this);
         
+        my.scene = this;
+
         // Initialize event manager
         my.eventMan = new EventManager(this);
         
@@ -57,6 +71,7 @@ export class MyLevel extends Scene {
         my.gridManager.initializeGrid(this);
 
         // Initialize command manager. WIP*
+        my.commandMan = new CommandManager();
 
         // Initialize scenario manager. WIP*
 
@@ -74,10 +89,64 @@ export class MyLevel extends Scene {
 
     onPostUpdate(engine, elapsedMs) {
         // Called after everything updates in the scene
-        this.handlePlantSelection(engine);
+        this.handlePlantSelectionKeys(engine);
+        this.handlePlantingKeys(engine);
     }
 
-    handlePlantSelection(engine){
+    handlePlantingKeys(engine){
+        if (engine.input.keyboard.wasPressed(Keys.Q)) {
+            console.log ("Q pressed"); // test
+            // plant selected plant
+            const { gridX, gridY } = this.getPlayerGridPosition();
+            console.log ("Player is at grid position: ", gridX, gridY); // test
+            this.plantCrop();
+        }
+        if (engine.input.keyboard.wasPressed(Keys.E)) {
+            console.log ("W pressed"); // test 
+            // pull selected plant
+            this.pickUpPlant();
+
+        }
+    }
+
+    plantCrop(){
+        if (this.inventory[this.selectedPlant] <= 0) {
+            console.log ("No more plants of this type in inventory");
+            return;
+        }
+        const { gridX, gridY } = this.getPlayerGridPosition();
+
+        if (my.gridManager.canPlant(gridX, gridY, this.selectedPlant)){
+            // Make plant command
+            const command = new PlantCropCommand(gridX, gridY, this.selectedPlant);
+            // Execute with CommandManager (also pushes to history stack).
+            my.commandMan.executeCommand(command);
+            
+            this.updateInventory();
+            // my.text.message.setText('');
+        } else {
+            // my.text.message.setText('Cannot plant here.');
+            // this.time.delayedCall(3000, () => {
+                // my.text.message.setText('');
+        }
+    }
+
+    pickUpPlant(){
+        const { gridX, gridY } = this.getPlayerGridPosition();
+        const plantTypeCode = my.gridManager.getPlantType(gridX, gridY);
+        const growthLevel = my.gridManager.getGrowthLevel(gridX, gridY);
+
+        if (plantTypeCode !== PlantTypes.NONE) {
+            // Make plant command.
+            const command = new RemovePlantCommand(gridX, gridY, plantTypeCode, growthLevel);
+            // Execute with CommandManager (also pushes to history stack).
+            my.commandMan.executeCommand(command);
+
+            this.updateInventory();
+        }
+    }
+
+    handlePlantSelectionKeys(engine){
         if (engine.input.keyboard.wasPressed(Keys.Key1)) {
             console.log ("ONE pressed"); // test
             this.selectPlant('carrots');
@@ -97,7 +166,8 @@ export class MyLevel extends Scene {
 
     selectPlant(plant){
         this.selectedPlant = plant;
-        // update inventory WIP*
+        console.log ("selected plant: ", this.selectedPlant); // test
+        this.updateInventory();
     }
 
     updateInventory(){
@@ -111,7 +181,7 @@ export class MyLevel extends Scene {
 
     initInventoryDisplay(){
         this.inventoryText.carrots = new Label({
-            text: `Carrots: ${this.inventory['carrots']}`,
+            text: `carrots: ${this.inventory['carrots']}`,
             pos: vec(10, 10),
             font: new Font({
                 family: 'impact',
@@ -123,7 +193,7 @@ export class MyLevel extends Scene {
             }); 
         this.add (this.inventoryText.carrots);
         this.inventoryText.roses = new Label({
-                    text: `Roses: ${this.inventory['roses']}`,
+                    text: `roses: ${this.inventory['roses']}`,
                     pos: vec(10, 90),
                     font: new Font({
                         family: 'impact',
@@ -135,7 +205,7 @@ export class MyLevel extends Scene {
                     });
         this.add (this.inventoryText.roses);
         this.inventoryText.corns = new Label({
-                    text: `Corns: ${this.inventory['corns']}`,
+                    text: `corns: ${this.inventory['corns']}`,
                     pos: vec(10, 170),
                     font: new Font({
                         family: 'impact',
@@ -147,6 +217,15 @@ export class MyLevel extends Scene {
                     });
         this.add (this.inventoryText.corns);
     }
+
+    getPlayerGridPosition() {
+        const playerCenterX = my.player.pos.x;
+        const playerCenterY = my.player.pos.y;
+        const gridX = Math.floor(playerCenterX / this.cellSize);
+        const gridY = Math.floor(playerCenterY / this.cellSize);
+        return { gridX, gridY };
+    }
+
     drawGrid(cellSize, gameWidth, gameHeight, scene) {
         // Create vertical lines
         for (let x = 0; x < gameWidth; x += cellSize) {

@@ -1,3 +1,7 @@
+import { PlantSprite } from "../PlantSprite.js";
+import { Actor } from "excalibur";
+import { my } from "../Globals.js";
+
 // Constants for resource limits
 const RAND_SUN_MAX = 5;
 const RAND_WATER_MAX = 2;
@@ -121,13 +125,17 @@ export class GridManager {
     }
 
     plantCrop(x, y, plantName, scene) {
+        console.log ('plantCrop called');
         const plantTypeCode = this.getPlantTypeCode(plantName);
         const textureKey = `${plantName}Seedling`;
 
         const posX = x * this.cellSize + this.cellSize / 2;
         const posY = y * this.cellSize + this.cellSize / 2;
-        const plantSprite = scene.physics.add.image(posX, posY, textureKey);
-        plantSprite.setScale(2.5);
+        // const plantSprite = scene.physics.add.image(posX, posY, textureKey);
+        // plantSprite.setScale(2.5);
+        const plantSprite = new PlantSprite();
+        plantSprite.initSprite(posX, posY, textureKey);
+        my.scene.add(plantSprite);
 
         this.setPlantType(x, y, plantTypeCode);
         this.setGrowthLevel(x, y, 1);
@@ -140,12 +148,12 @@ export class GridManager {
     
         const key = `${x},${y}`;
         if (this.plantSprites[key]) {
-            this.plantSprites[key].destroy();
+            this.plantSprites[key].kill();
             delete this.plantSprites[key];
         }
     
         // Clear growth history
-        delete this.growthHistory[key];
+        delete this.growthHistory[key]; // deprecated? using lists in commands now
     }
 
     updatePlantSprite(x, y) {
