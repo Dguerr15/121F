@@ -2,7 +2,7 @@ import { my } from "../Globals.js";
 
 export class EventManager {
     constructor(scene) {
-        this.scene = scene;
+        // this.scene = scene;
     }
     //game saving stuff
     saveGame(saveSlotName) {
@@ -33,7 +33,7 @@ export class EventManager {
         }
 
         // load grid state
-        my.gridManager.setGridState(saveData.grid, this.scene);
+        my.gridManager.setGridState(saveData.grid, my.scene);
 
         // restore player state
         my.player.pos.x = saveData.player.x;
