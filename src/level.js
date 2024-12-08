@@ -278,7 +278,7 @@ export class MyLevel extends Scene {
                 unit: FontUnit.Px,
                 color: '#ffffff'
             }),
-            z: 4
+            z: 5
             });
         this.add (this.dayCountText);
         this.textHeight += this.textHeightIncrement;
@@ -294,7 +294,7 @@ export class MyLevel extends Scene {
                 unit: FontUnit.Px,
                 color: '#ffffff'
             }),
-            z: 4
+            z: 5
             }); 
         this.add (this.inventoryText.carrots);
         this.textHeight += this.textHeightIncrement;
@@ -307,7 +307,7 @@ export class MyLevel extends Scene {
                         unit: FontUnit.Px,
                         color: '#ffffff'
                     }),
-                    z: 4
+                    z: 5
                     });
         this.add (this.inventoryText.roses);
         this.textHeight += this.textHeightIncrement;
@@ -320,7 +320,7 @@ export class MyLevel extends Scene {
                         unit: FontUnit.Px,
                         color: '#ffffff'
                     }),
-                    z: 4
+                    z: 5
                     });
         this.add (this.inventoryText.corns);
         this.textHeight += this.textHeightIncrement;
@@ -336,7 +336,7 @@ export class MyLevel extends Scene {
                 unit: FontUnit.Px,
                 color: '#aa0000'
             }),
-            z: 4
+            z: 5
             });
         this.add (this.messageText);
         this.textHeight += this.textHeightIncrement;
@@ -356,7 +356,7 @@ export class MyLevel extends Scene {
                 unit: FontUnit.Px,
                 color: '#44dd44'
             }),
-            z: 4
+            z: 5
             });
         this.add (this.winMessageText);
     }
