@@ -322,7 +322,7 @@ export class MyLevel extends Scene {
         this.textHeight = 10;
         this.textHeightIncrement = 70;
         this.dayCountText = null;
-        my.dayCountText = this.dayCountText; // make a global reference
+        // my.dayCountText = this.dayCountText; // make a global reference
         this.initDayCountText();
 
         this.inventoryText = {carrots: null, roses: null, corns: null};
@@ -334,6 +334,10 @@ export class MyLevel extends Scene {
 
         this.winMessageText = null;
         this.initWinMessageText();
+    }
+
+    updateDayCountText(){
+        this.dayCountText.text = `Day: ${this.dayCount}`;
     }
 
     initDayCountText(){

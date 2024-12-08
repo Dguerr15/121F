@@ -13,8 +13,8 @@ export class EventManager {
                 x: my.player.pos.x,
                 y: my.player.pos.y,
             },
-            inventory: this.scene.inventory,
-            dayCount: this.scene.dayCount,
+            inventory: my.scene.inventory,
+            dayCount: my.scene.dayCount,
             history: my.commandMan.serializeHistory(),
             redoStack: my.commandMan.serializeRedoStack()
         };
@@ -40,17 +40,18 @@ export class EventManager {
         my.player.pos.y = saveData.player.y;
 
         // restore inv and day ct
-        this.scene.inventory = saveData.inventory;
-        this.scene.dayCount = saveData.dayCount;
+        my.scene.inventory = saveData.inventory;
+        my.scene.dayCount = saveData.dayCount;
         my.inventory = saveData.inventory;
 
-        // update text and ui
-        this.scene.updateInventory();
-        my.dayCountText = `Day: ${this.scene.dayCount}`;
 
         // load command history
         my.commandMan.deserialize(saveData.history);
         my.commandMan.deserializeRedoStack(saveData.redoStack);
+
+        // update text and ui
+        my.scene.updateInventory();
+        my.scene.updateDayCountText();
 
         console.log(`Game loaded from slot ${saveSlotName}`);
         return true;
