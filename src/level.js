@@ -306,12 +306,16 @@ export class MyLevel extends Scene {
     }
 
     updateInventory(){
+        const lang = localStorage.getItem('language');
+        console.log ("lang: ", lang); // test
         const colors = { carrots: '#ffffff', corns: '#ffffff', roses: '#ffffff' };
         colors[this.selectedPlant] = '#aaffaa';
         for (const key in this.inventoryText) {
             this.inventoryText[key].font.color = colors[key];
-            this.inventoryText[key].text = `${key}: ${this.inventory[key]}`;
+            this.inventoryText[key].text = `${language[lang][key]}: ${this.inventory[key]}`;
         }
+
+
 
         // console.log("day count: ", dayCt); // test
         // this.dayCount = dayCt;
