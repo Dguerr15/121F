@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="favicon.ico" />
+    <link rel="manifest" href="game.webmanifest" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excalibur Vanilla JS</title>
     <style>
@@ -188,5 +189,11 @@
         document.getElementById('btn-arabic').addEventListener('click', () => updateLanguage('ar'));
     </script>
     <script type="module" src="src/main.js"></script> <!-- Your game script -->
+    <!-- Register the Service Worker -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register("/sw.js");
+        }
+    </script>
 </body>
 </html>
