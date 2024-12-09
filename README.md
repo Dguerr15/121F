@@ -1,3 +1,37 @@
+# Devlog F2 Software Requirement Satisfaction 12/09
+
+## How we satisfied the software requirements
+
+### F0+F1
+No major changes.
+
+### External DSL for Scenario Design
+The pre-existing language we used for our external DSL for scenario design was JSON. Here is a short example of a definition in this language:
+```json
+"scenario": {
+    "victory_condition_amount": 9,
+    "victory_condition_level": 3
+  }
+```
+In this code example, we set up the win scenario for the game. The "victory_condition_amount" specifies how many plants the player has to plant to win, and we set that to 9 plants. The "victory_condition_level" specifies the growth level each plant needs to be to win, and we set that to growth level 3. So, in order to win the game, the player must have 9 plants that have a growth level of 3.
+
+### Internal DSL for Plants and Growth Conditions
+```javascript
+console.log("Scenario manager: Victory condition amount: ", victory_condition_amount);
+        this.scene.victoryConditionAmount = victory_condition_amount || 9;
+        console.log("Scenario manager: Victory condition level: ", victory_condition_level);
+        this.scene.victoryConditionLevel = victory_condition_level || 3;
+```
+Our DSL is written in JavaScript. In the above code snippet, we create the game's win conditions from the JSON external DSL. We start with the victory_condition_amount which is the amount of plants needed to win the game. From the JSON file, we know this is 9, so we set the this.scene.victoryConditionAmount variable to 9. We then go to the victory_condition_level which is the growth level of the plants needed to win and, again, from the JSON file, we know the growth level is 3, so we set the this.scene.victoryConditionLevel variable to 3. So, in this snippet, we use the variables created in the external DSL to set up the win conditions in JavaScript. Since the rest of our game and engine runs with JavaScript, it would be hard to make our engine use the JSON external DSL.
+
+### Switch to Alternate Platform
+We switched our platform from Phaser to Excalibur.js. Lots of code that we previously had in Phaser was carried over to Excalibur.js such as our 'Objects' folder with our GridManager.js, Command.js, and others. However, the main game logic file, farming.js, which mainly used Phaser had to be redesigned in Excalibur.js. This was because Excalibur.js is structured a little differently from Phaser, so we had to reimplement the farming.js file into a new level.js file with all of the controls and UI elements from the original Phaser design. We originally thought we would switch to Excalibur.js, but, as deadlines drew closer, we thought of other platforms to switch to such as changing JavaScript to TypeScript. This came with other problems like figuring out how to set up a server to run our game, so we decided to stick with Excalibur.js to avoid those other headaches.
+
+## Reflection
+We had some reconsiderations about the platform switching as I described above. We didn't know if Excalibur.js would be the most efficient platform to switch to, so we explored other options. However, in the end, we thought it was best to keep JavaScript as the main language since a lot of our files didn't depend so much on Phaser except for the main farming.js file. On the note of giving the player more feedback, we tried different UI designs to help the player understand the controls of the game, but we are considering different ways of showing the player what they need to win.
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # Devlog F1 Software Requirement Satisfaction 12/04
 
 ## How we satisfied the software requirements
