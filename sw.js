@@ -31,7 +31,9 @@ const ASSETS_TO_CACHE = [
     "./assets/tile_0089.png",
     "./assets/tile_0091.png",
     "./assets/brace-logo-symbol.png",
-    //"./node_modules/excalibur/build/esm/excalibur.min.js"
+    "./node_modules/",
+    "./node_modules/excalibur/build/excalibur.js",
+    "./node_modules/excalibur/build/esm/excalibur.min.js"
 ];
 
 // Installing Service Worker
