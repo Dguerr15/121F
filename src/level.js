@@ -117,8 +117,9 @@ export class MyLevel extends Scene {
         // Add autosave. WIP* 
         // Every 5 seconds, save the game to the autosave slot 3.
         const autoSaveTimer = new Timer({
-            interval: 5000,
+            interval: 2000,
             fcn: () => {
+                this.updateInventory()
                 this.autoSavePrompt();
             },
             repeats: true
