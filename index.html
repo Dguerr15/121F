@@ -176,9 +176,6 @@
             listItems[9].innerHTML = formatText('Z', translations[language].undo);
             listItems[10].innerHTML = formatText('X', translations[language].redo);
 
-            // Keep layout direction LTR for all languages
-            document.body.dir = 'ltr';
-
             // Update the displayed current language
             document.getElementById('current-language').textContent = `Current Language: ${
                 language === 'en' ? 'English' : language === 'zh' ? '中文' : 'العربية'

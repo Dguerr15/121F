@@ -10,7 +10,6 @@ import { EventManager } from "./Objects/EventManager.js";
 import { CommandManager } from "./Objects/CommandManager.js";
 import { GridManager } from "./Objects/GridManager.js";
 import { ScenarioManager } from "./Objects/ScenarioManager.js";
-import { SpecialEventManager } from "./Objects/SpecialEventManager.js";
 
 // global variables
 let victory_condition_amount = 9
