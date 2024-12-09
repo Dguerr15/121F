@@ -1,6 +1,6 @@
 const CACHE_NAME = "plow-pioneer-cache-v1";
 const ASSETS_TO_CACHE = [
-    "./",
+    //"./",
     "./index.html",
     "./game.webmanifest",
     "./src/main.js",
@@ -18,7 +18,6 @@ const ASSETS_TO_CACHE = [
     "./src/Objects/GridManager.js",
     "./src/Objects/PlantGrowthDSL.js",
     "./src/Objects/ScenarioManager.js",
-    "./src/Objects/SpecialEventManager.js",
     "./assets/ground_01.png",
     "./assets/player_05.png",
     "./assets/tile_0056.png",
@@ -31,9 +30,7 @@ const ASSETS_TO_CACHE = [
     "./assets/tile_0089.png",
     "./assets/tile_0091.png",
     "./assets/brace-logo-symbol.png",
-    "./node_modules/",
-    "./node_modules/excalibur/build/esm/excalibur.js",
-    "./node_modules/excalibur/build/esm/excalibur.min.js"
+    //"./node_modules/excalibur/build/esm/excalibur.min.js"
 ];
 
 // Installing Service Worker
