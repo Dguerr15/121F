@@ -47,12 +47,6 @@ export class ScenarioManager {
         this.scene.inventory.corns = crops.corns;
 
         this.scene.updateInventory();
-        /*
-        // Apply weather conditions
-        const weather = this.scenarioData.weather;
-        this.scene.weather = weather;  // You can store it or use it as needed
-        console.log('Weather data loaded:', weather);
-        */
 
         Object.values(this.scenarioData.special_events).forEach(event => {
           my.specialEvents[event.day_of_event] = event.event;

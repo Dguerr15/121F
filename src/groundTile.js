@@ -61,30 +61,4 @@ export class GroundTile extends Actor {
       console.log('You clicked the ground @', evt.worldPos.toString());
     });
   }
-
-
-  onPreUpdate(engine, elapsedMs) {
-    // Put any update logic here runs every frame before Actor builtins
-  }
-
-  onPostUpdate(engine, elapsedMs) {
-    // Put any update logic here runs every frame after Actor builtins
-
-  }
-
-  onPreCollisionResolve(self, other, side, contact) {
-    // Called before a collision is resolved, if you want to opt out of this specific collision call contact.cancel()
-  }
-
-  onPostCollisionResolve(self, other, side, contact) {
-    // Called every time a collision is resolved and overlap is solved
-  }
-
-  onCollisionStart(self, other, side, contact) {
-    // Called when a pair of objects are in contact
-  }
-
-  onCollisionEnd(self, other, side, lastContact) {
-    // Called when a pair of objects separates
-  }
 }

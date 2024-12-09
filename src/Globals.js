@@ -9,5 +9,4 @@ export const my = {
     player: null,
     dayCountText: null,
     language: 'en'
-    // text exists in scenes not objects that can be stored outside(?)
 };
