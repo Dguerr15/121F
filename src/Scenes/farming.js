@@ -22,7 +22,8 @@ class farming extends Phaser.Scene {
 
         // Initialize the ScenarioManager
         this.scenarioManager = new ScenarioManager(this);
-        this.scenarioManager.loadScenario('scenario1');  // Load the TOML scenario file
+        this.scenarioManager.loadScenario('scenario1');  // Load the JSON scenario file
+        this.updateInventory();
     }
 
     // Preload assets

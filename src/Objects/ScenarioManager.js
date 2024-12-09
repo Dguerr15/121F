@@ -46,7 +46,7 @@ export class ScenarioManager {
         this.scene.inventory.roses = crops.roses;
         this.scene.inventory.corns = crops.corns;
 
-        // this.scene.updateInventory(starting_day);
+        this.scene.updateInventory();
         /*
         // Apply weather conditions
         const weather = this.scenarioData.weather;
@@ -61,6 +61,7 @@ export class ScenarioManager {
 
 
         console.log('Scenario applied:', this.scenarioData);
+
     } else {
         console.error('Invalid scenario data.');
     }

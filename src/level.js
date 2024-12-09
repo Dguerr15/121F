@@ -81,6 +81,7 @@ export class MyLevel extends Scene {
         //scenario manager
         my.scenarioManager = new ScenarioManager(this);
         my.scenarioManager.loadScenario('scenario1');
+        console.log("inventory", this.inventory);
 
 
         //special event manager
@@ -362,7 +363,7 @@ export class MyLevel extends Scene {
     }
 
     initInventoryDisplay() {
-        const currentLang = language['zh']; // Replace 'en' with dynamic language selection if needed
+        const currentLang = language['en']; // Replace 'en' with dynamic language selection if needed
     
         this.inventoryText.carrots = new Label({
             text: `${currentLang['carrots']}: ${this.inventory['carrots']}`,
