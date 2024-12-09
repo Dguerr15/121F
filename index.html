@@ -157,27 +157,36 @@
         function updateLanguage(language) {
             const controlList = document.getElementById('control-list');
             const listItems = controlList.querySelectorAll('li');
-            document.getElementById('controls-header').textContent = translations[language].controls; // Translate the Controls header
+            document.getElementById('controls-header').textContent = translations[language].controls;
 
-            listItems[0].innerHTML = `<b>W/A/S/D:</b> ${translations[language].move}`;
-            listItems[1].innerHTML = `<b>E:</b> ${translations[language].pickUp}`;
-            listItems[2].innerHTML = `<b>Q:</b> ${translations[language].plant}`;
-            listItems[3].innerHTML = `<b>1:</b> ${translations[language].selectCarrots}`;
-            listItems[4].innerHTML = `<b>2:</b> ${translations[language].selectCorn}`;
-            listItems[5].innerHTML = `<b>3:</b> ${translations[language].selectRoses}`;
-            listItems[6].innerHTML = `<b>SPACE:</b> ${translations[language].advanceTime}`;
-            listItems[7].innerHTML = `<b>K:</b> ${translations[language].saveGame}`;
-            listItems[8].innerHTML = `<b>L:</b> ${translations[language].loadGame}`;
-            listItems[9].innerHTML = `<b>Z:</b> ${translations[language].undo}`;
-            listItems[10].innerHTML = `<b>X:</b> ${translations[language].redo}`;
+            // Reverse the text structure for Arabic
+            const isArabic = language === 'ar';
+
+            const formatText = (key, value) => isArabic ? `${value} : ${key}` : `<b>${key}:</b> ${value}`;
+
+            listItems[0].innerHTML = formatText('W/A/S/D', translations[language].move);
+            listItems[1].innerHTML = formatText('E', translations[language].pickUp);
+            listItems[2].innerHTML = formatText('Q', translations[language].plant);
+            listItems[3].innerHTML = formatText('1', translations[language].selectCarrots);
+            listItems[4].innerHTML = formatText('2', translations[language].selectCorn);
+            listItems[5].innerHTML = formatText('3', translations[language].selectRoses);
+            listItems[6].innerHTML = formatText('SPACE', translations[language].advanceTime);
+            listItems[7].innerHTML = formatText('K', translations[language].saveGame);
+            listItems[8].innerHTML = formatText('L', translations[language].loadGame);
+            listItems[9].innerHTML = formatText('Z', translations[language].undo);
+            listItems[10].innerHTML = formatText('X', translations[language].redo);
+
+            // Keep layout direction LTR for all languages
+            document.body.dir = 'ltr';
 
             // Update the displayed current language
-            document.getElementById('current-language').textContent = `Current Language: ${language === 'en' ? 'English' : language === 'zh' ? '中文' : 'العربية'}`;
+            document.getElementById('current-language').textContent = `Current Language: ${
+                language === 'en' ? 'English' : language === 'zh' ? '中文' : 'العربية'
+            }`;
 
             // Store the selected language in localStorage
             localStorage.setItem('language', language);
         }
-
         // Check for stored language on page load
         const storedLanguage = localStorage.getItem('language') || 'en';
         updateLanguage(storedLanguage);
