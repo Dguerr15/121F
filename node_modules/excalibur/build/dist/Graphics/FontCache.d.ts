@@ -1,0 +1,19 @@
+import { BoundingBox } from '../Collision/BoundingBox';
+import { Color } from '../Color';
+import { Font } from './Font';
+import { FontTextInstance } from './FontTextInstance';
+export declare class FontCache {
+    static FONT_TIMEOUT: number;
+    private static _LOGGER;
+    private static _TEXT_USAGE;
+    private static _TEXT_CACHE;
+    private static _MEASURE_CACHE;
+    static measureText(text: string, font: Font, maxWidth?: number): BoundingBox;
+    static getTextInstance(text: string, font: Font, color: Color): FontTextInstance;
+    static checkAndClearCache(): void;
+    static get cacheSize(): number;
+    /**
+     * Force clear all cached text bitmaps
+     */
+    static clearCache(): void;
+}
