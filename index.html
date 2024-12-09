@@ -9,7 +9,7 @@
         body {
             margin: 0;
             display: flex;
-            flex-direction: row-reverse; /* Swap the order of the flex items */
+            flex-direction: row-reverse;
             font-family: Arial, sans-serif;
         }
 
@@ -22,7 +22,7 @@
             width: 250px;
             background-color: #f4f4f4;
             padding: 15px;
-            border-right: 1px solid #ccc; /* Border on the right to match the new order */
+            border-right: 1px solid #ccc;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
@@ -43,7 +43,6 @@
             font-size: 14px;
         }
 
-        /* Style for language buttons */
         #language-controls {
             margin-top: 20px;
             text-align: center;
@@ -60,42 +59,91 @@
             background-color: #ddd;
         }
 
-        /* Display current language */
         #current-language {
             margin-top: 20px;
             font-size: 16px;
             font-weight: bold;
             text-align: center;
         }
+
+        #button-controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #button-controls button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #button-controls h2 {
+            margin-top: 0;
+            font-size: 18px;
+        }
+
+        #movement-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #advance-time {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
     <div id="game-container"></div>
     <div id="controls-panel">
-        <h2 id="controls-header">Controls</h2> <!-- Added ID for header -->
-        <ul id="control-list">
-            <li><b>W/A/S/D:</b> Move</li>
-            <li><b>E:</b> Pick Up</li>
-            <li><b>Q:</b> Plant</li>
-            <li><b>1:</b> Select Carrots</li>
-            <li><b>2:</b> Select Corn</li>
-            <li><b>3:</b> Select Roses</li>
-            <li><b>SPACE:</b> Advance Time</li>
-            <li><b>K:</b> Save Game</li>
-            <li><b>L:</b> Load Game</li>
-            <li><b>Z:</b> Undo</li>
-            <li><b>X:</b> Redo</li>
-        </ul>
+        <div id="button-controls">
+            <h2 id="controls-header">Game Controls</h2>
+            <div id="movement-panel">
+                <div id="mv-top">
+                    <button id="move-up">Up</button>
+                </div>
+                <div id="mv-mid">
+                    <button id="move-left">Left</button>
+                    <button id="move-right">Right</button>
+                </div>
+                <div id="mv-bot">
+                    <button id="move-down">Down</button>
+                </div>
+            </div>
+            <div id="plant-commands">
+                <button id="plant-crop">Plant</button>
+                <button id="pick-up">Pick Up</button>
+            </div>
+            <div id="plant-select">
+                <button id="select-carrots">Carrots</button>
+                <button id="select-roses">Roses</button>
+                <button id="select-corns">Corns</button>
+            </div>
 
-        <!-- Language selection buttons -->
-        <div id="language-controls">
-            <button id="btn-english" class="lang-btn">English</button>
-            <button id="btn-chinese" class="lang-btn">中文</button>
-            <button id="btn-arabic" class="lang-btn">العربية</button>
+            <button id="advance-time">Advance Time</button>
+
+            <div id="game-saves">
+                <button id="save-game">Save Game</button>
+                <button id="load-game">Load Game</button>
+            </div>
+
+            <div id="game-undo-redo">
+                <button id="undo">Undo</button>
+                <button id="redo">Redo</button>
+            </div>
+
+            <div id="language-controls">
+                <div id="current-language">Current Language: English</div>
+                <button id="btn-english" class="lang-btn">English</button>
+                <button id="btn-chinese" class="lang-btn">中文</button>
+                <button id="btn-arabic" class="lang-btn">العربية</button>
+            </div>
         </div>
-
-        <!-- Display the current language -->
-        <div id="current-language">Current Language: English</div>
     </div>
 
     <script type="importmap">
@@ -105,18 +153,21 @@
             }
         }
     </script>
-                <!-- "excalibur": "https://unpkg.com/excalibur@0.29.3/build/esm/excalibur.min.js" -->
+
     <script type="module">
-        // Language data for controls
+        // Extended translation keys for the buttons
         const translations = {
             "en": {
-                "controls": "Controls",
-                "move": "Move",
-                "pickUp": "Pick Up",
+                "controls": "Game Controls",
+                "up": "Up",
+                "down": "Down",
+                "left": "Left",
+                "right": "Right",
                 "plant": "Plant",
-                "selectCarrots": "Select Carrots",
-                "selectCorn": "Select Corn",
-                "selectRoses": "Select Roses",
+                "pickUp": "Pick Up",
+                "selectCarrots": "Carrots",
+                "selectCorn": "Corn",
+                "selectRoses": "Roses",
                 "advanceTime": "Advance Time",
                 "saveGame": "Save Game",
                 "loadGame": "Load Game",
@@ -124,13 +175,16 @@
                 "redo": "Redo"
             },
             "zh": {
-                "controls": "控制",
-                "move": "移动",
-                "pickUp": "捡起",
+                "controls": "游戏控制",
+                "up": "上",
+                "down": "下",
+                "left": "左",
+                "right": "右",
                 "plant": "种植",
-                "selectCarrots": "选择胡萝卜",
-                "selectCorn": "选择玉米",
-                "selectRoses": "选择玫瑰",
+                "pickUp": "捡起",
+                "selectCarrots": "胡萝卜",
+                "selectCorn": "玉米",
+                "selectRoses": "玫瑰",
                 "advanceTime": "推进时间",
                 "saveGame": "保存游戏",
                 "loadGame": "加载游戏",
@@ -138,13 +192,16 @@
                 "redo": "重做"
             },
             "ar": {
-                "controls": "التحكمات",
-                "move": "تحرك",
-                "pickUp": "إلتقط",
+                "controls": "تحكم اللعبة",
+                "up": "أعلى",
+                "down": "أسفل",
+                "left": "يسار",
+                "right": "يمين",
                 "plant": "زرع",
-                "selectCarrots": "اختيار الجزر",
-                "selectCorn": "اختيار الذرة",
-                "selectRoses": "اختيار الورود",
+                "pickUp": "إلتقط",
+                "selectCarrots": "جزر",
+                "selectCorn": "ذرة",
+                "selectRoses": "ورود",
                 "advanceTime": "تقدم بالوقت",
                 "saveGame": "حفظ اللعبة",
                 "loadGame": "تحميل اللعبة",
@@ -153,28 +210,32 @@
             }
         };
 
-        // Function to update the controls panel with selected language
         function updateLanguage(language) {
-            const controlList = document.getElementById('control-list');
-            const listItems = controlList.querySelectorAll('li');
+            // Update controls header
             document.getElementById('controls-header').textContent = translations[language].controls;
 
-            // Reverse the text structure for Arabic
-            const isArabic = language === 'ar';
+            // Movement buttons
+            document.getElementById('move-up').textContent = translations[language].up;
+            document.getElementById('move-down').textContent = translations[language].down;
+            document.getElementById('move-left').textContent = translations[language].left;
+            document.getElementById('move-right').textContent = translations[language].right;
 
-            const formatText = (key, value) => isArabic ? `${value} : ${key}` : `<b>${key}:</b> ${value}`;
+            // Plant commands
+            document.getElementById('plant-crop').textContent = translations[language].plant;
+            document.getElementById('pick-up').textContent = translations[language].pickUp;
 
-            listItems[0].innerHTML = formatText('W/A/S/D', translations[language].move);
-            listItems[1].innerHTML = formatText('E', translations[language].pickUp);
-            listItems[2].innerHTML = formatText('Q', translations[language].plant);
-            listItems[3].innerHTML = formatText('1', translations[language].selectCarrots);
-            listItems[4].innerHTML = formatText('2', translations[language].selectCorn);
-            listItems[5].innerHTML = formatText('3', translations[language].selectRoses);
-            listItems[6].innerHTML = formatText('SPACE', translations[language].advanceTime);
-            listItems[7].innerHTML = formatText('K', translations[language].saveGame);
-            listItems[8].innerHTML = formatText('L', translations[language].loadGame);
-            listItems[9].innerHTML = formatText('Z', translations[language].undo);
-            listItems[10].innerHTML = formatText('X', translations[language].redo);
+            // Plant selection
+            document.getElementById('select-carrots').textContent = translations[language].selectCarrots;
+            document.getElementById('select-roses').textContent = translations[language].selectRoses;
+            // Since original text was "Corns" and we only have singular "Corn" in translations, we'll use the singular from translations
+            document.getElementById('select-corns').textContent = translations[language].selectCorn;
+
+            // Other controls
+            document.getElementById('advance-time').textContent = translations[language].advanceTime;
+            document.getElementById('save-game').textContent = translations[language].saveGame;
+            document.getElementById('load-game').textContent = translations[language].loadGame;
+            document.getElementById('undo').textContent = translations[language].undo;
+            document.getElementById('redo').textContent = translations[language].redo;
 
             // Update the displayed current language
             document.getElementById('current-language').textContent = `Current Language: ${
@@ -184,6 +245,7 @@
             // Store the selected language in localStorage
             localStorage.setItem('language', language);
         }
+
         // Check for stored language on page load
         const storedLanguage = localStorage.getItem('language') || 'en';
         updateLanguage(storedLanguage);
@@ -193,6 +255,7 @@
         document.getElementById('btn-chinese').addEventListener('click', () => updateLanguage('zh'));
         document.getElementById('btn-arabic').addEventListener('click', () => updateLanguage('ar'));
     </script>
-    <script type="module" src="src/main.js"></script> <!-- Your game script -->
+
+    <script type="module" src="src/main.js"></script>
 </body>
 </html>
