@@ -1,5 +1,6 @@
 const CACHE_NAME = "plow-pioneer-cache-v1";
 const ASSETS_TO_CACHE = [
+    "./",
     "./index.html",
     "./game.webmanifest",
     "./src/main.js",
