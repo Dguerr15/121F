@@ -1,0 +1,11 @@
+{
+    "name": "Plow Pioneers",
+    "short_name": "PlowGame",
+    "description": "This is the 121 Final Project",
+    "start_url": "./index.html",
+    "display": "fullscreen",
+    "icons": [{
+    "sizes": "180x180",
+    "src": "./assets/brace-logo-symbol.png"
+  }]
+}
