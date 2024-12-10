@@ -6,6 +6,7 @@
     "display": "fullscreen",
     "icons": [{
     "sizes": "180x180",
+    "orientation": "landscape",
     "src": "./assets/brace-logo-symbol.png"
   }]
 }
