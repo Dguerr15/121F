@@ -15,6 +15,29 @@ The pre-existing language we used for our external DSL for scenario design was J
 ```
 In this code example, we set up the win scenario for the game. The "victory_condition_amount" specifies how many plants the player has to plant to win, and we set that to 9 plants. The "victory_condition_level" specifies the growth level each plant needs to be to win, and we set that to growth level 3. So, in order to win the game, the player must have 9 plants that have a growth level of 3.
 
+In this way, we also defined various other constants for the balance of the game in an external file, making it more accessible for fine tuning. Examples of constants we defined: starting number of each plant, max amount of water held per cell, and the random ranges for sun and water that can occur each day.
+
+Finally, we also defined special events that can occur on arbitrary days that would cause the entire map to increase in water (rain/flood), extremely sunny days (higher sun). In this way we can also define other events such as eclipse (lower sun values).
+
+```json
+  "special_events": {
+    "event1":{
+      "day_of_event": 6,
+      "event": {
+        "water": 3,
+        "sun": 0
+      }
+    },
+    "event2":{
+      "day_of_event": 2,
+      "event": {
+        "water": 0,
+        "sun": -2
+      }
+    }
+  }
+  ```
+
 ### Internal DSL for Plants and Growth Conditions
 For the internal DSL requirement, our implementation largely resides in the PlantGrowthDSL.js file. In this file, we defined structs for each plant that contained GrowthCondition objects. These objects are essentially the loosely declared interfaces for our internal DSL.
 ```javascript
