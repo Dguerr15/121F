@@ -32,7 +32,7 @@ const language = {
         "save" : "Enter save slot number (1-3):",
         "error" : "Invalid save slot.",
         "continue" : "Do you want to continue from where you left off?",
-        "win" : "you win!\nLoad from save to continue.",
+        "win" : "you win!",
         "cannot" : "Cannot plant here."
     },
     "ar": {
@@ -43,7 +43,7 @@ const language = {
         "save" : ":أدخل رقم فتحة الحفظ (1-3)",
         "error" : "فتحة الحفظ غير صالحة.",
         "continue" : "هل تريد المتابعة من حيث توقفت؟",
-        "win" : "أنت تفوز!\nتحميل من الحفظ للمتابعة.",
+        "win" : "!فزت",
         "cannot" : "لا يمكن زراعة هنا."
     },
     "zh": {
@@ -54,7 +54,7 @@ const language = {
         "save" : "输入保存槽号码 (1-3):",
         "error" : "无效的保存槽。",
         "continue" : "您要继续吗？",
-        "win" : "你赢了\n从保存加载以继续。",
+        "win" : "你赢了!",
         "cannot" : "无法在此处种植。"
     },
 };
@@ -285,7 +285,7 @@ export class MyLevel extends Scene {
         setTimeout(() => {
             this.input.keyboard.enabled = true;
             window.location.reload(); // Reload the page
-        }, 2000); // 2000 milliseconds = 2 seconds
+        }, 4000); // 2000 milliseconds = 2 seconds
     }
 
     handlePlantingKeys(engine) {
@@ -484,7 +484,7 @@ export class MyLevel extends Scene {
             pos: vec(360, 300),
             font: new Font({
                 family: 'impact',
-                size: 24,
+                size: 36,
                 unit: FontUnit.Px,
                 color: '#44dd44'
             }),
@@ -548,5 +548,15 @@ export class MyLevel extends Scene {
         } else {
             console.error(`${language[lang]['error']}`);
         }
+    }
+    
+    undoCommand() {
+        my.commandMan.undo();
+        this.updateInventory();
+    }
+
+    redoCommand() {
+        my.commandMan.redo();
+        this.updateInventory();
     }
 }
