@@ -25,16 +25,19 @@ const PlantTypes = {
 
 const language = {
     "en": {
+        "Day": "Day",
         "carrots": "carrots",
         "roses": "roses",
         "corns": "corns"
     },
     "ar": {
+        "Day": "يوم",
         "carrots": "جزر",
         "roses": "ورود",
         "corns": "ذرة"
     },
     "zh": {
+        "Day": "天",
         "carrots": "胡萝卜",
         "roses": "玫瑰",
         "corns": "玉米"
@@ -119,6 +122,7 @@ export class MyLevel extends Scene {
             fcn: () => {
                 this.updateInventory();
                 this.autoSavePrompt();
+                this.updateDayCountText();
             },
             repeats: true
         });
@@ -360,13 +364,16 @@ export class MyLevel extends Scene {
         this.initWinMessageText();
     }
 
-    updateDayCountText(){
-        this.dayCountText.text = `Day: ${this.dayCount}`;
+    updateDayCountText() {
+        const lang = localStorage.getItem('language');
+        this.dayCountText.text = `${language[lang]['Day']}: ${this.dayCount}`;
     }
 
     initDayCountText(){
+        const currentLang = language['en']; // Replace 'en' with dynamic language selection if needed
+        
         this.dayCountText = new Label({
-            text: `Day: ${this.dayCount}`,
+            text: `${currentLang['Day']}: ${this.dayCount}`,
             pos: vec(10, this.textHeight),
             font: new Font({
                 family: 'impact',
@@ -375,7 +382,7 @@ export class MyLevel extends Scene {
                 color: '#ffffff'
             }),
             z: 5
-            });
+        });
         this.add (this.dayCountText);
         this.textHeight += this.textHeightIncrement;
     }
