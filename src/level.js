@@ -115,7 +115,7 @@ export class MyLevel extends Scene {
         // Initialize UI elements. WIP*
 
         // Add autosave. WIP* 
-        // Every 5 seconds, save the game to the autosave slot 3.
+        // Every 2 seconds, save the game to the autosave slot 3.
         const autoSaveTimer = new Timer({
             interval: 2000,
             fcn: () => {
@@ -261,9 +261,16 @@ export class MyLevel extends Scene {
             this.updateInventory();
             // my.text.message.setText('');
         } else {
-            // my.text.message.setText('Cannot plant here.');
-            // this.time.delayedCall(3000, () => {
-                // my.text.message.setText('');
+            this.messageText.text = ('Cannot plant here.');
+            const messageTimer = new Timer({
+                interval: 3000,
+                fcn: () => {
+                    this.messageText.text = ('');
+                },
+                repeats: false
+            });
+            this.add(messageTimer);
+            messageTimer.start();
         }
     }
 
@@ -315,12 +322,6 @@ export class MyLevel extends Scene {
             this.inventoryText[key].font.color = colors[key];
             this.inventoryText[key].text = `${language[lang][key]}: ${this.inventory[key]}`;
         }
-
-
-
-        // console.log("day count: ", dayCt); // test
-        // this.dayCount = dayCt;
-        // this.dayCountText.text = `Day: ${dayCt}`;
     }
 
     initUI(){
@@ -410,7 +411,7 @@ export class MyLevel extends Scene {
 
     initMessageText(){
         this.messageText = new Label({
-            text: 'a',
+            text: '',
             pos: vec(10, this.textHeight),
             font: new Font({
                 family: 'impact',
@@ -476,22 +477,4 @@ export class MyLevel extends Scene {
           scene.add(horizontalLine);
         }
     }
-
-    onPreLoad(loader) {
-        // Add any scene specific resources to load
-    }
-
-    onDeactivate(context) {
-        // Called when Excalibur transitions away from this scene
-        // Only 1 scene is active at a time
-    }
-
-    onPreDraw(ctx, elapsedMs) {
-        // Called before Excalibur draws to the screen
-    }
-
-    onPostDraw(ctx, elapsedMs) {
-        // Called after Excalibur draws to the screen
-    }
-
 }
