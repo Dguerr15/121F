@@ -41,11 +41,20 @@ moderateSoil will define a condition for the max water level for a plant to grow
 
 Each of our plant types are then constructed as an object containing a variable number of these GrowthConditions and other necessary data:
 ```javascript
-1: PlantGrowthDSL.definePlantGrowth(
-        1,
-        [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ],
-        { waterNeeded: 5, sunNeeded: 4 }
+// define growth conditions 
+export const GrowthDefinitions = {
+    ...
+    //roses
+    3: PlantGrowthDSL.definePlantGrowth(
+        3,
+        [
+            GrowthConditionBuilder.sunAndWaterNeeded(3, 4),
+            GrowthConditionBuilder.noDifferentPlantsAdjacent(3)
+        ],
+        { waterNeeded: 3, sunNeeded: 4 }
     ),
+    ... 
+};
 ```
 
 ### Switch to Alternate Platform
