@@ -178,8 +178,8 @@
             listItems[10].innerHTML = formatText('X', translations[language].redo);
 
             // Update the displayed current language
-            document.getElementById('current-language').textContent = `Current Language: ${
-                language === 'en' ? 'English' : language === 'zh' ? '中文' : 'العربية'
+            document.getElementById('current-language').textContent = `${
+                language === 'en' ? 'Current Language: English' : language === 'zh' ? '当前语言：中文' : 'اللغة الحالية : العربية'
             }`;
 
             // Store the selected language in localStorage
