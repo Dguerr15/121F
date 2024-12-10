@@ -16,13 +16,37 @@ The pre-existing language we used for our external DSL for scenario design was J
 In this code example, we set up the win scenario for the game. The "victory_condition_amount" specifies how many plants the player has to plant to win, and we set that to 9 plants. The "victory_condition_level" specifies the growth level each plant needs to be to win, and we set that to growth level 3. So, in order to win the game, the player must have 9 plants that have a growth level of 3.
 
 ### Internal DSL for Plants and Growth Conditions
+For the internal DSL requirement, our implementation largely resides in the PlantGrowthDSL.js file. In this file, we defined structs for each plant that contained GrowthCondition objects. These objects are essentially the loosely declared interfaces for our internal DSL.
 ```javascript
-console.log("Scenario manager: Victory condition amount: ", victory_condition_amount);
-        this.scene.victoryConditionAmount = victory_condition_amount || 9;
-        console.log("Scenario manager: Victory condition level: ", victory_condition_level);
-        this.scene.victoryConditionLevel = victory_condition_level || 3;
+class GrowthCondition {
+    constructor(condition) {
+        this.condition = condition;
+    }
+    check(context) {
+        return this.condition(context);
+    }
+}
 ```
-Our DSL is written in JavaScript. In the above code snippet, we create the game's win conditions from the JSON external DSL. We start with the victory_condition_amount which is the amount of plants needed to win the game. From the JSON file, we know this is 9, so we set the this.scene.victoryConditionAmount variable to 9. We then go to the victory_condition_level which is the growth level of the plants needed to win and, again, from the JSON file, we know the growth level is 3, so we set the this.scene.victoryConditionLevel variable to 3. So, in this snippet, we use the variables created in the external DSL to set up the win conditions in JavaScript. Since the rest of our game and engine runs with JavaScript, it would be hard to make our engine use the JSON external DSL.
+Each GrowthCondition object contains unique implementations of conditions that are defined by the static functions in GrowthConditionBuilder. There are a number of unique types of conditions that will return a bool depending various conditions that are defined in GrowthConditionBuilder:
+```javascript
+static sunAndWaterNeeded(waterNeeded, sunNeeded){...}
+static adjacencyNeeded(minAdjacentPlants, requiredPlantType = null){...}
+static noDifferentPlantsAdjacent(requiredPlantType){...}
+static moderateSoil(requiredMin, requiredMax){...}
+```
+sunAndWaterNeeded defines a condition for the water and sun required, 
+adjacencyNeeded defines the number of adjacent plants of a certain type required, 
+noDifferentPlantsAdjacent will define a requirement for there to be no adjacent plants of a certain type,
+moderateSoil will define a condition for the max water level for a plant to grow (if the soil is TOO wet, a plant with this condition won't grow).
+
+Each of our plant types are then constructed as an object containing a variable number of these GrowthConditions and other necessary data:
+```javascript
+1: PlantGrowthDSL.definePlantGrowth(
+        1,
+        [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ],
+        { waterNeeded: 5, sunNeeded: 4 }
+    ),
+```
 
 ### Switch to Alternate Platform
 We switched our platform from Phaser to Excalibur.js. Lots of code that we previously had in Phaser was carried over to Excalibur.js such as our 'Objects' folder with our GridManager.js, Command.js, and others. However, the main game logic file, farming.js, which mainly used Phaser had to be redesigned in Excalibur.js. This was because Excalibur.js is structured a little differently from Phaser, so we had to reimplement the farming.js file into a new level.js file with all of the controls and UI elements from the original Phaser design. We originally thought we would switch to Excalibur.js, but, as deadlines drew closer, we thought of other platforms to switch to such as changing JavaScript to TypeScript. This came with other problems like figuring out how to set up a server to run our game, so we decided to stick with Excalibur.js to avoid those other headaches.
