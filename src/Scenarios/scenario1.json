@@ -5,7 +5,7 @@
     "roses": 7
   },
   "scenario": {
-    "starting_day": 1,
+    "starting_day": 2,
     "victory_condition_amount": 9,
     "victory_condition_level": 3
   },

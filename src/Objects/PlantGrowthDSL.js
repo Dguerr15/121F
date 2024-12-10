@@ -10,14 +10,12 @@ class GrowthCondition {
 class GrowthConditionBuilder {
     static sunAndWaterNeeded(waterNeeded, sunNeeded) {
         return new GrowthCondition(({ sunLevel, waterLevel }) => {
-            console.log("waterLevel: " + waterLevel + ", sunLevel: " + sunLevel);
             return sunLevel >= sunNeeded && waterLevel >= waterNeeded;
         });
     }
 
     static adjacencyNeeded(minAdjacentPlants, requiredPlantType = null) {
         return new GrowthCondition(({ neighbors, gridManager }) => {
-            console.log("minAdjacentPlants: " + minAdjacentPlants + ", requiredPlantType: " + requiredPlantType);
             const count = neighbors.reduce((acc, cell) => {
                 const t = gridManager.getPlantType(cell.x, cell.y);
                 if (requiredPlantType == null) {
@@ -35,8 +33,6 @@ class GrowthConditionBuilder {
             // ensure no neighbours of different plant type
             return neighbors.every(cell => {
                 const plantType = gridManager.getPlantType(cell.x, cell.y);
-                console.log("neighbor plantType: " + plantType + ", requiredPlantType: " + requiredPlantType);
-                console.log("eval:" + (plantType === 0 || plantType === requiredPlantType));
                 return plantType === 0 || plantType === requiredPlantType;
             });
         });

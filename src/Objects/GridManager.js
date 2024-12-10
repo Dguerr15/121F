@@ -169,7 +169,6 @@ export class GridManager {
     }
 
     plantCrop(x, y, plantName, scene) {
-        console.log ('plantCrop called');
         const plantTypeCode = this.getPlantTypeCode(plantName);
         const textureKey = `${plantName}Seedling`;
 
@@ -227,7 +226,6 @@ export class GridManager {
     }
 
     getPlantTypeCode(plantTypeName) {
-        console.log ("attempting to get PlantTypes[] of plantTypeName: " + plantTypeName);
         return PlantTypes[plantTypeName.toUpperCase()];
     }
 
@@ -277,7 +275,6 @@ export class GridManager {
 
     // get and set grid state for game saving
     getGridState() {
-        console.log("getting grid state");
         const gridState = [];
         for (let x = 0; x < this.gridWidth; x++) {
             for (let y = 0; y < this.gridHeight; y++) {
@@ -296,7 +293,6 @@ export class GridManager {
     }
 
     setGridState(gridState, scene) {
-        console.log("setting grid state");
 
         // clear existing grid ui and text
         for (let key in this.plantSprites) {

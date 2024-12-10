@@ -23,7 +23,6 @@ export class PlantCropCommand extends Command {
     }
 
     undo() {
-        console.log ("undoing plant crop command: ", this.plantName);
         my.inventory[this.plantName]++;
         my.gridManager.removePlant(this.gridX, this.gridY); // Reverse by removing the crop
     }
@@ -157,7 +156,6 @@ export class AdvanceTimeCommand extends Command {
     updatePlantGrowth(x, y) {
         const plantType = my.gridManager.getPlantType(x, y);
         if (plantType !== PlantTypes.NONE) {
-            console.log ("updating plant growth: plant type: " + plantType);
 
             const growthLevel = my.gridManager.getGrowthLevel(x, y);
             const sunLevel = my.gridManager.getSunLevel(x, y);
@@ -175,10 +173,8 @@ export class AdvanceTimeCommand extends Command {
                 gridManager: my.gridManager 
             };
 
-            console.log("checking conditions");
             // Check if all conditions are met
             const canGrow = conditions.every(cond => cond.check(context));
-            console.log("condition results: " + canGrow);
 
             if (canGrow && growthLevel < 3) {
                 // Growth Event.
@@ -188,11 +184,9 @@ export class AdvanceTimeCommand extends Command {
                 my.gridManager.setWaterLevel(x, y, waterLevel - consume.waterNeeded);
                 my.gridManager.updatePlantSprite(x, y);
 
-                console.log ("growth conditions met");
                 // Store growth event
                 const eventKey = `${x},${y}`;
                 if (!this.growthEvents.has(eventKey)) {
-                    console.log ("growth event stored at x, y: " + x + ", " + y);
                     this.growthEvents.set(eventKey, {x, y});
                 }
             }
@@ -218,7 +212,6 @@ export class AdvanceTimeCommand extends Command {
         }
         const eventsArray = Array.from(this.growthEvents.values());
         for (let i = eventsArray.length - 1; i >= 0; i--) {
-            console.log ("growth event found for undo at x, y: " + eventsArray[i].x + ", " + eventsArray[i].y);
             const {x, y} = eventsArray[i];
             this.undoPlantGrowth(x, y);
             my.gridManager.drawCellInfo(my.scene, x, y);

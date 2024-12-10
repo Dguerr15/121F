@@ -15,10 +15,8 @@ export const Resources = {
   cornsGrowing: new ImageSource('./assets/tile_0075.png'),
   cornsFullGrown: new ImageSource('./assets/tile_0059.png')
 }
-// So when you type Resources.Sword -> ImageSource
 
-// We build a loader and add all of our resources to the boot loader
-// You can build your own loader by extending DefaultLoader
+
 export const loader = new Loader();
 for (const res of Object.values(Resources)) {
   loader.addResource(res);

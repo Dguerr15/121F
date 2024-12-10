@@ -7,8 +7,6 @@ import { MyLevel } from "./level.js";
 const gameWidth = window.innerWidth * .8;
 const gameHeight = window.innerHeight;
 
-console.log(gameWidth, gameHeight);
-
 const game = new Engine({
   width: gameWidth, // Logical width and height in game pixels
   height: gameHeight,
@@ -17,11 +15,6 @@ const game = new Engine({
   scenes: {
     start: MyLevel
   },
-  // physics: {
-  //   solver: SolverStrategy.Realistic,
-  //   substep: 5 // Sub step the physics simulation for more robust simulations
-  // },
-  // fixedUpdateTimestep: 16 // Turn on fixed update timestep when consistent physic simulation is important
 });
 
 game.start('start', { // name of the start scene 'start'

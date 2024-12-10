@@ -31,13 +31,9 @@ export class ScenarioManager {
   // Apply the loaded scenario data to the game
   applyScenario() {
     if (this.scenarioData.scenario) {
-        console.log("scendata: ", this.scenarioData);
         const { starting_day, victory_condition_amount, victory_condition_level } = this.scenarioData.scenario;
-        console.log("Scenario manager: Starting day: ", starting_day);
-        // this.dayCount = starting_day || 1;
-        console.log("Scenario manager: Victory condition amount: ", victory_condition_amount);
+        this.scene.dayCount = starting_day || 1;
         this.scene.victoryConditionAmount = victory_condition_amount || 9;
-        console.log("Scenario manager: Victory condition level: ", victory_condition_level);
         this.scene.victoryConditionLevel = victory_condition_level || 3;
 
         // Apply crops starting conditions
@@ -50,12 +46,7 @@ export class ScenarioManager {
 
         Object.values(this.scenarioData.special_events).forEach(event => {
           my.specialEvents[event.day_of_event] = event.event;
-          console.log("Assigning special event on day " + event.day_of_event + ": " + event.event);
         });
-
-
-        console.log('Scenario applied:', this.scenarioData);
-
     } else {
         console.error('Invalid scenario data.');
     }

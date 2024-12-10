@@ -6,7 +6,6 @@ export class EventManager {
     }
     //game saving stuff
     saveGame(saveSlotName) {
-        console.log("saving game");
         const saveData = {
             grid: my.gridManager.getGridState(),
             player: {
@@ -20,15 +19,12 @@ export class EventManager {
         };
 
         localStorage.setItem(`${saveSlotName}`, JSON.stringify(saveData));
-        console.log(`Game saved to slot ${saveSlotName}`);
     }
 
     loadGame(saveSlotName) {
-        console.log("loading game");
         const saveData = JSON.parse(localStorage.getItem(`${saveSlotName}`));
 
         if (!saveData) {
-            console.log(`No save data found in slot ${saveSlotName}`);
             return false;
         }
 
@@ -53,7 +49,6 @@ export class EventManager {
         my.scene.updateInventory();
         my.scene.updateDayCountText();
 
-        console.log(`Game loaded from slot ${saveSlotName}`);
         return true;
     }
 }

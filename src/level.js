@@ -98,7 +98,6 @@ export class MyLevel extends Scene {
         //scenario manager
         my.scenarioManager = new ScenarioManager(this);
         my.scenarioManager.loadScenario('scenario1');
-        console.log("inventory", this.inventory);
 
         this.setupButtonControls(engine);
     }
@@ -123,12 +122,8 @@ export class MyLevel extends Scene {
         my.gridManager = new GridManager(cols, rows, this.cellSize);
         my.gridManager.initializeGrid(this);
 
-        // Initialize command manager. WIP*
+        // Initialize command manager.
         my.commandMan = new CommandManager();
-
-        // Initialize scenario manager. WIP*
-
-        // Initialize UI elements. WIP*
 
         // Add autosave. WIP* 
         // Every 2 seconds, save the game to the autosave slot 3.
@@ -147,10 +142,6 @@ export class MyLevel extends Scene {
 
         // Prompt to continue game from autosave
         this.promptContinue();
-    }
-
-    onPreUpdate(engine, elapsedMs) {
-        // Called before anything updates in the scene
     }
 
     onPostUpdate(engine, elapsedMs) {
@@ -279,8 +270,12 @@ export class MyLevel extends Scene {
         const lang = localStorage.getItem('language');
         this.input.keyboard.enabled = false; // Disable keyboard input
         this.winMessageText.text = `${language[lang]['win']}`; // Display win message
-        this.engine.stop(); 
-
+        
+        // Pause for 2 seconds, then reload the game
+        setTimeout(() => {
+            this.engine.stop();     
+        }, 100); 
+        
         // Pause for 2 seconds, then reload the game
         setTimeout(() => {
             this.input.keyboard.enabled = true;
@@ -476,9 +471,7 @@ export class MyLevel extends Scene {
 
     initWinMessageText(){
         const width = this.gridWidth * this.cellSize;
-        console.log ("width: ", width); // test 
         const height = this.gridHeight * this.cellSize;
-        console.log ("height: ", height); // test
         this.winMessageText = new Label({
             text: '',
             pos: vec(360, 300),
@@ -549,7 +542,7 @@ export class MyLevel extends Scene {
             console.error(`${language[lang]['error']}`);
         }
     }
-    
+
     undoCommand() {
         my.commandMan.undo();
         this.updateInventory();
