@@ -1,6 +1,5 @@
 import { my } from "../Globals.js";
 import { RAND_SUN_MAX, RAND_WATER_MAX, MAX_WATER_CAPACITY, PlantTypes } from "./GridManager.js";
-import { Label } from "excalibur";
 import { GrowthDefinitions } from "./PlantGrowthDSL.js";
 
 export class Command {

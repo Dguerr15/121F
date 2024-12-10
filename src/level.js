@@ -81,6 +81,8 @@ export class MyLevel extends Scene {
         my.scenarioManager = new ScenarioManager(this);
         my.scenarioManager.loadScenario('scenario1');
         console.log("inventory", this.inventory);
+
+        this.setupButtonControls(engine);
     }
 
     onActivate(context) {
@@ -113,7 +115,7 @@ export class MyLevel extends Scene {
         const autoSaveTimer = new Timer({
             interval: 2000,
             fcn: () => {
-                this.updateInventory()
+                this.updateInventory();
                 this.autoSavePrompt();
             },
             repeats: true
@@ -139,49 +141,99 @@ export class MyLevel extends Scene {
         this.handleSaveLoadKeys(engine);
     }
 
-    handleSaveLoadKeys(engine){
-        if (engine.input.keyboard.wasPressed(Keys.K)){
+    setupButtonControls(engine) {
+        const stepSize = 10; // Amount to move with each button press
+
+        // Movement buttons
+        document.getElementById("move-up").addEventListener("click", () => {
+            my.player.pos.y -= stepSize;
+        });
+
+        document.getElementById("move-down").addEventListener("click", () => {
+            my.player.pos.y += stepSize;
+        });
+
+        document.getElementById("move-left").addEventListener("click", () => {
+            my.player.pos.x -= stepSize;
+        });
+
+        document.getElementById("move-right").addEventListener("click", () => {
+            my.player.pos.x += stepSize;
+        });
+
+        // Planting and picking up
+        document.getElementById("plant-crop").addEventListener("click", () => this.plantCrop());
+        document.getElementById("pick-up").addEventListener("click", () => this.pickUpPlant());
+
+        // Selecting plants
+        document.getElementById("select-carrots").addEventListener("click", () => {
+            this.selectPlant("carrots");
+            this.updateInventory();
+        });
+        document.getElementById("select-roses").addEventListener("click", () => {
+            this.selectPlant("roses");
+            this.updateInventory();
+        });
+        document.getElementById("select-corns").addEventListener("click", () => {
+            this.selectPlant("corns");
+            this.updateInventory();
+        });
+
+        // Time advance
+        document.getElementById("advance-time").addEventListener("click", () => {
+            this.advanceTime();
+        });
+
+        // Save/Load
+        document.getElementById("save-game").addEventListener("click", () => {
+            this.saveGame();
+        });
+
+        document.getElementById("load-game").addEventListener("click", () => {
+            this.loadGame();
+        });
+
+        // Undo/Redo
+        document.getElementById("undo").addEventListener("click", () => {
+            this.undoCommand();
+        });
+
+        document.getElementById("redo").addEventListener("click", () => {
+            this.redoCommand();
+        });
+    }
+
+    handleSaveLoadKeys(engine) {
+        if (engine.input.keyboard.wasPressed(Keys.K)) {
             // save
-            const slot = prompt("Enter save slot number (1-3):");
-            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
-                my.eventMan.saveGame(`saveSlot${slot}`);
-            } else {
-                console.error("Invalid save slot.");
-            }
+            this.saveGame();
         }
-        if (engine.input.keyboard.wasPressed(Keys.L)){
-            //load
-            const slot = prompt("Enter save slot number (1-3):");
-            if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
-                my.eventMan.loadGame(`saveSlot${slot}`);
-                this.updateInventory();
-            } else {
-                console.error("Invalid save slot.");
-            }
+        if (engine.input.keyboard.wasPressed(Keys.L)) {
+            // load
+            this.loadGame();
         }
     }
 
-    handleUndoRedoKeys(engine){
+    handleUndoRedoKeys(engine) {
         if (engine.input.keyboard.wasPressed(Keys.Z)) {
-            // Undo last command
-            my.commandMan.undo();
-            this.updateInventory();
+            this.undoCommand();
         }
         if (engine.input.keyboard.wasPressed(Keys.X)) {
-            // Redo last command
-            my.commandMan.redo();
-            this.updateInventory();
+            this.redoCommand();
         }   
     }
 
-    handleAdvanceTimeKey(engine){
+    handleAdvanceTimeKey(engine) {
         if (engine.input.keyboard.wasPressed(Keys.Space)) {
-            // Advance time
-            const command = new AdvanceTimeCommand();
-            my.commandMan.executeCommand(command);
-            if (my.gridManager.checkWinCondition(victory_condition_amount, victory_condition_level)) {
-                this.winGame();
-            }
+            this.advanceTime();
+        }
+    }
+
+    advanceTime() {
+        const command = new AdvanceTimeCommand();
+        my.commandMan.executeCommand(command);
+        if (my.gridManager.checkWinCondition(victory_condition_amount, victory_condition_level)) {
+            this.winGame();
         }
     }
 
@@ -206,14 +258,13 @@ export class MyLevel extends Scene {
         this.winMessageText.text = 'You win!\nLoad from save to continue.';
     }
 
-    handlePlantingKeys(engine){
+    handlePlantingKeys(engine) {
         if (engine.input.keyboard.wasPressed(Keys.Q)) {
             // plant selected plant
-            const { gridX, gridY } = this.getPlayerGridPosition();
             this.plantCrop();
         }
         if (engine.input.keyboard.wasPressed(Keys.E)) {
-            // pull selected plant
+            // pick up plant
             this.pickUpPlant();
         }
     }
@@ -260,16 +311,16 @@ export class MyLevel extends Scene {
         }
     }
 
-    handlePlantSelectionKeys(engine){
-        if (engine.input.keyboard.wasPressed(Keys.Key1)) {
+    handlePlantSelectionKeys(engine) {
+        if (engine.input.keyboard.wasPressed(Keys.Digit1)) {
             this.selectPlant('carrots');
             this.updateInventory();
         }
-        if (engine.input.keyboard.wasPressed(Keys.Key2)) {
+        if (engine.input.keyboard.wasPressed(Keys.Digit2)) {
             this.selectPlant('roses');
             this.updateInventory();
         }
-        if (engine.input.keyboard.wasPressed(Keys.Key3)) {
+        if (engine.input.keyboard.wasPressed(Keys.Digit3)) {
             this.selectPlant('corns');
             this.updateInventory();
         }
@@ -440,5 +491,51 @@ export class MyLevel extends Scene {
           });
           scene.add(horizontalLine);
         }
+    }
+
+    // New helper methods to replicate keyboard logic for save/load/undo/redo
+    saveGame() {
+        const slot = prompt("Enter save slot number (1-3):");
+        if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+            my.eventMan.saveGame(`saveSlot${slot}`);
+        } else {
+            console.error("Invalid save slot.");
+        }
+    }
+
+    loadGame() {
+        const slot = prompt("Enter save slot number (1-3):");
+        if (slot && this.saveSlots.includes(`saveSlot${slot}`)) {
+            my.eventMan.loadGame(`saveSlot${slot}`);
+            this.updateInventory();
+        } else {
+            console.error("Invalid save slot.");
+        }
+    }
+
+    undoCommand() {
+        my.commandMan.undo();
+        this.updateInventory();
+    }
+
+    redoCommand() {
+        my.commandMan.redo();
+        this.updateInventory();
+    }
+
+    onPreLoad(loader) {
+        // Add any scene specific resources to load
+    }
+
+    onDeactivate(context) {
+        // Called when Excalibur transitions away from this scene
+    }
+
+    onPreDraw(ctx, elapsedMs) {
+        // Called before Excalibur draws to the screen
+    }
+
+    onPostDraw(ctx, elapsedMs) {
+        // Called after Excalibur draws to the screen
     }
 }
