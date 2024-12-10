@@ -24,6 +24,4 @@ game.start('start', { // name of the start scene 'start'
     direction: 'in',
     color: Color.ExcaliburBlue
   })
-}).then(() => {
-  // Do something after the game starts
 });
