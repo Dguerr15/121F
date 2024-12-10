@@ -1,3 +1,40 @@
+# Devlog F3 Software Requirement Satisfaction 12/10
+
+## How we satisfied the software requirements
+### F0+F1+F2
+No major changes were made.
+
+
+### Internationalization
+We introduced a structured approach leveraging separate files and interfaces for managing text content. All strings displayed to the player, such as UI labels, button texts, and controls, are now stored in a dedicated localization object keyed by language codes (e.g. en, zh, ar). These are accessed dynamically based on the player's selected language, ensuring consistency and ease of translation. Internal strings remained hardcoded within the game logic files, making their intent explicit.
+
+
+### Localization
+Our game supports English, Chinese, and Arabic, with localization achieved through a system that centralizes the transition logic using global variables and objects, each localized using a combination of manual effort and AI generative tools like ChatGPT and Google translate for translation and refinement. All visible text is dynamically loaded based on the selected language, ensuring flexibility and consistency. Players can switch languages using in-game buttons, with the chosen language stored in localStorage to persist between sessions. 
+
+
+### Mobile Installation
+To get our game to be installable on a smartphone-class mobile device, we got help from this documentation: https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps
+To make our game installable on a smartphone-class mobile device, we followed the guidance provided in MDN's Progressive Web App documentation. The first step was creating a game.webmanifest file to define the app’s settings, including its name, start URL, icon, and display properties. We then integrated the manifest into our project by adding the following line to our index.html:
+<link rel="manifest" href="game.webmanifest"/>
+
+
+This ensured the browser recognized our game as a PWA. By configuring the manifest and ensuring proper linking, the game became downloadable and installable directly from supported mobile browsers, allowing the player to play the game as if they were playing on a PC.
+
+
+### Mobile Play (Offline)
+
+To ensure the game played well on mobile, the team focused on setting up a proper PWA build process, which included configuring service workers and caching assets to enable offline functionality. However, challenges arose with Excalibur needing to be recognized by the service worker, causing issues with asset loading and the GitHub Pages deployment, preventing proper testing and offline support. We also needed to rescale our game and design the interface to be mobile-friendly, implementing buttons instead of keyboard controls and scaling the game layout to fit the average phone resolution of 1080x1920 (9:16 ratio). In the end, our group instead used Netlify to run a deployment of the game which worked on a group member’s phone. They could play the game and use the new buttons made for the controls even when offline.
+
+
+## Reflection
+Looking back on how we achieved the new F3 requirements, our team’s approach evolved significantly based on the challenges we faced initially attempting to transition everything into TypeScript, then having to move forward with Excalibur instead. Initially, when we integrated Excalibur, we encountered issues with dependencies and import setup, leading us to move the node_modules and package.json for better packaging and to fix deployment issues. This decision was a huge setback for the group, as we had to fully reimplement the entire game from scratch just in a different engine (Norman was the main contributor to getting this done properly). Additionally, we faced problems with branch inconsistencies, particularly between the “main” and “attemptingexcalibur” branches, where some changes (like scenario management updates) conflicted and were not able to merge seamlessly. This made it difficult to keep the project unified, leading to multiple bug fixes and remerging. Furthermore, deploying the game on GitHub Pages proved challenging, especially when it came to handling the mobile PWA setup. We had to troubleshoot issues related to offline functionality and ensure the game could run smoothly on mobile devices, which added complexity but also pushed us to improve our deployment and mobile support strategies. Overall, our adaptability played the biggest role in allowing us to slowly but surely make progress and finish this project. 
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+
 # Devlog F2 Software Requirement Satisfaction 12/09
 
 ## How we satisfied the software requirements
