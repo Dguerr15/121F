@@ -263,7 +263,7 @@ export class MyLevel extends Scene {
         } else {
             this.messageText.text = ('Cannot plant here.');
             const messageTimer = new Timer({
-                interval: 3000,
+                interval: 2000,
                 fcn: () => {
                     this.messageText.text = ('');
                 },
