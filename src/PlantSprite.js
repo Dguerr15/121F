@@ -15,7 +15,6 @@ export class PlantSprite extends Actor {
 
   
   initSprite(posX, posY, sprite){
-    console.log ('init sprite called');
     this.getPlantSprite(sprite);
     this.pos.x = posX;
     this.pos.y = posY;
