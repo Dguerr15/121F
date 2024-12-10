@@ -62,11 +62,12 @@ class PlantGrowthDSL {
 // define growth conditions 
 export const GrowthDefinitions = {
     //carrots
-    1: PlantGrowthDSL.definePlantGrowth(
-        1,
-        [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ],
-        { waterNeeded: 5, sunNeeded: 4 }
-    ),
+    1: { 1, [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ] , {waterNeeded: 5, sunNeeded:4 } }, 
+    // 1: PlantGrowthDSL.definePlantGrowth(
+    //     1,
+    //     [ GrowthConditionBuilder.sunAndWaterNeeded(5, 4) ],
+    //     { waterNeeded: 5, sunNeeded: 4 }
+    // ),
     //roses
     3: PlantGrowthDSL.definePlantGrowth(
         3,
