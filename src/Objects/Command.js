@@ -94,7 +94,7 @@ export class AdvanceTimeCommand extends Command {
 
         // Increment day count
         my.scene.dayCount++;
-        my.scene.dayCountText.text = `Day: ${my.scene.dayCount}`;
+        my.scene.updateDayCountText();
     }
 
     undo () {

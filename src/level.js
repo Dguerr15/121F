@@ -277,8 +277,15 @@ export class MyLevel extends Scene {
     // Handle winning the game
     winGame() {
         const lang = localStorage.getItem('language');
-        this.input.keyboard.enabled = false;
-        this.winMessageText.text = `${language[lang]['win']}`;
+        this.input.keyboard.enabled = false; // Disable keyboard input
+        this.winMessageText.text = `${language[lang]['win']}`; // Display win message
+        this.engine.stop(); 
+
+        // Pause for 2 seconds, then reload the game
+        setTimeout(() => {
+            this.input.keyboard.enabled = true;
+            window.location.reload(); // Reload the page
+        }, 2000); // 2000 milliseconds = 2 seconds
     }
 
     handlePlantingKeys(engine) {
