@@ -10,7 +10,6 @@
         body {
             margin: 0;
             display: flex;
-            flex-direction: row-reverse;
             font-family: Arial, sans-serif;
         }
 
@@ -20,12 +19,13 @@
         }
 
         #controls-panel {
-            width: 250px;
+            width: 20%;
             background-color: #f4f4f4;
             padding: 15px;
             border-right: 1px solid #ccc;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            height: 1080px;
         }
 
         #controls-panel h2 {
@@ -97,6 +97,21 @@
             cursor: pointer;
         }
 
+        /* Force lanscape mode on mobile */
+        @media (max-width: 2400px) {
+            @media (orientation: portrait) {
+                body {
+                    transform: rotate(90deg);
+                    transform-origin: left top;
+                    width: 100vh;
+                    height: 100vw;
+                    overflow-x: hidden;
+                    position: absolute;
+                    top: 100%;
+                    left: 0;
+                }
+            }
+        }
     </style>
 </head>
 <body>

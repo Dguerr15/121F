@@ -59,8 +59,8 @@ export class MyLevel extends Scene {
         this.initUI();
 
         this.cellSize = 64;
-        this.gridWidth = 13;
-        this.gridHeight = 10;
+        this.gridWidth = 31;
+        this.gridHeight = 18;
         for (let i = 0; i < this.gridWidth; i++) {
             for (let j = 0; j < this.gridHeight; j++) {
                 const ground = new GroundTile();
@@ -93,6 +93,8 @@ export class MyLevel extends Scene {
         this.drawGrid (this.cellSize, this.gridWidth * this.cellSize, this.gridHeight * this.cellSize, this);
         
         my.scene = this;
+        my.scene.width = this.gridWidth * this.cellSize;
+        my.scene.height = this.gridHeight * this.cellSize
 
         // Initialize event manager
         my.eventMan = new EventManager(this);
