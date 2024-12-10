@@ -51,8 +51,8 @@ export class Player extends Actor {
   constrainToGrid() {
     // Grid properties
     const cellSize = 64; // Size of each tile
-    const gridWidth = 13; // Grid width (number of tiles)
-    const gridHeight = 10; // Grid height (number of tiles)
+    const gridWidth = 31; // Grid width (number of tiles)
+    const gridHeight = 18; // Grid height (number of tiles)
 
     // Constrain player position within grid bounds
     const halfWidth = this.width / 2;
