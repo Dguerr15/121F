@@ -10,7 +10,6 @@ export class GroundTile extends Actor {
       height: 100,
       z: 1,
     });
-    
   }
 
   onInitialize() {
